@@ -32,11 +32,11 @@
 18. Create `frontend/` directory at root level
 19. Run `npm create vite@latest frontend -- --template react`
 20. Navigate to frontend and run `npm install`
-21. Initialize Shadcn/ui: `npx shadcn-ui@latest init`
+21. Initialize Shadcn/ui: `npx shadcn@latest init` (Note: `shadcn-ui` is deprecated, use `shadcn` instead)
 22. Install React Router: `npm install react-router-dom`
 23. Install Axios: `npm install axios`
 24. Install Recharts: `npm install recharts`
-25. Add Shadcn components: `npx shadcn-ui@latest add button card table dialog badge switch`
+25. Add Shadcn components: `npx shadcn@latest add button card table dialog badge switch` (Note: `shadcn-ui` is deprecated, use `shadcn` instead)
 
 ### Frontend Project Structure
 26. Create `frontend/src/pages/` directory
