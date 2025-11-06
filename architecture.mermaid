@@ -1,0 +1,166 @@
+graph TB
+    Browser[Web Browser]
+    OperatorUI[Operator Dashboard]
+    UserUI[User Dashboard]
+    
+    Vite[Vite Dev Server Port 5173]
+    Router[React Router]
+    Components[Shadcn UI Components]
+    APIClient[Axios API Client]
+    
+    APIGW[AWS API Gateway]
+    LocalAPI[Local API localhost:8000]
+    
+    FastAPI[FastAPI Application]
+    
+    IngestRouter[Ingest Router]
+    UsersRouter[Users Router]
+    ConsentRouter[Consent Router]
+    ProfileRouter[Profile Router]
+    FeaturesRouter[Features Router]
+    PersonasRouter[Personas Router]
+    RecsRouter[Recommendations Router]
+    OperatorRouter[Operator Router]
+    EvalRouter[Evaluate Router]
+    
+    FeatureDetection[Feature Detection Service]
+    PersonaAssignment[Persona Assignment Service]
+    RecEngine[Recommendation Engine]
+    Guardrails[Guardrails Service]
+    
+    OpenAI[OpenAI API GPT-4o-mini]
+    S3[AWS S3 Bucket]
+    
+    SQLite[(SQLite Database)]
+    Users[(users table)]
+    Accounts[(accounts table)]
+    Transactions[(transactions table)]
+    Liabilities[(liabilities table)]
+    Features[(user features table)]
+    Personas[(personas table)]
+    Recommendations[(recommendations table)]
+    ConsentLog[(consent log table)]
+    OperatorActions[(operator actions table)]
+    EvalMetrics[(evaluation metrics table)]
+    
+    Lambda[AWS Lambda Function]
+    SAM[AWS SAM]
+    
+    SyntheticData[Synthetic Data Generator]
+    DataFiles[JSON Data Files]
+    ComputeFeatures[Compute Features Script]
+    AssignPersonas[Assign Personas Script]
+    EvaluateScript[Evaluate Script]
+    
+    Browser --> OperatorUI
+    Browser --> UserUI
+    OperatorUI --> Vite
+    UserUI --> Vite
+    
+    Vite --> Router
+    Router --> Components
+    Components --> APIClient
+    
+    APIClient --> APIGW
+    APIClient --> LocalAPI
+    
+    APIGW --> Lambda
+    Lambda --> FastAPI
+    LocalAPI --> FastAPI
+    
+    FastAPI --> IngestRouter
+    FastAPI --> UsersRouter
+    FastAPI --> ConsentRouter
+    FastAPI --> ProfileRouter
+    FastAPI --> FeaturesRouter
+    FastAPI --> PersonasRouter
+    FastAPI --> RecsRouter
+    FastAPI --> OperatorRouter
+    FastAPI --> EvalRouter
+    
+    IngestRouter --> SQLite
+    UsersRouter --> SQLite
+    ConsentRouter --> SQLite
+    ConsentRouter --> ConsentLog
+    
+    FeaturesRouter --> FeatureDetection
+    FeatureDetection --> SQLite
+    FeatureDetection --> Features
+    
+    PersonasRouter --> PersonaAssignment
+    PersonaAssignment --> Features
+    PersonaAssignment --> Personas
+    
+    RecsRouter --> RecEngine
+    RecEngine --> OpenAI
+    RecEngine --> Guardrails
+    Guardrails --> Users
+    RecEngine --> Recommendations
+    
+    OperatorRouter --> SQLite
+    RecsRouter --> OperatorActions
+    
+    EvalRouter --> EvaluateScript
+    EvaluateScript --> EvalMetrics
+    EvaluateScript --> S3
+    
+    SyntheticData --> DataFiles
+    DataFiles --> IngestRouter
+    
+    IngestRouter --> Users
+    IngestRouter --> Accounts
+    IngestRouter --> Transactions
+    IngestRouter --> Liabilities
+    
+    ComputeFeatures --> FeaturesRouter
+    AssignPersonas --> PersonasRouter
+    
+    SAM --> Lambda
+    SAM --> S3
+
+    style Vite fill:#61dafb
+    style Router fill:#61dafb
+    style Components fill:#61dafb
+    style APIClient fill:#61dafb
+    style OperatorUI fill:#61dafb
+    style UserUI fill:#61dafb
+    
+    style FastAPI fill:#009688
+    style IngestRouter fill:#009688
+    style UsersRouter fill:#009688
+    style ConsentRouter fill:#009688
+    style ProfileRouter fill:#009688
+    style FeaturesRouter fill:#009688
+    style PersonasRouter fill:#009688
+    style RecsRouter fill:#009688
+    style OperatorRouter fill:#009688
+    style EvalRouter fill:#009688
+    style FeatureDetection fill:#009688
+    style PersonaAssignment fill:#009688
+    style RecEngine fill:#009688
+    style Guardrails fill:#009688
+    
+    style SQLite fill:#4caf50
+    style Users fill:#4caf50
+    style Accounts fill:#4caf50
+    style Transactions fill:#4caf50
+    style Liabilities fill:#4caf50
+    style Features fill:#4caf50
+    style Personas fill:#4caf50
+    style Recommendations fill:#4caf50
+    style ConsentLog fill:#4caf50
+    style OperatorActions fill:#4caf50
+    style EvalMetrics fill:#4caf50
+    
+    style OpenAI fill:#ff9800
+    
+    style SyntheticData fill:#9c27b0
+    style DataFiles fill:#9c27b0
+    style ComputeFeatures fill:#9c27b0
+    style AssignPersonas fill:#9c27b0
+    style EvaluateScript fill:#9c27b0
+    
+    style Lambda fill:#ff6b6b
+    style SAM fill:#ff6b6b
+    style APIGW fill:#ff6b6b
+    style S3 fill:#ff6b6b
