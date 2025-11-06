@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #1 Complete - Project structure and setup finished
+**Status**: PR #2 Complete - Synthetic Data Generation Script Working
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -21,13 +21,31 @@
 - ✅ Environment variable template (example-env.md)
 - ✅ Scripts directory created
 - ✅ Data directory created with .gitkeep
+- ✅ **PR #2: Synthetic Data Generation Complete**
+  - Faker dependency added (faker==20.1.0)
+  - `scripts/generate_synthetic_data.py` implemented
+  - User generation: 75 users (71 customers, 4 operators), 30% consent
+  - Account generation: 272 accounts (checking, savings, credit cards, investments)
+  - Transaction generation: 15,590 transactions with persona patterns
+  - Liability generation: 92 credit card liabilities with varied utilization
+  - JSON seed files generated and validated:
+    - `data/synthetic_users.json`: 75 records (21KB)
+    - `data/synthetic_accounts.json`: 272 records (104KB)
+    - `data/synthetic_transactions.json`: 15,590 records (7.9MB)
+    - `data/synthetic_liabilities.json`: 92 records (50KB)
+  - Persona patterns implemented:
+    - High credit card usage users
+    - Recurring subscription users
+    - Regular savings deposit users
+    - Irregular income users
+    - Regular biweekly payroll users
+  - Data quality verified (valid dates, realistic amounts, proper IDs, correct distributions)
 
 ### In Progress
-- 🔄 None - Ready for PR #2
+- 🔄 None - Ready for PR #3
 
 ### Not Started
-- ⏳ Synthetic data generation (75 users) - **PR #2 Next**
-- ⏳ Database schema implementation (10 tables)
+- ⏳ Database schema implementation (10 tables) - **PR #3 Next**
 - ⏳ POST `/ingest` endpoint
 - ⏳ Feature detection pipeline
 - ⏳ Persona assignment engine
@@ -39,15 +57,19 @@
 
 ## What's Left to Build
 
-### PR #2: Synthetic Data Generation (Next)
-- [ ] Add faker dependency to requirements.txt
-- [ ] Create `scripts/generate_synthetic_data.py`
-- [ ] Implement user generation (75 users, 30% consent)
-- [ ] Implement account generation (2-4 accounts per user)
-- [ ] Implement transaction generation (150-300 per user, 180-day window)
-- [ ] Implement liability generation (credit cards)
-- [ ] Main execution function with JSON export
-- [ ] Testing and validation
+### PR #3: Database Schema & SQLAlchemy Models (Next)
+- [ ] Database configuration (SQLite setup with SQLAlchemy)
+- [ ] User model (user_id, full_name, email, consent fields, user_type)
+- [ ] Account model (account_id, user_id, type, balances, currency)
+- [ ] Transaction model (transaction_id, account_id, user_id, date, amount, merchant, categories)
+- [ ] Liability model (liability_id, account_id, APR fields, payment info)
+- [ ] UserFeature model (feature_id, user_id, window_days, behavioral signals)
+- [ ] Persona model (persona_id, user_id, persona_type, confidence_score)
+- [ ] Recommendation model (recommendation_id, user_id, content, status, approval fields)
+- [ ] EvaluationMetric model (metric_id, run_id, performance metrics)
+- [ ] ConsentLog model (log_id, user_id, action, timestamp)
+- [ ] OperatorAction model (action_id, operator_id, action_type, recommendation_id)
+- [ ] Database initialization on startup
 
 ### Day 1 Deliverables (MVP)
 - [ ] SQLite database schema (10 tables) - **PR #3**
@@ -76,10 +98,10 @@
 ## Current Status
 
 ### Backend
-- **Status**: Structure initialized, ready for implementation
-- **Completed**: FastAPI skeleton, database setup, directory structure
-- **Next**: PR #2 (synthetic data), then PR #3 (database models)
-- **Priority**: Generate synthetic data first, then implement database schema
+- **Status**: Structure initialized, synthetic data generation complete
+- **Completed**: FastAPI skeleton, database setup, directory structure, synthetic data script
+- **Next**: PR #3 (database models), then data ingestion endpoint
+- **Priority**: Implement database schema to match synthetic data structure
 
 ### Frontend
 - **Status**: Structure initialized, ready for component development
@@ -91,7 +113,13 @@
 - **Status**: Setup complete, models not yet implemented
 - **Completed**: SQLAlchemy configuration, database connection setup
 - **Next**: Implement 10 SQLAlchemy models (PR #3)
-- **Priority**: After synthetic data generation
+- **Priority**: After synthetic data generation (now complete)
+
+### Data Generation
+- **Status**: ✅ Complete and tested
+- **Completed**: All 4 JSON seed files generated with realistic patterns
+- **Output**: Ready for ingestion into database
+- **Quality**: Validated (dates, amounts, IDs, distributions correct)
 
 ### AI Integration
 - **Status**: Not implemented
@@ -114,5 +142,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #2 Completion**: Synthetic data generation script producing 4 JSON files (users, accounts, transactions, liabilities) with realistic patterns for 75 users
+**PR #3 Completion**: Database schema implemented with all 10 SQLAlchemy models, database initialization working, ready for data ingestion endpoint
 

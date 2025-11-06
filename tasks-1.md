@@ -205,17 +205,17 @@
 ## PR #3: Database Schema & SQLAlchemy Models
 
 ### Database Configuration
-1. Create `backend/app/database.py` with SQLAlchemy setup
-2. Define `SQLALCHEMY_DATABASE_URL = "sqlite:///./spendsense.db"`
-3. Create SQLAlchemy engine with `create_engine()`
-4. Create `SessionLocal` with `sessionmaker()`
-5. Create `Base = declarative_base()`
-6. Create `get_db()` dependency function for FastAPI
-7. Create `init_db()` function to create all tables
+- [x] 1. Create `backend/app/database.py` with SQLAlchemy setup
+- [x] 2. Define `SQLALCHEMY_DATABASE_URL = "sqlite:///./spendsense.db"`
+- [x] 3. Create SQLAlchemy engine with `create_engine()`
+- [x] 4. Create `SessionLocal` with `sessionmaker()`
+- [x] 5. Create `Base = declarative_base()`
+- [x] 6. Create `get_db()` dependency function for FastAPI
+- [x] 7. Create `init_db()` function to create all tables
 
 ### Users Model
-8. Create `User` model in `backend/app/models.py`
-9. Add fields:
+- [x] 8. Create `User` model in `backend/app/models.py`
+- [x] 9. Add fields:
    - user_id: String, primary key
    - full_name: String, not nullable
    - email: String, unique, not nullable
@@ -224,11 +224,11 @@
    - consent_granted_at: DateTime, nullable
    - consent_revoked_at: DateTime, nullable
    - user_type: String, check constraint (customer/operator), default='customer'
-10. Add __repr__ method for debugging
+- [x] 10. Add __repr__ method for debugging
 
 ### Accounts Model
-11. Create `Account` model in `backend/app/models.py`
-12. Add fields:
+- [x] 11. Create `Account` model in `backend/app/models.py`
+- [x] 12. Add fields:
     - account_id: String, primary key
     - user_id: String, foreign key to users.user_id
     - type: String, not nullable
@@ -239,12 +239,12 @@
     - iso_currency_code: String, default='USD'
     - holder_category: String, nullable
     - created_at: DateTime, default=now
-13. Add relationship to User model
-14. Add __repr__ method
+- [x] 13. Add relationship to User model
+- [x] 14. Add __repr__ method
 
 ### Transactions Model
-15. Create `Transaction` model in `backend/app/models.py`
-16. Add fields:
+- [x] 15. Create `Transaction` model in `backend/app/models.py`
+- [x] 16. Add fields:
     - transaction_id: String, primary key
     - account_id: String, foreign key to accounts.account_id
     - user_id: String, foreign key to users.user_id
@@ -257,15 +257,15 @@
     - category_detailed: String, nullable
     - pending: Boolean, default=False
     - created_at: DateTime, default=now
-17. Add indexes:
+- [x] 17. Add indexes:
     - Index on (user_id, date)
     - Index on merchant_name
-18. Add relationships to User and Account
-19. Add __repr__ method
+- [x] 18. Add relationships to User and Account
+- [x] 19. Add __repr__ method
 
 ### Liabilities Model
-20. Create `Liability` model in `backend/app/models.py`
-21. Add fields:
+- [x] 20. Create `Liability` model in `backend/app/models.py`
+- [x] 21. Add fields:
     - liability_id: String, primary key
     - account_id: String, foreign key to accounts.account_id
     - user_id: String, foreign key to users.user_id
@@ -280,12 +280,12 @@
     - last_statement_balance: Float, nullable
     - interest_rate: Float, nullable
     - created_at: DateTime, default=now
-22. Add relationships to User and Account
-23. Add __repr__ method
+- [x] 22. Add relationships to User and Account
+- [x] 23. Add __repr__ method
 
 ### User Features Model
-24. Create `UserFeature` model in `backend/app/models.py`
-25. Add fields:
+- [x] 24. Create `UserFeature` model in `backend/app/models.py`
+- [x] 25. Add fields:
     - feature_id: Integer, primary key, autoincrement
     - user_id: String, foreign key to users.user_id
     - window_days: Integer, not nullable (30 or 180)
@@ -310,14 +310,14 @@
     - cash_flow_buffer_months: Float, default=0
     - avg_monthly_income: Float, default=0
     - investment_account_detected: Boolean, default=False
-26. Add unique constraint on (user_id, window_days)
-27. Add index on user_id
-28. Add relationship to User
-29. Add __repr__ method
+- [x] 26. Add unique constraint on (user_id, window_days)
+- [x] 27. Add index on user_id
+- [x] 28. Add relationship to User
+- [x] 29. Add __repr__ method
 
 ### Personas Model
-30. Create `Persona` model in `backend/app/models.py`
-31. Add fields:
+- [x] 30. Create `Persona` model in `backend/app/models.py`
+- [x] 31. Add fields:
     - persona_id: Integer, primary key, autoincrement
     - user_id: String, foreign key to users.user_id
     - window_days: Integer, not nullable
@@ -325,14 +325,14 @@
     - confidence_score: Float, default=1.0
     - assigned_at: DateTime, default=now
     - reasoning: Text (JSON), nullable
-32. Add unique constraint on (user_id, window_days)
-33. Add index on user_id
-34. Add relationship to User
-35. Add __repr__ method
+- [x] 32. Add unique constraint on (user_id, window_days)
+- [x] 33. Add index on user_id
+- [x] 34. Add relationship to User
+- [x] 35. Add __repr__ method
 
 ### Recommendations Model
-36. Create `Recommendation` model in `backend/app/models.py`
-37. Add fields:
+- [x] 36. Create `Recommendation` model in `backend/app/models.py`
+- [x] 37. Add fields:
     - recommendation_id: String, primary key
     - user_id: String, foreign key to users.user_id
     - persona_type: String, not nullable
@@ -350,15 +350,15 @@
     - generated_at: DateTime, default=now
     - generation_time_ms: Integer, nullable
     - expires_at: DateTime, nullable
-38. Add indexes:
+- [x] 38. Add indexes:
     - Index on user_id
     - Index on status
-39. Add relationship to User
-40. Add __repr__ method
+- [x] 39. Add relationship to User
+- [x] 40. Add __repr__ method
 
 ### Evaluation Metrics Model
-41. Create `EvaluationMetric` model in `backend/app/models.py`
-42. Add fields:
+- [x] 41. Create `EvaluationMetric` model in `backend/app/models.py`
+- [x] 42. Add fields:
     - metric_id: Integer, primary key, autoincrement
     - run_id: String, not nullable
     - timestamp: DateTime, default=now
@@ -374,24 +374,24 @@
     - recommendations_with_traces: Integer, nullable
     - auditability_percentage: Float, nullable
     - details: Text (JSON), nullable
-43. Add __repr__ method
+- [x] 43. Add __repr__ method
 
 ### Consent Log Model
-44. Create `ConsentLog` model in `backend/app/models.py`
-45. Add fields:
+- [x] 44. Create `ConsentLog` model in `backend/app/models.py`
+- [x] 45. Add fields:
     - log_id: Integer, primary key, autoincrement
     - user_id: String, foreign key to users.user_id
     - action: String, check constraint (granted/revoked)
     - timestamp: DateTime, default=now
     - ip_address: String, nullable
     - user_agent: String, nullable
-46. Add index on user_id
-47. Add relationship to User
-48. Add __repr__ method
+- [x] 46. Add index on user_id
+- [x] 47. Add relationship to User
+- [x] 48. Add __repr__ method
 
 ### Operator Actions Model
-49. Create `OperatorAction` model in `backend/app/models.py`
-50. Add fields:
+- [x] 49. Create `OperatorAction` model in `backend/app/models.py`
+- [x] 50. Add fields:
     - action_id: Integer, primary key, autoincrement
     - operator_id: String, not nullable
     - action_type: String, check constraint (approve/reject/override)
@@ -399,15 +399,13 @@
     - user_id: String, foreign key to users.user_id
     - reason: Text, nullable
     - timestamp: DateTime, default=now
-51. Add relationships to User and Recommendation
-52. Add __repr__ method
+- [x] 51. Add relationships to User and Recommendation
+- [x] 52. Add __repr__ method
 
 ### Database Initialization
-53. Update `backend/app/main.py` to import Base and models
-54. Add database initialization on startup (create all tables)
-55. Test database creation: run `uvicorn app.main:app --reload`
-56. Verify `spendsense.db` file created in backend/ directory
-57. Use SQLite browser to inspect tables and schema
-58. Verify all 10 tables created with correct columns and constraints
-
----
+- [x] 53. Update `backend/app/main.py` to import Base and models
+- [x] 54. Add database initialization on startup (create all tables)
+- [x] 55. Test database creation: run `uvicorn app.main:app --reload`
+- [x] 56. Verify `spendsense.db` file created in backend/ directory
+- [x] 57. Use SQLite browser to inspect tables and schema
+- [x] 58. Verify all 10 tables created with correct columns and constraints
