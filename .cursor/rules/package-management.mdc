@@ -1,0 +1,37 @@
+Description: Package version and compatibility management
+Globs: package.json, requirements.txt, **/package.json, **/requirements.txt
+
+# Package Management Rules
+
+## ALWAYS APPLY
+
+### Node Version
+- **Node.js 20 LTS** (v20.x.x) - Current LTS version as of 2024
+- All frontend packages MUST be compatible with Node 20
+- Verify compatibility before installation: `npm install --dry-run` or check package documentation
+
+### Python Version
+- **Python 3.11+** - Required for FastAPI and SQLAlchemy 2.0
+- All backend packages MUST be compatible with Python 3.11
+- Verify with: `pip check` after installation
+
+### Package Installation Rules
+1. **ONLY install latest STABLE builds** - No beta, alpha, or RC versions
+2. **Verify compatibility** before installing:
+   - Check package documentation for Node/Python version requirements
+   - Review changelog for breaking changes
+   - Test in development environment first
+3. **Pin versions** in package.json and requirements.txt for reproducibility
+4. **Document version decisions** in techContext.md when choosing specific versions
+
+### Deployment Platform Compatibility
+- **AWS Lambda**: Python 3.11 runtime (compatible)
+- **Vercel**: Node 20 LTS supported (compatible)
+- **Netlify**: Node 20 LTS supported (compatible)
+- **AWS S3 + CloudFront**: Static hosting (compatible)
+
+### Before Installing Any Package
+1. Check if it's compatible with Node 20 (frontend) or Python 3.11 (backend)
+2. Verify it's a stable release (not beta/alpha)
+3. Check if it conflicts with existing dependencies
+4. Update techContext.md with version and compatibility notes
