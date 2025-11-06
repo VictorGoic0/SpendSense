@@ -3,58 +3,58 @@
 ## PR #4: Pydantic Schemas for Data Validation
 
 ### User Schemas
-1. Create `backend/app/schemas.py`
-2. Import Pydantic BaseModel, Field, validator
-3. Create `UserBase` schema with core user fields
-4. Create `UserCreate` schema (extends UserBase) for POST requests
-5. Create `UserResponse` schema (extends UserBase) with all fields including IDs and timestamps
-6. Add Config class with `from_attributes = True` for ORM compatibility
+- [x] 1. Create `backend/app/schemas.py`
+- [x] 2. Import Pydantic BaseModel, Field, validator
+- [x] 3. Create `UserBase` schema with core user fields
+- [x] 4. Create `UserCreate` schema (extends UserBase) for POST requests
+- [x] 5. Create `UserResponse` schema (extends UserBase) with all fields including IDs and timestamps
+- [x] 6. Add Config class with `from_attributes = True` for ORM compatibility
 
 ### Account Schemas
-7. Create `AccountBase` schema with core account fields
-8. Create `AccountCreate` schema for account creation
-9. Create `AccountResponse` schema with all fields
-10. Add Config class for ORM compatibility
+- [x] 7. Create `AccountBase` schema with core account fields
+- [x] 8. Create `AccountCreate` schema for account creation
+- [x] 9. Create `AccountResponse` schema with all fields
+- [x] 10. Add Config class for ORM compatibility
 
 ### Transaction Schemas
-11. Create `TransactionBase` schema with core transaction fields
-12. Create `TransactionCreate` schema for transaction creation
-13. Create `TransactionResponse` schema with all fields
-14. Add Config class for ORM compatibility
+- [x] 11. Create `TransactionBase` schema with core transaction fields
+- [x] 12. Create `TransactionCreate` schema for transaction creation
+- [x] 13. Create `TransactionResponse` schema with all fields
+- [x] 14. Add Config class for ORM compatibility
 
 ### Liability Schemas
-15. Create `LiabilityBase` schema with core liability fields
-16. Create `LiabilityCreate` schema for liability creation
-17. Create `LiabilityResponse` schema with all fields
-18. Add Config class for ORM compatibility
+- [x] 15. Create `LiabilityBase` schema with core liability fields
+- [x] 16. Create `LiabilityCreate` schema for liability creation
+- [x] 17. Create `LiabilityResponse` schema with all fields
+- [x] 18. Add Config class for ORM compatibility
 
 ### Ingestion Schemas
-19. Create `IngestRequest` schema with fields:
+- [x] 19. Create `IngestRequest` schema with fields:
     - users: List[UserCreate]
     - accounts: List[AccountCreate]
     - transactions: List[TransactionCreate]
     - liabilities: List[LiabilityCreate]
-20. Create `IngestResponse` schema with fields:
+- [x] 20. Create `IngestResponse` schema with fields:
     - status: str
     - ingested: dict (counts per entity type)
     - duration_ms: int
 
 ### Feature Schemas
-21. Create `UserFeatureResponse` schema with all feature fields
-22. Add Config class for ORM compatibility
+- [x] 21. Create `UserFeatureResponse` schema with all feature fields
+- [x] 22. Add Config class for ORM compatibility
 
 ### Persona Schemas
-23. Create `PersonaResponse` schema with all persona fields
-24. Add Config class for ORM compatibility
+- [x] 23. Create `PersonaResponse` schema with all persona fields
+- [x] 24. Add Config class for ORM compatibility
 
 ### Recommendation Schemas
-25. Create `RecommendationBase` schema with core fields
-26. Create `RecommendationCreate` schema for creation
-27. Create `RecommendationResponse` schema with all fields including status
-28. Create `RecommendationApprove` schema with operator_id and notes
-29. Create `RecommendationOverride` schema with operator_id, new_title, new_content, reason
-30. Create `RecommendationReject` schema with operator_id and reason
-31. Add Config classes for ORM compatibility
+- [x] 25. Create `RecommendationBase` schema with core fields
+- [x] 26. Create `RecommendationCreate` schema for creation
+- [x] 27. Create `RecommendationResponse` schema with all fields including status
+- [x] 28. Create `RecommendationApprove` schema with operator_id and notes
+- [x] 29. Create `RecommendationOverride` schema with operator_id, new_title, new_content, reason
+- [x] 30. Create `RecommendationReject` schema with operator_id and reason
+- [x] 31. Add Config classes for ORM compatibility
 
 ---
 

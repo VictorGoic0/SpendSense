@@ -1,51 +1,54 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #2 Complete - Synthetic Data Generation Script Finished
+**Status**: PR #4 Complete - Pydantic Schemas for Data Validation Finished
 
 ## Recent Changes
-- ✅ PR #2 Complete: All 38 tasks finished
-- ✅ Synthetic data generation script implemented (`scripts/generate_synthetic_data.py`)
-- ✅ Faker dependency added and installed (faker==20.1.0)
-- ✅ User generation function: 71 customers + 4 operators, 30% consent rate
-- ✅ Account generation function: 2-4 accounts per user (checking, savings, credit cards, investments)
-- ✅ Transaction generation function: 150-300 transactions per user over 180-day window
-- ✅ Liability generation function: Credit card liabilities with varied utilization patterns
-- ✅ Main execution function: Orchestrates all generation and exports to JSON
-- ✅ JSON seed files generated:
-  - `data/synthetic_users.json`: 75 records (21KB)
-  - `data/synthetic_accounts.json`: 272 records (104KB)
-  - `data/synthetic_transactions.json`: 15,590 records (7.9MB)
-  - `data/synthetic_liabilities.json`: 92 records (50KB)
-- ✅ Persona patterns implemented in transaction generation:
-  - High credit card usage
-  - Recurring subscriptions
-  - Regular savings deposits
-  - Irregular income patterns
-  - Regular biweekly payroll
-- ✅ Data generation assumptions documented in script header
+- ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
+  - Database configuration complete (SQLite setup with SQLAlchemy)
+  - All 10 SQLAlchemy models implemented:
+    - User model (user_id, full_name, email, consent fields, user_type)
+    - Account model (account_id, user_id, type, balances, currency)
+    - Transaction model (transaction_id, account_id, user_id, date, amount, merchant, categories)
+    - Liability model (liability_id, account_id, APR fields, payment info)
+    - UserFeature model (feature_id, user_id, window_days, behavioral signals)
+    - Persona model (persona_id, user_id, persona_type, confidence_score)
+    - Recommendation model (recommendation_id, user_id, content, status, approval fields)
+    - EvaluationMetric model (metric_id, run_id, performance metrics)
+    - ConsentLog model (log_id, user_id, action, timestamp)
+    - OperatorAction model (action_id, operator_id, action_type, recommendation_id)
+  - Database initialization on FastAPI startup
+  - All tables verified with DB Browser for SQLite
+  - Database file created: `backend/spendsense.db`
+- ✅ PR #4 Complete: Pydantic Schemas for Data Validation (all 31 tasks finished)
+  - Created `backend/app/schemas.py` with all validation schemas
+  - User schemas: UserBase, UserCreate, UserResponse
+  - Account schemas: AccountBase, AccountCreate, AccountResponse
+  - Transaction schemas: TransactionBase, TransactionCreate, TransactionResponse (with date parsing)
+  - Liability schemas: LiabilityBase, LiabilityCreate, LiabilityResponse (with date parsing)
+  - Ingestion schemas: IngestRequest, IngestResponse
+  - Feature schemas: UserFeatureResponse
+  - Persona schemas: PersonaResponse
+  - Recommendation schemas: RecommendationBase, RecommendationCreate, RecommendationResponse, RecommendationApprove, RecommendationOverride, RecommendationReject
+  - All schemas use Pydantic v2 syntax with Literal types for enum validation
+  - ORM compatibility configured with `from_attributes = True`
+  - Validation tested and working
 
 ## Next Steps
-1. **PR #3: Database Schema & SQLAlchemy Models** - Implement 10 database tables
-   - Database configuration (SQLite setup)
-   - User model
-   - Account model
-   - Transaction model
-   - Liability model
-   - UserFeature model
-   - Persona model
-   - Recommendation model
-   - EvaluationMetric model
-   - ConsentLog model
-   - OperatorAction model
-   - Database initialization on startup
+1. **PR #5: Data Ingestion API Endpoint** - Implement POST `/ingest` endpoint
+   - FastAPI app setup with CORS middleware
+   - Create ingest router (`backend/app/routers/ingest.py`)
+   - Implement bulk ingestion endpoint
+   - Process users, accounts, transactions (batched), and liabilities
+   - Error handling and idempotency
+   - Test with synthetic JSON data
+   - Verify data in database
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Database schema implementation** - Next task (PR #3)
-- **Data ingestion endpoint** - Will need database models first
-- **Feature detection pipeline** - Depends on database schema
+- **Data ingestion endpoint** - Next task (PR #5)
+- **Feature detection pipeline** - After data ingestion
 - **UI components** - Can start after data ingestion endpoint is ready
 
 ### Technical Decisions Made
@@ -56,28 +59,35 @@
 - **Synthetic data format** - JSON files that can seed both SQLite and production databases
 - **Random seed** - Set to 42 for reproducibility
 - **Data generation patterns** - Persona patterns distributed across users for realistic behavioral signals
+- **Database** - SQLite for MVP (file: `backend/spendsense.db`)
+- **SQLAlchemy** - Using declarative_base() pattern, relationships configured
+- **Pydantic** - v2.5.0 with Literal types for enum validation, date parsing validators
 
 ### Integration Points
 - Frontend ↔ Backend: CORS configuration needed, API client setup in `frontend/src/lib/api.js`
-- Backend ↔ Database: SQLAlchemy setup complete, models to be implemented (PR #3)
+- Backend ↔ Database: SQLAlchemy setup complete, all models implemented (PR #3 complete)
 - Backend ↔ OpenAI: API key management via environment variables
 - Backend ↔ AWS: S3 bucket setup pending
-- Data Generation ↔ Database: JSON seed files ready for ingestion endpoint
+- Data Generation ↔ Database: JSON seed files ready for ingestion endpoint (PR #5)
 
 ## Current Blockers
-None - Ready to proceed with PR #3 (Database Schema)
+None - Ready to proceed with PR #5 (Data Ingestion API Endpoint)
 
 ## Active Questions
-1. Should we upgrade Python venv to 3.11+ before proceeding with database models?
+1. Should we upgrade Python venv to 3.11+ before proceeding with data ingestion?
 2. Are AWS credentials configured for S3 exports?
-3. Should we create the data ingestion endpoint before or after database models?
+3. Should we implement feature detection before or after data ingestion?
 
 ## Workflow Notes
 - PR #1 complete (all 41 tasks checked off)
 - PR #2 complete (all 38 tasks checked off)
-- Following tasks-1.md structure (PR #3 next)
+- PR #3 complete (all 58 tasks checked off)
+- PR #4 complete (all 31 tasks checked off)
+- Following tasks-1.md and tasks-2.md structure (PR #5 next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility
 - Consent is mandatory - no recommendations without opt-in
+- Database schema matches synthetic data structure exactly
+- Pydantic schemas validated and ready for API endpoints
 
