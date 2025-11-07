@@ -191,15 +191,15 @@
 ## PR #25: Bulk Approve Endpoint
 
 ### Bulk Approve Endpoint
-- [ ] 1. Create POST `/bulk-approve` endpoint
-- [ ] 2. Accept BulkApproveRequest schema:
+- [x] 1. Create POST `/bulk-approve` endpoint
+- [x] 2. Accept BulkApproveRequest schema:
    - operator_id: str
    - recommendation_ids: list[str]
-- [ ] 3. Get database session
+- [x] 3. Get database session
 
 ### Bulk Processing
-- [ ] 4. Initialize counters: approved=0, failed=0, errors=[]
-- [ ] 5. Loop through recommendation_ids:
+- [x] 4. Initialize counters: approved=0, failed=0, errors=[]
+- [x] 5. Loop through recommendation_ids:
    - Query recommendation by ID
    - Skip if not found (log as failed)
    - Skip if not in pending_approval status (log as failed)
@@ -210,31 +210,31 @@
    - Catch and log any errors per recommendation
 
 ### Batch Commit
-- [ ] 6. After loop, commit all changes in single transaction
-- [ ] 7. If commit fails, rollback and return error
-- [ ] 8. If partial success, commit what succeeded
+- [x] 6. After loop, commit all changes in single transaction
+- [x] 7. If commit fails, rollback and return error
+- [x] 8. If partial success, commit what succeeded
 
 ### Response
-- [ ] 9. Return BulkApproveResponse with:
+- [x] 9. Return BulkApproveResponse with:
    - approved: count
    - failed: count
    - errors: list of error messages
-- [ ] 10. Return 200 if any succeeded, 400 if all failed
+- [x] 10. Return 200 if any succeeded, 400 if all failed
 
 ### Error Handling
-- [ ] 11. Handle individual recommendation errors gracefully
-- [ ] 12. Don't fail entire batch if one fails
-- [ ] 13. Provide detailed error messages per failed ID
-- [ ] 14. Add comprehensive logging
+- [x] 11. Handle individual recommendation errors gracefully
+- [x] 12. Don't fail entire batch if one fails
+- [x] 13. Provide detailed error messages per failed ID
+- [x] 14. Add comprehensive logging
 
 ### Testing Bulk Approve
-- [ ] 15. Generate 10 recommendations for test user
-- [ ] 16. Get list of pending recommendation IDs
-- [ ] 17. Call bulk approve with all IDs
-- [ ] 18. Verify all changed to approved
-- [ ] 19. Test with mix of valid and invalid IDs
-- [ ] 20. Verify partial success handled correctly
-- [ ] 21. Verify error messages informative
+- [x] 15. Generate 10 recommendations for test user
+- [x] 16. Get list of pending recommendation IDs
+- [x] 17. Call bulk approve with all IDs
+- [x] 18. Verify all changed to approved
+- [x] 19. Test with mix of valid and invalid IDs
+- [x] 20. Verify partial success handled correctly
+- [x] 21. Verify error messages informative
 
 ---
 

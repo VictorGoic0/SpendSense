@@ -293,3 +293,16 @@ class RecommendationReject(BaseModel):
     """Schema for rejecting a recommendation"""
     operator_id: str
     reason: str
+
+
+class BulkApproveRequest(BaseModel):
+    """Schema for bulk approving recommendations"""
+    operator_id: str
+    recommendation_ids: List[str]
+
+
+class BulkApproveResponse(BaseModel):
+    """Schema for bulk approve response"""
+    approved: int
+    failed: int
+    errors: List[str]

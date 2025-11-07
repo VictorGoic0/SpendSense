@@ -192,9 +192,20 @@ User Dashboard (React UI)
   - Updates recommendation status to 'approved', sets approved_by and approved_at
   - Creates OperatorAction record for audit trail
   - Returns updated recommendation
+- **Override Endpoint**: POST `/recommendations/{recommendation_id}/override` (PR #24 Complete)
+  - Validates recommendation exists and at least one of new_title or new_content provided
+  - Stores original content in JSON format (original_title, original_content, overridden_at)
+  - Updates recommendation with new content, validates tone, appends disclosure
+  - Rejects new content with critical tone warnings (forbidden phrases)
+  - Creates OperatorAction record with action_type='override'
+  - Returns updated recommendation with original_content and override_reason
+- **Reject Endpoint**: POST `/recommendations/{recommendation_id}/reject` (PR #24 Complete)
+  - Validates recommendation exists and is not already approved
+  - Updates recommendation status to 'rejected'
+  - Stores rejection reason in metadata_json (rejection_reason, rejected_by, rejected_at)
+  - Creates OperatorAction record with action_type='reject'
+  - Returns updated recommendation with rejection metadata
 - **Bulk Operations**: Operators can approve multiple at once (to be implemented in PR #25)
-- **Override Support**: Store original content, allow edits with reason logging (to be implemented in PR #24)
-- **Reject Support**: Reject recommendations with reason logging (to be implemented in PR #24)
 - **Audit Trail**: All actions logged in `operator_actions` table
 
 ## Key Technical Decisions
@@ -251,6 +262,8 @@ User Dashboard (React UI)
   - POST /recommendations/generate/{user_id} - Generate recommendations for user
   - GET /recommendations/{user_id} - Get recommendations for user (with optional status and window_days filters)
   - POST /recommendations/{recommendation_id}/approve - Approve a recommendation (PR #23 Complete)
+  - POST /recommendations/{recommendation_id}/override - Override a recommendation with new content (PR #24 Complete)
+  - POST /recommendations/{recommendation_id}/reject - Reject a recommendation (PR #24 Complete)
 
 ### Frontend Constants & Enums Pattern
 - **Centralized Enums**: All enum values defined in `frontend/src/constants/enums.js`

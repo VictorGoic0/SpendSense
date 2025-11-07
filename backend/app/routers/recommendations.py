@@ -15,7 +15,7 @@ import logging
 
 from app.database import get_db
 from app.models import User, Persona, Recommendation, OperatorAction
-from app.schemas import RecommendationApprove, RecommendationOverride, RecommendationReject
+from app.schemas import RecommendationApprove, RecommendationOverride, RecommendationReject, BulkApproveRequest, BulkApproveResponse
 from app.services.recommendation_engine import (
     build_user_context,
     validate_context,
@@ -962,6 +962,184 @@ async def reject_recommendation(
             f"Error rejecting recommendation {recommendation_id}: {str(e)}",
             exc_info=True
         )
+        raise HTTPException(
+            status_code=500,
+            detail=f"Server error: {str(e)}"
+        )
+
+
+@router.post("/bulk-approve", response_model=BulkApproveResponse)
+async def bulk_approve_recommendations(
+    request: BulkApproveRequest,
+    db: Session = Depends(get_db)
+) -> BulkApproveResponse:
+    """
+    Bulk approve multiple recommendations.
+    
+    This endpoint:
+    1. Accepts a list of recommendation IDs
+    2. Processes each recommendation individually
+    3. Approves only those in 'pending_approval' status
+    4. Logs operator actions for each approval
+    5. Commits all changes in a single transaction
+    6. Returns summary of approved and failed counts
+    
+    Args:
+        request: BulkApproveRequest with operator_id and list of recommendation_ids
+        db: Database session
+    
+    Returns:
+        BulkApproveResponse with:
+        - approved: Count of successfully approved recommendations
+        - failed: Count of failed recommendations
+        - errors: List of error messages for failed recommendations
+    
+    Raises:
+        400: If all recommendations failed
+        500: Server error (database error)
+    """
+    try:
+        # ========================================================================
+        # Initialize Counters
+        # ========================================================================
+        
+        approved_count = 0
+        failed_count = 0
+        errors = []
+        recommendations_to_update = []
+        operator_actions_to_create = []
+        
+        logger.info(
+            f"Bulk approve request from operator {request.operator_id} "
+            f"for {len(request.recommendation_ids)} recommendations"
+        )
+        
+        # ========================================================================
+        # Process Each Recommendation
+        # ========================================================================
+        
+        for recommendation_id in request.recommendation_ids:
+            try:
+                # Query recommendation by ID
+                recommendation = db.query(Recommendation).filter(
+                    Recommendation.recommendation_id == recommendation_id
+                ).first()
+                
+                # Skip if not found
+                if not recommendation:
+                    failed_count += 1
+                    error_msg = f"Recommendation '{recommendation_id}' not found"
+                    errors.append(error_msg)
+                    logger.warning(error_msg)
+                    continue
+                
+                # Skip if not in pending_approval status
+                if recommendation.status != 'pending_approval':
+                    failed_count += 1
+                    error_msg = (
+                        f"Recommendation '{recommendation_id}' is not in 'pending_approval' status "
+                        f"(current status: '{recommendation.status}')"
+                    )
+                    errors.append(error_msg)
+                    logger.warning(error_msg)
+                    continue
+                
+                # Update recommendation:
+                # - Set status='approved'
+                # - Set approved_by=operator_id
+                # - Set approved_at=current timestamp
+                recommendation.status = 'approved'
+                recommendation.approved_by = request.operator_id
+                recommendation.approved_at = datetime.utcnow()
+                
+                recommendations_to_update.append(recommendation)
+                
+                # Create OperatorAction record
+                operator_action = OperatorAction(
+                    operator_id=request.operator_id,
+                    action_type='approve',
+                    recommendation_id=recommendation_id,
+                    user_id=recommendation.user_id,
+                    reason=None,  # Bulk approve doesn't include notes
+                    timestamp=datetime.utcnow()
+                )
+                
+                operator_actions_to_create.append(operator_action)
+                
+                approved_count += 1
+                
+                logger.debug(
+                    f"Prepared approval for recommendation {recommendation_id} "
+                    f"by operator {request.operator_id}"
+                )
+            
+            except Exception as e:
+                # Catch and log any errors per recommendation
+                failed_count += 1
+                error_msg = f"Error processing recommendation '{recommendation_id}': {str(e)}"
+                errors.append(error_msg)
+                logger.error(error_msg, exc_info=True)
+                continue
+        
+        # ========================================================================
+        # Batch Commit
+        # ========================================================================
+        
+        # If we have any recommendations to approve, commit them
+        if recommendations_to_update:
+            try:
+                # Add all operator actions
+                db.add_all(operator_actions_to_create)
+                
+                # Commit all changes in single transaction
+                db.commit()
+                
+                logger.info(
+                    f"Bulk approve completed: {approved_count} approved, {failed_count} failed"
+                )
+            except Exception as e:
+                # Rollback on commit failure
+                db.rollback()
+                logger.error(f"Error committing bulk approve transaction: {str(e)}", exc_info=True)
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to commit bulk approve transaction: {str(e)}"
+                )
+        
+        # ========================================================================
+        # Response
+        # ========================================================================
+        
+        # Return 200 if any succeeded, 400 if all failed
+        if approved_count == 0:
+            logger.warning(
+                f"Bulk approve failed for all {len(request.recommendation_ids)} recommendations"
+            )
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "message": "All recommendations failed to approve",
+                    "approved": approved_count,
+                    "failed": failed_count,
+                    "errors": errors
+                }
+            )
+        
+        # Return BulkApproveResponse
+        return BulkApproveResponse(
+            approved=approved_count,
+            failed=failed_count,
+            errors=errors
+        )
+    
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    
+    except Exception as e:
+        # Rollback database transaction on error
+        db.rollback()
+        logger.error(f"Error in bulk approve: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
             detail=f"Server error: {str(e)}"
