@@ -41,7 +41,9 @@ export default function OperatorApprovalQueue() {
     newContent: "",
     reason: "",
   });
+  const [overrideFormError, setOverrideFormError] = useState(null);
   const [rejectForm, setRejectForm] = useState({ reason: "" });
+  const [rejectFormError, setRejectFormError] = useState(null);
   const refreshIntervalRef = useRef(null);
 
   // Fetch recommendations
@@ -160,22 +162,26 @@ export default function OperatorApprovalQueue() {
       newContent: "",
       reason: "",
     });
+    setOverrideFormError(null);
     setOverrideDialogOpen(true);
   };
 
   const handleOverrideSubmit = async () => {
+    // Validate reason is provided
     if (!overrideForm.reason.trim()) {
-      setError("Reason is required for override");
+      setOverrideFormError("Reason is required for override");
       return;
     }
 
+    // Validate at least one of new title or new content is provided
     if (!overrideForm.newTitle && !overrideForm.newContent) {
-      setError("At least one of new title or new content must be provided");
+      setOverrideFormError("At least one of new title or new content must be provided");
       return;
     }
 
     const recId = selectedRecommendation.recommendation_id;
     setActionLoading((prev) => ({ ...prev, [recId]: true }));
+    setOverrideFormError(null);
 
     try {
       await overrideRecommendation(
@@ -189,7 +195,7 @@ export default function OperatorApprovalQueue() {
       setOverrideDialogOpen(false);
       await fetchRecommendations();
     } catch (err) {
-      setError(err.message || "Failed to override recommendation");
+      setOverrideFormError(err.message || "Failed to override recommendation");
       console.error("Error overriding recommendation:", err);
     } finally {
       setActionLoading((prev) => ({ ...prev, [recId]: false }));
@@ -200,17 +206,20 @@ export default function OperatorApprovalQueue() {
   const handleRejectClick = (recommendation) => {
     setSelectedRecommendation(recommendation);
     setRejectForm({ reason: "" });
+    setRejectFormError(null);
     setRejectDialogOpen(true);
   };
 
   const handleRejectSubmit = async () => {
+    // Validate reason is provided
     if (!rejectForm.reason.trim()) {
-      setError("Reason is required for rejection");
+      setRejectFormError("Reason is required for rejection");
       return;
     }
 
     const recId = selectedRecommendation.recommendation_id;
     setActionLoading((prev) => ({ ...prev, [recId]: true }));
+    setRejectFormError(null);
 
     try {
       await rejectRecommendation(recId, OPERATOR_ID, rejectForm.reason);
@@ -226,7 +235,7 @@ export default function OperatorApprovalQueue() {
         return newSet;
       });
     } catch (err) {
-      setError(err.message || "Failed to reject recommendation");
+      setRejectFormError(err.message || "Failed to reject recommendation");
       console.error("Error rejecting recommendation:", err);
     } finally {
       setActionLoading((prev) => ({ ...prev, [recId]: false }));
@@ -414,14 +423,25 @@ export default function OperatorApprovalQueue() {
               <label className="text-sm font-medium text-gray-700 mb-1 block">
                 Reason <span className="text-red-500">*</span>
               </label>
+              {overrideFormError && (
+                <p className="text-sm text-red-600 italic mb-1">
+                  {overrideFormError}
+                </p>
+              )}
               <textarea
                 value={overrideForm.reason}
-                onChange={(e) =>
-                  setOverrideForm({ ...overrideForm, reason: e.target.value })
-                }
+                onChange={(e) => {
+                  setOverrideForm({ ...overrideForm, reason: e.target.value });
+                  // Clear error when user starts typing
+                  if (overrideFormError) {
+                    setOverrideFormError(null);
+                  }
+                }}
                 rows={3}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  overrideFormError ? "border-red-300" : "border-gray-300"
+                }`}
                 placeholder="Explain why you're overriding this recommendation..."
               />
             </div>
@@ -429,12 +449,25 @@ export default function OperatorApprovalQueue() {
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setOverrideDialogOpen(false)}
+              onClick={() => {
+                setOverrideDialogOpen(false);
+                setOverrideFormError(null);
+              }}
             >
               Cancel
             </Button>
-            <Button onClick={handleOverrideSubmit}>
-              Override
+            <Button
+              onClick={handleOverrideSubmit}
+              disabled={actionLoading[selectedRecommendation?.recommendation_id]}
+            >
+              {actionLoading[selectedRecommendation?.recommendation_id] ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Overriding...
+                </>
+              ) : (
+                "Override"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -453,26 +486,51 @@ export default function OperatorApprovalQueue() {
             <label className="text-sm font-medium text-gray-700 mb-1 block">
               Reason <span className="text-red-500">*</span>
             </label>
+            {rejectFormError && (
+              <p className="text-sm text-red-600 italic mb-1">
+                {rejectFormError}
+              </p>
+            )}
             <textarea
               value={rejectForm.reason}
-              onChange={(e) =>
-                setRejectForm({ ...rejectForm, reason: e.target.value })
-              }
+              onChange={(e) => {
+                setRejectForm({ ...rejectForm, reason: e.target.value });
+                // Clear error when user starts typing
+                if (rejectFormError) {
+                  setRejectFormError(null);
+                }
+              }}
               rows={4}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                rejectFormError ? "border-red-300" : "border-gray-300"
+              }`}
               placeholder="Explain why you're rejecting this recommendation..."
             />
           </div>
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setRejectDialogOpen(false)}
+              onClick={() => {
+                setRejectDialogOpen(false);
+                setRejectFormError(null);
+              }}
             >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleRejectSubmit}>
-              Reject
+            <Button
+              variant="destructive"
+              onClick={handleRejectSubmit}
+              disabled={actionLoading[selectedRecommendation?.recommendation_id]}
+            >
+              {actionLoading[selectedRecommendation?.recommendation_id] ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Rejecting...
+                </>
+              ) : (
+                "Reject"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
