@@ -257,76 +257,76 @@
 - [x] 39. Each page should render page title and "Coming soon" message
 
 ### Testing Navigation
-- [ ] 40. Start backend: `uvicorn app.main:app --reload`
-- [ ] 41. Start frontend: `npm run dev`
-- [ ] 42. Verify frontend accessible at http://localhost:5173
-- [ ] 43. Test navigation between placeholder pages
-- [ ] 44. Verify no console errors
-- [ ] 45. Verify CORS working (check network tab)
+- [x] 40. Start backend: `uvicorn app.main:app --reload`
+- [x] 41. Start frontend: `npm run dev`
+- [x] 42. Verify frontend accessible at http://localhost:5173
+- [x] 43. Test navigation between placeholder pages
+- [x] 44. Verify no console errors
+- [x] 45. Verify CORS working (check network tab)
 
 ---
 
 ## PR #12: Frontend - Operator Dashboard (Metrics & Charts)
 
 ### Dashboard Data Fetching
-1. Update `frontend/src/pages/OperatorDashboard.jsx`
-2. Import useState, useEffect from React
-3. Import api service functions
-4. Create state variables:
+- [x] 1. Update `frontend/src/pages/OperatorDashboard.jsx`
+- [x] 2. Import useState, useEffect from React
+- [x] 3. Import api service functions
+- [x] 4. Create state variables:
    - dashboardData (object)
    - loading (boolean)
    - error (string)
-5. Create useEffect to fetch dashboard data on mount
-6. Call getOperatorDashboard() API function
-7. Update state with response data
-8. Handle loading and error states
+- [x] 5. Create useEffect to fetch dashboard data on mount
+- [x] 6. Call getOperatorDashboard() API function
+- [x] 7. Update state with response data
+- [x] 8. Handle loading and error states
 
 ### Metrics Cards Component
-9. Create `frontend/src/components/MetricsCard.jsx`
-10. Accept props: title, value, subtitle, icon (optional)
-11. Use Shadcn Card component
-12. Display title in card header
-13. Display large value in card content
-14. Display subtitle below value
-15. Style with Tailwind for visual hierarchy
-16. Export component
+- [x] 9. Create `frontend/src/components/MetricsCard.jsx`
+- [x] 10. Accept props: title, value, subtitle, icon (optional)
+- [x] 11. Use Shadcn Card component
+- [x] 12. Display title in card header
+- [x] 13. Display large value in card content
+- [x] 14. Display subtitle below value
+- [x] 15. Style with Tailwind for visual hierarchy
+- [x] 16. Export component
 
 ### Dashboard Layout
-17. In OperatorDashboard.jsx, create grid layout for metrics
-18. Use Tailwind grid classes (grid-cols-1 md:grid-cols-2 lg:grid-cols-4)
-19. Create MetricsCard for total users
-20. Create MetricsCard for users with consent
-21. Create MetricsCard for pending approvals
-22. Create MetricsCard for avg latency
+- [x] 17. In OperatorDashboard.jsx, create grid layout for metrics
+- [x] 18. Use Tailwind grid classes (grid-cols-1 md:grid-cols-2 lg:grid-cols-4)
+- [x] 19. Create MetricsCard for total users
+- [x] 20. Create MetricsCard for users with consent
+- [x] 21. Create MetricsCard for pending approvals
+- [x] 22. Create MetricsCard for avg latency
 
 ### Persona Distribution Chart
-23. Install recharts if not already installed
-24. Import BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip from recharts
-25. Transform persona_distribution data for recharts:
+- [x] 23. Install recharts if not already installed
+- [x] 24. Import BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip from recharts
+- [x] 25. Transform persona_distribution data for recharts:
     - Convert object to array of {name, value} objects
-26. Create bar chart showing persona distribution
-27. Style with Shadcn Card wrapper
-28. Add chart title "Persona Distribution"
-29. Use responsive container for chart
+- [x] 26. Create bar chart showing persona distribution
+- [x] 27. Style with Shadcn Card wrapper
+- [x] 28. Add chart title "Persona Distribution"
+- [x] 29. Use responsive container for chart
 
 ### Recommendation Status Chart
-30. Create second chart for recommendation status breakdown
-31. Use similar bar chart structure
-32. Show counts for pending, approved, overridden, rejected
-33. Use different color scheme for status types
-34. Add chart title "Recommendation Status"
+- [x] 30. Create second chart for recommendation status breakdown
+- [x] 31. Use similar bar chart structure
+- [x] 32. Show counts for pending, approved, overridden, rejected
+- [x] 33. Use different color scheme for status types
+- [x] 34. Add chart title "Recommendation Status"
 
 ### Loading & Error States
-35. Create loading skeleton using Shadcn Skeleton component
-36. Show skeleton cards while data fetching
-37. Create error alert using Shadcn Alert component
-38. Display error message if API call fails
-39. Add retry button on error
+- [x] 35. Create loading skeleton using Shadcn Skeleton component
+- [x] 36. Show skeleton cards while data fetching
+- [x] 37. Create error alert using Shadcn Alert component
+- [x] 38. Display error message if API call fails
+- [x] 39. Add retry button on error
 
 ### Testing Dashboard
-40. Run frontend and backend
-41. Verify metrics display correctly
-42. Verify charts render with data
-43. Test loading state (add artificial delay)
-44. Test error state (stop backend)
-45. Verify responsive layout on different screen sizes
+- [ ] 40. Run frontend and backend
+- [ ] 41. Verify metrics display correctly
+- [ ] 42. Verify charts render with data
+- [ ] 43. Test loading state (add artificial delay)
+- [ ] 44. Test error state (stop backend)
+- [ ] 45. Verify responsive layout on different screen sizes
