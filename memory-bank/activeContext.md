@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #5 Complete - Data Ingestion API Endpoint Finished
+**Status**: PR #6 Complete - Feature Detection Service - Subscription Signals Finished
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -53,20 +53,42 @@
   - Data verified in database using SQLite browser
   - Swagger UI accessible at `/docs`
   - Requests dependency added (requests==2.31.0)
+- ✅ PR #6 Complete: Feature Detection Service - Subscription Signals (all 22 tasks finished)
+  - Created `backend/app/services/feature_detection.py` service file
+  - Helper functions implemented:
+    - `get_transactions_in_window()` - Queries transactions filtered by date window, ordered by date
+    - `get_accounts_by_type()` - Queries accounts filtered by account types
+  - Subscription detection implemented:
+    - `compute_subscription_signals()` - Main function for subscription pattern detection
+    - Groups transactions by merchant_name
+    - Filters merchants with ≥3 transactions
+    - `is_recurring_pattern()` - Detects recurring patterns:
+      - Weekly subscriptions (~7 days ±5 tolerance)
+      - Monthly subscriptions (~30 days ±5 tolerance)
+      - Quarterly subscriptions (~90 days ±5 tolerance)
+    - Calculates signals:
+      - `recurring_merchants` (count of merchants with recurring patterns)
+      - `monthly_recurring_spend` (sum of recurring transactions / months in window)
+      - `subscription_spend_share` (recurring spend / total spend, 0-1 ratio)
+  - Test script created (`scripts/test_feature_detection.py`)
+  - Tests subscription detection for multiple users with both 30-day and 180-day windows
+  - Logs results with merchant examples for validation
 
 ## Next Steps
-1. **PR #6: Feature Detection Service - Subscription Signals** - Implement behavioral pattern detection
-   - Create feature detection service file
-   - Implement helper functions for transaction/account queries
-   - Implement subscription detection logic (merchant grouping, recurring patterns)
-   - Calculate subscription signals (recurring merchants, monthly spend, spend share)
-   - Test with known users that have subscription patterns
+1. **PR #7: Feature Detection Service - Savings Signals** - Implement savings pattern detection
+   - Add `compute_savings_signals()` function to feature_detection.py
+   - Filter savings-type accounts (savings, money market, cash management, HSA)
+   - Calculate net savings inflow (deposits - withdrawals)
+   - Calculate savings growth rate
+   - Calculate emergency fund months (savings balance / monthly expenses)
+   - Test with users who have savings patterns
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Feature detection pipeline** - Next task (PR #6)
-- **Savings signals detection** - After subscription signals (PR #7)
+- **Savings signals detection** - Next task (PR #7)
+- **Credit signals detection** - After savings signals
+- **Income signals detection** - After credit signals
 - **UI components** - Can start after feature detection is ready
 
 ### Technical Decisions Made
@@ -83,19 +105,22 @@
 - **CORS** - Configured for localhost:5173 (Vite) and localhost:3000 (React)
 - **Batching** - Transactions processed in batches of 1000 for performance
 - **Idempotency** - Duplicate key errors handled gracefully with 409 status
+- **Pattern Detection** - Recurring pattern detection with ±5 day tolerance for weekly/monthly/quarterly intervals
+- **Feature Detection** - Modular service design, helper functions reusable across signal types
 
 ### Integration Points
 - Frontend ↔ Backend: CORS configured, API client setup in `frontend/src/lib/api.js`
 - Backend ↔ Database: SQLAlchemy setup complete, all models implemented, data loaded (PR #3, #5 complete)
+- Backend ↔ Feature Detection: Service module created, subscription signals implemented (PR #6 complete)
 - Backend ↔ OpenAI: API key management via environment variables
 - Backend ↔ AWS: S3 bucket setup pending
 - Data Generation ↔ Database: ✅ Complete - All synthetic data ingested successfully
 
 ## Current Blockers
-None - Ready to proceed with PR #6 (Feature Detection Service)
+None - Ready to proceed with PR #7 (Feature Detection Service - Savings Signals)
 
 ## Active Questions
-1. Should we upgrade Python venv to 3.11+ before proceeding with feature detection?
+1. Should we upgrade Python venv to 3.11+ before proceeding with more feature detection?
 2. Are AWS credentials configured for S3 exports?
 3. Should we implement all feature detection signals before persona assignment?
 
@@ -105,7 +130,8 @@ None - Ready to proceed with PR #6 (Feature Detection Service)
 - PR #3 complete (all 58 tasks checked off)
 - PR #4 complete (all 31 tasks checked off)
 - PR #5 complete (all 30 tasks checked off)
-- Following tasks-1.md and tasks-2.md structure (PR #6 next)
+- PR #6 complete (all 22 tasks checked off)
+- Following tasks-1.md and tasks-2.md structure (PR #7 next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility
@@ -114,4 +140,5 @@ None - Ready to proceed with PR #6 (Feature Detection Service)
 - Pydantic schemas validated and ready for API endpoints
 - Data ingestion endpoint functional and tested
 - All synthetic data successfully loaded into database
+- Feature detection service created with subscription signal detection working
 

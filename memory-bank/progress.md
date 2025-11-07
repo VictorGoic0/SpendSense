@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #5 Complete - Data Ingestion API Endpoint Working
+**Status**: PR #6 Complete - Feature Detection Service - Subscription Signals Working
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -92,12 +92,34 @@
   - Data verified in database using SQLite browser
   - Swagger UI accessible at `/docs`
   - Requests dependency added (requests==2.31.0)
+- ✅ **PR #6: Feature Detection Service - Subscription Signals Complete**
+  - Created `backend/app/services/feature_detection.py` service file
+  - Helper functions implemented:
+    - `get_transactions_in_window()` - Queries transactions filtered by date window, ordered by date
+    - `get_accounts_by_type()` - Queries accounts filtered by account types
+  - Subscription detection implemented:
+    - `compute_subscription_signals()` - Main function for subscription pattern detection
+    - Groups transactions by merchant_name
+    - Filters merchants with ≥3 transactions
+    - `is_recurring_pattern()` - Detects recurring patterns:
+      - Weekly subscriptions (~7 days ±5 tolerance)
+      - Monthly subscriptions (~30 days ±5 tolerance)
+      - Quarterly subscriptions (~90 days ±5 tolerance)
+    - Calculates signals:
+      - `recurring_merchants` (count of merchants with recurring patterns)
+      - `monthly_recurring_spend` (sum of recurring transactions / months in window)
+      - `subscription_spend_share` (recurring spend / total spend, 0-1 ratio)
+  - Test script created (`scripts/test_feature_detection.py`)
+  - Tests subscription detection for multiple users with both 30-day and 180-day windows
+  - Logs results with merchant examples for validation
 
 ### In Progress
-- 🔄 None - Ready for PR #6
+- 🔄 None - Ready for PR #7
 
 ### Not Started
-- ⏳ Feature detection pipeline - **PR #6 Next**
+- ⏳ Savings signals detection - **PR #7 Next**
+- ⏳ Credit signals detection
+- ⏳ Income signals detection
 - ⏳ Persona assignment engine
 - ⏳ AI recommendation engine
 - ⏳ Guardrails module
@@ -107,17 +129,18 @@
 
 ## What's Left to Build
 
-### PR #6: Feature Detection Service - Subscription Signals (Next)
-- [ ] Create feature detection service file
-- [ ] Implement helper functions for transaction/account queries
-- [ ] Implement subscription detection logic
-- [ ] Calculate subscription signals
-- [ ] Test with known users
+### PR #7: Feature Detection Service - Savings Signals (Next)
+- [ ] Add `compute_savings_signals()` function to feature_detection.py
+- [ ] Filter savings-type accounts
+- [ ] Calculate net savings inflow
+- [ ] Calculate savings growth rate
+- [ ] Calculate emergency fund months
+- [ ] Test with users who have savings patterns
 
 ### Day 1 Deliverables (MVP)
 - [x] SQLite database schema (10 tables) - **PR #3 Complete**
 - [x] POST `/ingest` endpoint working - **PR #5 Complete**
-- [ ] All behavioral signals computed (30d and 180d windows)
+- [ ] All behavioral signals computed (30d and 180d windows) - **In Progress (PR #6, #7)**
 - [ ] React UI components built (operator dashboard, user dashboard)
 - [ ] Full integration testing possible via UI
 
@@ -141,10 +164,10 @@
 ## Current Status
 
 ### Backend
-- **Status**: Data ingestion complete, ready for feature detection
-- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint
-- **Next**: PR #6 (feature detection service - subscription signals)
-- **Priority**: Implement behavioral pattern detection for subscriptions
+- **Status**: Subscription signals detection complete, ready for savings signals
+- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, subscription detection
+- **Next**: PR #7 (feature detection service - savings signals)
+- **Priority**: Implement savings pattern detection
 
 ### Frontend
 - **Status**: Structure initialized, ready for component development
@@ -157,7 +180,7 @@
 - **Completed**: SQLAlchemy configuration, all 10 models, relationships, indexes, constraints, initialization
 - **Database File**: `backend/spendsense.db` (verified with DB Browser)
 - **Data Loaded**: 75 users, 272 accounts, 15,590 transactions, 92 liabilities
-- **Next**: Compute behavioral features (PR #6)
+- **Next**: Compute behavioral features (PR #6 complete, PR #7 next)
 
 ### Data Generation
 - **Status**: ✅ Complete and tested
@@ -174,7 +197,14 @@
 - **Status**: ✅ Complete - Endpoint functional and tested
 - **Completed**: POST `/ingest` endpoint, bulk insertion, batching, error handling, idempotency
 - **Data Loaded**: All synthetic data successfully ingested
-- **Next**: Use ingested data for feature detection (PR #6)
+- **Usage**: ✅ Data ready for feature detection
+
+### Feature Detection
+- **Status**: ✅ Subscription Signals Complete - Service module created
+- **Completed**: Helper functions, subscription detection logic, pattern recognition, spend calculations
+- **Service File**: `backend/app/services/feature_detection.py`
+- **Test Script**: `scripts/test_feature_detection.py`
+- **Next**: Implement savings signals (PR #7)
 
 ### AI Integration
 - **Status**: Not implemented
@@ -197,5 +227,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #6 Completion**: Feature detection service implemented for subscription signals, ready for savings signals and persona assignment
+**PR #7 Completion**: Savings signals detection implemented, ready for credit signals and income signals
 

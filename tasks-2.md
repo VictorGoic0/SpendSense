@@ -143,58 +143,58 @@
 ## PR #6: Feature Detection Service - Subscription Signals
 
 ### Service File Creation
-1. Create `backend/app/services/feature_detection.py`
-2. Import required libraries: SQLAlchemy, datetime, collections
-3. Import database models
-4. Import database session
+- [x] 1. Create `backend/app/services/feature_detection.py`
+- [x] 2. Import required libraries: SQLAlchemy, datetime, collections
+- [x] 3. Import database models
+- [x] 4. Import database session
 
 ### Helper Functions
-5. Create `get_transactions_in_window(db, user_id, window_days)` function:
+- [x] 5. Create `get_transactions_in_window(db, user_id, window_days)` function:
    - Query transactions for user
    - Filter by date (last N days)
    - Order by date ascending
    - Return list of transactions
-6. Create `get_accounts_by_type(db, user_id, account_types)` function:
+- [x] 6. Create `get_accounts_by_type(db, user_id, account_types)` function:
    - Query accounts for user
    - Filter by account type (checking, savings, etc.)
    - Return list of accounts
 
 ### Subscription Detection - Merchant Grouping
-7. Create `compute_subscription_signals(db, user_id, window_days)` function
-8. Get all transactions in window for user
-9. Group transactions by merchant_name using Counter/dict
-10. For each merchant with ≥3 transactions:
+- [x] 7. Create `compute_subscription_signals(db, user_id, window_days)` function
+- [x] 8. Get all transactions in window for user
+- [x] 9. Group transactions by merchant_name using Counter/dict
+- [x] 10. For each merchant with ≥3 transactions:
     - Extract transaction dates
     - Sort dates chronologically
     - Calculate day gaps between consecutive transactions
 
 ### Subscription Detection - Recurring Pattern
-11. Create `is_recurring_pattern(dates)` helper function:
+- [x] 11. Create `is_recurring_pattern(dates)` helper function:
     - Accept list of transaction dates
     - Calculate gaps between consecutive dates
     - Check if gaps are approximately 30 days (weekly: ~7, monthly: ~30, quarterly: ~90)
     - Allow ±5 day tolerance
     - Return True if pattern detected
-12. Filter merchants to only those with recurring patterns
+- [x] 12. Filter merchants to only those with recurring patterns
 
 ### Subscription Detection - Spend Calculation
-13. Count total recurring merchants (≥3 occurrences with pattern)
-14. Calculate monthly_recurring_spend:
+- [x] 13. Count total recurring merchants (≥3 occurrences with pattern)
+- [x] 14. Calculate monthly_recurring_spend:
     - Sum all amounts for recurring merchants
     - Divide by number of months in window
-15. Calculate total_spend in window (sum all transaction amounts)
-16. Calculate subscription_spend_share = recurring_spend / total_spend
-17. Return dict with:
+- [x] 15. Calculate total_spend in window (sum all transaction amounts)
+- [x] 16. Calculate subscription_spend_share = recurring_spend / total_spend
+- [x] 17. Return dict with:
     - recurring_merchants (count)
     - monthly_recurring_spend (float)
     - subscription_spend_share (float, 0-1)
 
 ### Testing Subscription Detection
-18. Create test function in `scripts/test_feature_detection.py`
-19. Test with known users that have subscription patterns
-20. Verify recurring merchants detected correctly
-21. Verify spend calculations accurate
-22. Log results for validation
+- [x] 18. Create test function in `scripts/test_feature_detection.py`
+- [x] 19. Test with known users that have subscription patterns
+- [x] 20. Verify recurring merchants detected correctly
+- [x] 21. Verify spend calculations accurate
+- [x] 22. Log results for validation
 
 ---
 
