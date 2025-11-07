@@ -356,6 +356,26 @@
 - [x] 57. Document WAL mode decision and limitations in DECISIONS.md and LIMITATIONS.md
 - [x] 58. Verify fixes: 4 workers + WAL mode resolves hanging issue when generating recommendations
 
+### Markdown Rendering for Recommendations
+- [x] 59. Install react-markdown package for rendering Markdown in recommendation content
+- [x] 60. Update RecommendationCard component to use ReactMarkdown for content and rationale previews
+- [x] 61. Update OperatorUserDetail page to use ReactMarkdown for recommendation content display
+- [x] 62. Add type checking to ensure ReactMarkdown always receives string values (handle undefined/null content)
+- [x] 63. Update truncateText helper to validate input is a string before processing
+- [x] 64. Verify Markdown syntax (bold, italic, etc.) renders correctly in both approval queue and user detail pages
+
+### Expandable Content for Recommendations
+- [x] 65. Add expandable content functionality to RecommendationCard component
+- [x] 66. Add state to track expanded/collapsed state for content and rationale separately
+- [x] 67. Show truncated preview by default (existing behavior)
+- [x] 68. Add "Show more" link/button below truncated content
+- [x] 69. On click, expand to show full content inline with ReactMarkdown rendering
+- [x] 70. Replace "Show more" with "Show less" when expanded
+- [x] 71. Add expandable content functionality to OperatorUserDetail recommendation cards
+- [x] 72. Ensure both content and rationale can be expanded independently in RecommendationCard
+- [x] 73. Style expand/collapse buttons with appropriate hover states
+- [x] 74. Test expand/collapse functionality on both approval queue and user detail pages
+
 ---
 
 ## PR #27: Frontend - User Dashboard & Consent

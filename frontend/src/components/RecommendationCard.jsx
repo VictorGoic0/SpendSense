@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
+import ReactMarkdown from 'react-markdown';
 
 /**
  * Helper function to get persona display name
@@ -75,7 +77,7 @@ const formatDate = (dateString) => {
  * @returns {string} Truncated text
  */
 const truncateText = (text, maxLength = 150) => {
-  if (!text) return '';
+  if (!text || typeof text !== 'string') return '';
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength) + '...';
 };
@@ -114,8 +116,15 @@ export default function RecommendationCard({
     generated_at,
   } = recommendation;
 
+  const [contentExpanded, setContentExpanded] = useState(false);
+  const [rationaleExpanded, setRationaleExpanded] = useState(false);
+
   const contentPreview = truncateText(content, 150);
-  const rationalePreview = truncateText(rationale, 100);
+  const rationalePreview = truncateText(rationale, 150);
+  
+  // Check if content/rationale is actually truncated
+  const isContentTruncated = typeof content === 'string' && content.length > 150;
+  const isRationaleTruncated = typeof rationale === 'string' && rationale.length > 150;
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -169,18 +178,42 @@ export default function RecommendationCard({
         {/* Content preview */}
         <div className="mb-4">
           <h4 className="text-sm font-semibold text-gray-700 mb-1">Content:</h4>
-          <p className="text-sm text-gray-600 whitespace-pre-wrap">
-            {contentPreview}
-          </p>
+          <div className="text-sm text-gray-600">
+            <ReactMarkdown>
+              {contentExpanded || !isContentTruncated 
+                ? (typeof content === 'string' ? content : '') 
+                : contentPreview}
+            </ReactMarkdown>
+          </div>
+          {isContentTruncated && (
+            <button
+              onClick={() => setContentExpanded(!contentExpanded)}
+              className="text-sm text-blue-600 hover:text-blue-800 hover:underline mt-1"
+            >
+              {contentExpanded ? 'Show less' : 'Show more'}
+            </button>
+          )}
         </div>
         
         {/* Rationale preview */}
         {rationalePreview && (
           <div>
             <h4 className="text-sm font-semibold text-gray-700 mb-1">Rationale:</h4>
-            <p className="text-sm text-gray-600">
-              {rationalePreview}
-            </p>
+            <div className="text-sm text-gray-600">
+              <ReactMarkdown>
+                {rationaleExpanded || !isRationaleTruncated
+                  ? (typeof rationale === 'string' ? rationale : '')
+                  : rationalePreview}
+              </ReactMarkdown>
+            </div>
+            {isRationaleTruncated && (
+              <button
+                onClick={() => setRationaleExpanded(!rationaleExpanded)}
+                className="text-sm text-blue-600 hover:text-blue-800 hover:underline mt-1"
+              >
+                {rationaleExpanded ? 'Show less' : 'Show more'}
+              </button>
+            )}
           </div>
         )}
       </CardContent>

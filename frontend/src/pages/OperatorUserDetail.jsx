@@ -9,6 +9,7 @@ import { Alert, AlertTitle, AlertDescription } from '../components/ui/alert';
 import { Skeleton } from '../components/ui/skeleton';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
+import ReactMarkdown from 'react-markdown';
 
 const SIGNAL_TYPES = ['subscriptions', 'savings', 'credit', 'income'];
 
@@ -24,6 +25,7 @@ export default function OperatorUserDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeSignalType, setActiveSignalType] = useState('subscriptions');
+  const [expandedContent, setExpandedContent] = useState(new Set());
 
   // Fetch all data on mount
   useEffect(() => {
@@ -243,31 +245,58 @@ export default function OperatorUserDetail() {
           <CardContent>
             {recommendations && recommendations.length > 0 ? (
               <div className="space-y-4">
-                {recommendations.map((rec) => (
-                  <div key={rec.recommendation_id} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold text-gray-900">{rec.title}</h4>
-                      <Badge
-                        variant="outline"
-                        className={
-                          rec.status === 'approved'
-                            ? 'bg-green-100 text-green-800 border-green-200'
-                            : rec.status === 'pending_approval'
-                            ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
-                            : 'bg-gray-100 text-gray-800 border-gray-200'
-                        }
-                      >
-                        {rec.status?.replace('_', ' ')}
-                      </Badge>
+                {recommendations.map((rec) => {
+                  const isExpanded = expandedContent.has(rec.recommendation_id);
+                  const content = typeof rec.content === 'string' ? rec.content : '';
+                  const isTruncated = content.length > 200;
+                  const displayContent = isExpanded || !isTruncated 
+                    ? content 
+                    : content.substring(0, 200) + '...';
+                  
+                  return (
+                    <div key={rec.recommendation_id} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-semibold text-gray-900">{rec.title}</h4>
+                        <Badge
+                          variant="outline"
+                          className={
+                            rec.status === 'approved'
+                              ? 'bg-green-100 text-green-800 border-green-200'
+                              : rec.status === 'pending_approval'
+                              ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                              : 'bg-gray-100 text-gray-800 border-gray-200'
+                          }
+                        >
+                          {rec.status?.replace('_', ' ')}
+                        </Badge>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <ReactMarkdown>{displayContent}</ReactMarkdown>
+                      </div>
+                      {isTruncated && (
+                        <button
+                          onClick={() => {
+                            const newExpanded = new Set(expandedContent);
+                            if (isExpanded) {
+                              newExpanded.delete(rec.recommendation_id);
+                            } else {
+                              newExpanded.add(rec.recommendation_id);
+                            }
+                            setExpandedContent(newExpanded);
+                          }}
+                          className="text-sm text-blue-600 hover:text-blue-800 hover:underline mt-1"
+                        >
+                          {isExpanded ? 'Show less' : 'Show more'}
+                        </button>
+                      )}
+                      {rec.generated_at && (
+                        <p className="text-xs text-gray-500 mt-2">
+                          Generated: {new Date(rec.generated_at).toLocaleDateString()}
+                        </p>
+                      )}
                     </div>
-                    <p className="text-sm text-gray-600">{rec.content?.substring(0, 200)}...</p>
-                    {rec.generated_at && (
-                      <p className="text-xs text-gray-500 mt-2">
-                        Generated: {new Date(rec.generated_at).toLocaleDateString()}
-                      </p>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <p className="text-gray-500">No recommendations yet. Click "Generate Recommendations" to create some.</p>
