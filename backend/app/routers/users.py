@@ -101,3 +101,60 @@ async def get_users(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching users: {str(e)}")
 
+
+@router.get("/{user_id}")
+async def get_user(
+    user_id: str,
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    Get a single user by ID with personas for both 30d and 180d windows.
+    
+    Args:
+        user_id: User ID to fetch
+        db: Database session
+    
+    Returns:
+        Dictionary with user data and personas
+    """
+    try:
+        # Query user by ID
+        user = db.query(User).filter(User.user_id == user_id).first()
+        
+        if not user:
+            raise HTTPException(status_code=404, detail=f"User with ID '{user_id}' not found")
+        
+        # Query personas for both windows
+        personas = db.query(Persona).filter(
+            Persona.user_id == user_id
+        ).all()
+        
+        # Build personas list
+        personas_list = []
+        for persona in personas:
+            personas_list.append({
+                "persona_type": persona.persona_type,
+                "confidence_score": persona.confidence_score,
+                "assigned_at": persona.assigned_at.isoformat() if persona.assigned_at else None,
+                "window_days": persona.window_days,
+                "reasoning": persona.reasoning
+            })
+        
+        # Build response
+        return {
+            "user_id": user.user_id,
+            "full_name": user.full_name,
+            "email": user.email,
+            "user_type": user.user_type,
+            "consent_status": user.consent_status,
+            "consent_granted_at": user.consent_granted_at.isoformat() if user.consent_granted_at else None,
+            "consent_revoked_at": user.consent_revoked_at.isoformat() if user.consent_revoked_at else None,
+            "created_at": user.created_at.isoformat() if user.created_at else None,
+            "personas": personas_list
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching user: {str(e)}")
+

@@ -115,53 +115,53 @@
 ## PR #14: Frontend - Operator User Detail Page
 
 ### User Detail Data Fetching
-- [ ] 1. Update `frontend/src/pages/OperatorUserDetail.jsx`
-- [ ] 2. Import useParams to get userId from URL
-- [ ] 3. Import useState, useEffect
-- [ ] 4. Import getUser, getUserProfile, getOperatorUserSignals API functions
-- [ ] 5. Create state variables:
+- [x] 1. Update `frontend/src/pages/OperatorUserDetail.jsx`
+- [x] 2. Import useParams to get userId from URL
+- [x] 3. Import useState, useEffect
+- [x] 4. Import getUser, getUserProfile, getOperatorUserSignals API functions
+- [x] 5. Create state variables:
   - user (object)
   - profile (object with personas and features)
   - signals (object with detailed signal breakdown)
   - loading (boolean)
   - error (string)
-- [ ] 6. Create useEffect to fetch all data on mount
-- [ ] 7. Fetch user, profile, and signals in parallel (Promise.all)
-- [ ] 8. Update state with response data
+- [x] 6. Create useEffect to fetch all data on mount
+- [x] 7. Fetch user, profile, and signals in parallel (Promise.all)
+- [x] 8. Update state with response data
 
 ### User Info Card
-- [ ] 9. Create `frontend/src/components/UserInfoCard.jsx`
-- [ ] 10. Accept props: user data
-- [ ] 11. Display user name, email, user type
-- [ ] 12. Display consent status with Badge
-- [ ] 13. Display consent granted/revoked dates if available
-- [ ] 14. Use Shadcn Card component for layout
-- [ ] 15. Style with Tailwind
+- [x] 9. Create `frontend/src/components/UserInfoCard.jsx`
+- [x] 10. Accept props: user data
+- [x] 11. Display user name, email, user type
+- [x] 12. Display consent status with Badge
+- [x] 13. Display consent granted/revoked dates if available
+- [x] 14. Use Shadcn Card component for layout
+- [x] 15. Style with Tailwind
 
 ### Persona Display Component
-- [ ] 16. Create `frontend/src/components/PersonaDisplay.jsx`
-- [ ] 17. Accept props: persona object (type, confidence, assigned_at)
-- [ ] 18. Display persona type with large badge/chip
-- [ ] 19. Display confidence score as percentage
-- [ ] 20. Display assigned date
-- [ ] 21. Add icon/color coding per persona type:
+- [x] 16. Create `frontend/src/components/PersonaDisplay.jsx`
+- [x] 17. Accept props: persona object (type, confidence, assigned_at)
+- [x] 18. Display persona type with large badge/chip
+- [x] 19. Display confidence score as percentage
+- [x] 20. Display assigned date
+- [x] 21. Add icon/color coding per persona type:
   - high_utilization: red
   - variable_income: orange
   - subscription_heavy: yellow
   - savings_builder: green
   - wealth_builder: blue
-- [ ] 22. Use Shadcn Card component
+- [x] 22. Use Shadcn Card component
 
 ### Signal Display Component - Subscriptions
-- [ ] 23. Create `frontend/src/components/SignalDisplay.jsx`
-- [ ] 24. Accept props: signals object, signalType (subscriptions/savings/credit/income)
-- [ ] 25. For subscriptions, display:
+- [x] 23. Create `frontend/src/components/SignalDisplay.jsx`
+- [x] 24. Accept props: signals object, signalType (subscriptions/savings/credit/income)
+- [x] 25. For subscriptions, display:
   - Number of recurring merchants
   - Monthly recurring spend ($)
   - Subscription spend share (%)
-- [ ] 26. Use progress bar to visualize subscription share
-- [ ] 27. List recurring merchant names if available
-- [ ] 28. Use Shadcn Card and Progress components
+- [x] 26. Use progress bar to visualize subscription share
+- [x] 27. List recurring merchant names if available
+- [x] 28. Use Shadcn Card and Progress components
 
 ### Signal Display Component - Savings
 - [ ] 29. In SignalDisplay, add savings view:
@@ -227,6 +227,44 @@
 - [ ] 57. Test tab navigation between signals
 - [ ] 58. Verify back button works
 - [ ] 59. Test with users having different personas
+
+### Backend - Get User by ID Endpoint
+- [x] 60. Add GET `/{user_id}` endpoint to `backend/app/routers/users.py`
+- [x] 61. Accept user_id as path parameter
+- [x] 62. Query User record by user_id
+- [x] 63. Query Persona records for both 30d and 180d windows
+- [x] 64. Return user object with:
+  - user_id, full_name, email, user_type, consent_status
+  - consent_granted_at, consent_revoked_at, created_at
+  - personas array with both 30d and 180d personas if available
+- [x] 65. Add error handling:
+  - User not found → 404
+  - Database error → 500
+- [ ] 66. Test endpoint via Swagger UI
+- [ ] 67. Verify frontend getUser() function works correctly
+
+### Backend - Get User Signals Endpoint
+- [x] 68. Add GET `/users/{user_id}/signals` endpoint to `backend/app/routers/operator.py`
+- [x] 69. Accept user_id as path parameter
+- [x] 70. Query User record for user_name and consent_status
+- [x] 71. Query UserFeature records for 30d and 180d windows
+- [x] 72. Query Persona records for 30d and 180d windows
+- [x] 73. Query Transactions to get recurring merchant names (merchants with ≥3 transactions)
+- [x] 74. Query Accounts/Liabilities to get credit card details (last_four, balance, limit, utilization)
+- [x] 75. Calculate income frequency from transaction patterns (biweekly/monthly)
+- [x] 76. Build 30d_signals object with:
+  - subscriptions: recurring_merchants (array), monthly_spend, spend_share
+  - savings: net_inflow, growth_rate, emergency_fund_months
+  - credit: cards array with last_four, utilization, balance, limit
+  - income: payroll_detected, avg_monthly, frequency
+- [x] 77. Build 180d_signals object (same structure)
+- [x] 78. Return response with user_id, user_name, consent_status, 30d_signals, 180d_signals, persona_30d, persona_180d
+- [x] 79. Add error handling:
+  - User not found → 404
+  - Features not computed → 400 with message
+  - Database error → 500
+- [ ] 80. Test endpoint via Swagger UI
+- [ ] 81. Verify frontend getOperatorUserSignals() function works correctly
 
 ---
 
