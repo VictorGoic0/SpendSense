@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #16 Complete - Persona Assignment Endpoint & Batch Script Complete
+**Status**: PR #17 Complete - OpenAI Integration Setup & Prompt Templates Complete
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -268,14 +268,28 @@
   - Database schema: Updated Persona model and schema to include 'general_wellness' persona type
   - Successfully assigned personas to 71 users (142 persona records: 71 users × 2 windows)
   - Note: Synthetic data variance enhancement needed - some persona types (wealth_builder, variable_income) not well represented in current test data
+- ✅ **PR #17 Complete: OpenAI Integration Setup & Prompt Templates (all 50 tasks finished)**
+  - OpenAI dependencies: Added `openai==1.3.5` to requirements.txt, installed SDK, API key configured
+  - Prompts directory: Created `backend/app/prompts/` with 5 self-contained persona-specific prompts
+  - Prompt design: Following "just right" calibration guide - lean (~42-52 lines), self-contained, principle-based
+  - Persona prompts created:
+    - `high_utilization.txt`: Debt paydown, utilization impact, payment automation, balance transfers, interest calculation
+    - `variable_income.txt`: Percent-based budgeting, emergency funds, income smoothing, cash flow buffers, expense management
+    - `subscription_heavy.txt`: Subscription audits, cancellation tactics, free alternatives, bill alerts, annual vs monthly comparisons
+    - `savings_builder.txt`: Goal setting, automation, high-yield accounts, CDs, progress tracking
+    - `wealth_builder.txt`: Tax-advantaged investing, asset allocation, retirement planning, estate planning, charitable giving (educational only)
+  - Prompt structure: Role & Context, Core Principles, Response Framework (5 steps), Guidelines (with topic lists), Output Format
+  - Prompt loader utility: `backend/app/utils/prompt_loader.py` with caching, error handling, validation
 
 ### In Progress
-- 🔄 None - Ready for PR #17+
+- 🔄 None - Ready for PR #18
 
 ### Not Started
-- ⏳ AI recommendation engine - **PR #17+ Next**
-- ⏳ Guardrails module
-- ⏳ React UI components (operator user detail, approval queue, user dashboard)
+- ⏳ Recommendation engine service (context building) - **PR #18 Next**
+- ⏳ OpenAI integration (API calls) - **PR #19 Next**
+- ⏳ Guardrails module - **PR #20 Next**
+- ⏳ Recommendation generation endpoint - **PR #21 Next**
+- ⏳ React UI components (approval queue, user dashboard)
 - ⏳ Evaluation system
 - ⏳ AWS deployment
 
@@ -387,8 +401,11 @@
 - **Next**: AI recommendation generation (PR #17+)
 
 ### AI Integration
-- **Status**: Not implemented
-- **Next**: Set up OpenAI SDK and create 5 persona-specific prompts
+- **Status**: OpenAI SDK installed, prompt templates complete
+- **Completed**: OpenAI SDK (v1.3.5) installed, API key configured, 5 persona-specific prompts created, prompt loader utility with caching
+- **Prompt Files**: `backend/app/prompts/` directory with 5 self-contained prompts (high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder)
+- **Prompt Loader**: `backend/app/utils/prompt_loader.py` with `load_prompt()` function and in-memory caching
+- **Next**: Build recommendation engine service with context building (PR #18)
 - **Priority**: Day 2 - after persona assignment
 
 ### Infrastructure
@@ -407,5 +424,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #17+ Completion**: AI recommendation generation with OpenAI integration, ready for approval workflow
+**PR #18-21 Completion**: Recommendation engine service (context building, OpenAI integration), guardrails, and generation endpoint - ready for approval workflow
 

@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #16 Complete - Persona Assignment Endpoint & Batch Script Complete
+**Status**: PR #17 Complete - OpenAI Integration Setup & Prompt Templates Complete
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -320,17 +320,52 @@
     - 30d window: 44 high_utilization, 10 subscription_heavy, 1 savings_builder, 16 general_wellness
     - 180d window: 44 high_utilization, 19 subscription_heavy, 8 general_wellness
   - Note: Some persona types (wealth_builder, variable_income) not represented in current synthetic data - will enhance data generation later for better variance
+- ✅ **PR #17 Complete: OpenAI Integration Setup & Prompt Templates (all 50 tasks finished)**
+  - OpenAI dependencies:
+    - Added `openai==1.3.5` to `backend/requirements.txt`
+    - Installed OpenAI SDK in virtual environment
+    - API key configured in `.env.local` (already present)
+    - `.gitignore` already covers `.env` files
+  - Prompts infrastructure:
+    - Created `backend/app/prompts/` directory with `__init__.py`
+    - Created 5 self-contained persona-specific prompt files (following "just right" calibration guide)
+    - Each prompt is ~42-52 lines (lean and focused)
+    - Prompts follow structure: Role & Context, Core Principles, Response Framework, Guidelines, Output Format
+  - Persona-specific prompts created:
+    - `high_utilization.txt`: Credit card debt management strategies
+    - `variable_income.txt`: Irregular income budgeting and cash flow strategies
+    - `subscription_heavy.txt`: Subscription optimization and audit strategies
+    - `savings_builder.txt`: Savings acceleration and goal-setting strategies
+    - `wealth_builder.txt`: Investment/retirement education (with restrictions on specific investment advice)
+  - Each prompt includes:
+    - Core principles (regulatory compliance, data citation, empowering tone)
+    - 5-step response framework for generating recommendations
+    - Persona-specific guidelines with topic list ("When relevant, address topics like...")
+    - JSON output format specification with mandatory disclosure
+  - Prompt loader utility (`backend/app/utils/prompt_loader.py`):
+    - `load_prompt(persona_type: str) -> str` function
+    - File path construction and error handling
+    - In-memory caching for performance
+    - Helper functions for cache management
+  - Prompt design decisions:
+    - Self-contained prompts (no base template) for clarity and maintainability
+    - Reduced prescription, increased principles (following "just right" calibration guide)
+    - Simplified output format (no lengthy examples)
+    - Topic lists included in guidelines for persona-specific depth
 
 ## Next Steps
-1. **PR #17+: AI Recommendation Generation** - Create OpenAI integration with 5 persona-specific endpoints
-2. **PR #18+: Approval Queue** - Implement recommendation approval workflow
-3. **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
+1. **PR #18: Recommendation Engine Service - Context Building** - Build user context from database for OpenAI
+2. **PR #19: Recommendation Engine Service - OpenAI Integration** - Implement OpenAI API calls
+3. **PR #20: Guardrails Service** - Implement tone validation and consent checks
+4. **PR #21: Recommendation Generation Endpoint** - Create API endpoint for generating recommendations
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **AI recommendation generation** - Next task (PR #17+)
-- **Approval Queue** - After recommendation generation
+- **Recommendation engine context building** - Next task (PR #18)
+- **OpenAI integration** - After context building (PR #19)
+- **Guardrails service** - After OpenAI integration (PR #20)
+- **Recommendation generation endpoint** - Final step (PR #21)
 - **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
 
 ### Technical Decisions Made
@@ -363,6 +398,8 @@
 - **Frontend Enums** - Centralized enum system for UserType, ConsentStatus, ConsentAction with helper functions
 - **Backend Users Endpoint** - GET /users with pagination, filters, and persona data; GET /users/{user_id} for single user
 - **Backend Operator Endpoints** - GET /operator/dashboard with metrics and statistics; GET /operator/users/{user_id}/signals for detailed signals
+- **OpenAI Integration** - OpenAI SDK installed (v1.3.5), API key configured, prompt templates created
+- **Prompt System** - Self-contained persona-specific prompts following "just right" calibration guide, prompt loader utility with caching
 
 ### Integration Points
 - Frontend ↔ Backend: CORS configured, API client setup complete (`frontend/src/lib/api.js`), API service functions ready (`frontend/src/lib/apiService.js`), routing structure in place
@@ -374,7 +411,7 @@
 - Data Generation ↔ Database: ✅ Complete - All synthetic data ingested successfully
 
 ## Current Blockers
-None - Ready to proceed with PR #17+ (AI Recommendation Generation)
+None - Ready to proceed with PR #18 (Recommendation Engine Service - Context Building)
 
 ## Active Questions
 1. ✅ Python venv upgraded to 3.11.9 - Complete
@@ -400,7 +437,8 @@ None - Ready to proceed with PR #17+ (AI Recommendation Generation)
 - PR #14 complete (all 52 implementation tasks checked off, including backend endpoints)
 - PR #15 complete (all 29 tasks checked off - Persona Assignment Service)
 - PR #16 complete (all 29 tasks checked off - Persona Assignment Endpoint & Batch Script)
-- Following tasks-4.md structure (PR #17+ next)
+- PR #17 complete (all 50 tasks checked off - OpenAI Integration Setup & Prompt Templates)
+- Following tasks-5.md structure (PR #18 next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility

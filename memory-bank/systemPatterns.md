@@ -125,9 +125,19 @@ User Dashboard (React UI)
 - **Reasoning Storage**: JSON-serialized reasoning dict stored in Persona.reasoning field
 
 ### AI Integration Pattern
-- **Separate Endpoints Per Persona**: 5 distinct system prompts for better context management
-- **Context Payload**: Structured JSON with user features, accounts, recent transactions
-- **Post-Generation Validation**: Tone check before saving to database
+- **OpenAI SDK**: Version 1.3.5 installed and configured
+- **Prompt System**: 5 self-contained persona-specific prompts following "just right" calibration guide
+  - Each prompt is lean (~42-52 lines), self-contained, principle-based
+  - Structure: Role & Context, Core Principles, Response Framework (5 steps), Guidelines (with topic lists), Output Format
+  - Prompts located in `backend/app/prompts/` directory
+  - Prompt loader utility (`backend/app/utils/prompt_loader.py`) with in-memory caching
+- **Prompt Design**: 
+  - Self-contained (no base template) for clarity
+  - Reduced prescription, increased principles
+  - Topic lists in guidelines for persona-specific depth
+  - Simplified output format (JSON structure without lengthy examples)
+- **Context Payload**: Structured JSON with user features, accounts, recent transactions (to be implemented in PR #18)
+- **Post-Generation Validation**: Tone check before saving to database (to be implemented in PR #20)
 - **Status Workflow**: `pending_approval` → `approved` → user-visible
 
 ### Guardrails Pattern
@@ -210,10 +220,13 @@ User Dashboard (React UI)
 - Migrations handled via SQLAlchemy
 
 ### Backend → OpenAI
-- OpenAI Python SDK
-- GPT-4o-mini model (cost-effective)
+- OpenAI Python SDK (v1.3.5) installed and configured
+- API key management via environment variables (`.env.local`)
+- GPT-4o-mini model (cost-effective) - to be used in PR #19
 - JSON response format for structured output
-- Error handling and retry logic
+- Error handling and retry logic (to be implemented in PR #19)
+- Prompt templates: 5 persona-specific prompts in `backend/app/prompts/` directory
+- Prompt loader: `backend/app/utils/prompt_loader.py` with caching for performance
 
 ### Backend → AWS
 - S3 for Parquet exports
