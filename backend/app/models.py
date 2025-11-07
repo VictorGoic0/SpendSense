@@ -291,3 +291,47 @@ class OperatorAction(Base):
 
     def __repr__(self):
         return f"<OperatorAction(action_id={self.action_id}, operator_id='{self.operator_id}', action_type='{self.action_type}')>"
+
+
+class ProductOffer(Base):
+    """Product offer model for financial products (savings accounts, credit cards, apps, services, investment accounts)"""
+    __tablename__ = "product_offers"
+
+    product_id = Column(String, primary_key=True)
+    product_name = Column(String, nullable=False)
+    product_type = Column(String, CheckConstraint("product_type IN ('savings_account', 'credit_card', 'app', 'service', 'investment_account')"), nullable=False)
+    category = Column(String, nullable=False)  # balance_transfer, hysa, budgeting_app, subscription_manager, robo_advisor, etc.
+    persona_targets = Column(Text, nullable=False)  # JSON array of target personas
+    
+    # Eligibility criteria
+    min_income = Column(Float, default=0.0)
+    max_credit_utilization = Column(Float, default=1.0)
+    requires_no_existing_savings = Column(Boolean, default=False)
+    requires_no_existing_investment = Column(Boolean, default=False)
+    min_credit_score = Column(Integer, nullable=True)
+    
+    # Content fields
+    short_description = Column(Text, nullable=False)
+    benefits = Column(Text, nullable=False)  # JSON array of benefit strings
+    typical_apy_or_fee = Column(Text, nullable=True)
+    partner_link = Column(Text, nullable=True)
+    disclosure = Column(Text, nullable=False)
+    
+    # Business fields
+    partner_name = Column(String, nullable=False)
+    commission_rate = Column(Float, default=0.0)
+    priority = Column(Integer, default=1)
+    active = Column(Boolean, default=True)
+    
+    # Timestamps
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+    # Indexes
+    __table_args__ = (
+        Index('idx_product_offers_persona_targets', 'persona_targets'),
+        Index('idx_product_offers_active', 'active'),
+    )
+
+    def __repr__(self):
+        return f"<ProductOffer(product_id='{self.product_id}', product_name='{self.product_name}', product_type='{self.product_type}')>"

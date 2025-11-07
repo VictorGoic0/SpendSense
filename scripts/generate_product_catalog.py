@@ -1,7 +1,19 @@
 # scripts/generate_product_catalog.py
 
 import json
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 from openai import OpenAI
+
+# Load .env file from backend folder
+backend_dir = Path(__file__).parent.parent / "backend"
+env_path = backend_dir / ".env"
+if env_path.exists():
+    load_dotenv(env_path)
+else:
+    # Fallback: try loading from current directory
+    load_dotenv()
 
 client = OpenAI()
 

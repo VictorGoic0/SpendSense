@@ -418,6 +418,7 @@ SpendSense/
 │
 ├── scripts/                 # Utility scripts
 │   ├── generate_synthetic_data.py
+│   ├── generate_product_catalog.py
 │   ├── compute_all_features.py
 │   ├── assign_all_personas.py
 │   ├── test_*.py            # Test scripts for various endpoints
@@ -427,7 +428,8 @@ SpendSense/
 │   ├── synthetic_users.json
 │   ├── synthetic_accounts.json
 │   ├── synthetic_transactions.json
-│   └── synthetic_liabilities.json
+│   ├── synthetic_liabilities.json
+│   └── product_catalog.json  # Generated product catalog
 │
 ├── docs/                    # Documentation
 │   ├── DECISIONS.md
@@ -515,6 +517,24 @@ python scripts/compute_all_features.py
 ```bash
 python scripts/assign_all_personas.py
 ```
+
+5. **Generate product catalog** (optional, for product recommendations):
+```bash
+# Ensure OPENAI_API_KEY is set in your .env file
+python scripts/generate_product_catalog.py
+```
+
+This script uses OpenAI GPT-4o to generate 20-25 realistic financial products (savings accounts, credit cards, apps, services, investment accounts) matched to the 5 personas. The generated catalog is saved to `data/product_catalog.json`.
+
+**Expected runtime**: ~30-60 seconds  
+**Expected API cost**: ~$0.10-0.20
+
+The script generates products with:
+- Realistic eligibility criteria (income requirements, credit score minimums, etc.)
+- Persona targeting (products matched to specific user personas)
+- Complete metadata (benefits, APY/fees, partner information, disclosures)
+
+After generation, use `scripts/seed_product_catalog.py` to load products into the database (see PR #39).
 
 ---
 
