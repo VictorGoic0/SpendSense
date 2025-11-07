@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #26 Complete - Frontend Approval Queue Page Complete
+**Status**: PR #27 Complete - User Dashboard & Consent Management Complete
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -484,12 +484,30 @@
     - Errors persist until user types in the field
     - Modal stays open and prevents API call if validation fails
   - All 74 tasks completed
+- ✅ **PR #27 Complete: Frontend - User Dashboard & Consent (all 44 tasks finished)**
+  - Backend consent endpoints:
+    - Created `backend/app/routers/consent.py` router
+    - POST `/consent` endpoint: Updates user consent status (grant/revoke), creates ConsentLog entries
+    - GET `/consent/{user_id}` endpoint: Returns consent status, timestamps, and full history
+    - Consent schemas added: ConsentRequest, ConsentHistoryItem, ConsentResponse
+    - Router registered in main.py
+    - Error handling and logging implemented
+  - Frontend components:
+    - ConsentToggle component: Switch with confirmation dialogs, status badge, timestamp display
+    - UserRecommendationCard component: Read-only recommendation display with markdown, expandable content
+  - UserDashboard page:
+    - Parallel data fetching (user, consent, recommendations)
+    - Consent management with grant/revoke flows
+    - Recommendations display with expandable content and markdown rendering
+    - Empty states for no consent and no recommendations
+    - Error handling and loading states
+    - Responsive layout
+  - All 44 tasks completed (7 backend + 37 frontend)
 
 ### In Progress
 - 🔄 None - Ready for next PR
 
 ### Not Started
-- ⏳ React UI components (user dashboard)
 - ⏳ Evaluation system
 - ⏳ AWS deployment
 
@@ -548,10 +566,10 @@
 - **Priority**: Create OpenAI integration with 5 persona-specific endpoints
 
 ### Frontend
-- **Status**: Operator Dashboard, User List, User Detail, and Approval Queue complete
-- **Completed**: React 18 + Vite, Shadcn/ui configured, TailwindCSS setup, API client, API service functions, React Router setup, Layout component, Operator Dashboard with metrics cards and charts, Operator User List with table, filters, pagination, search, Operator User Detail with two-column layout, tabs, signal displays, recommendations section, Operator Approval Queue with bulk selection, individual actions, override/reject dialogs, RecommendationCard component, Checkbox component, UserInfoCard, PersonaDisplay, SignalDisplay components, Progress component, loading/error states, responsive layout, enum system for constants
-- **Next**: User Dashboard with consent management (PR #27)
-- **Priority**: User Dashboard with consent management (PR #27)
+- **Status**: Operator Dashboard, User List, User Detail, Approval Queue, and User Dashboard complete
+- **Completed**: React 18 + Vite, Shadcn/ui configured, TailwindCSS setup, API client, API service functions, React Router setup, Layout component, Operator Dashboard with metrics cards and charts, Operator User List with table, filters, pagination, search, Operator User Detail with two-column layout, tabs, signal displays, recommendations section, Operator Approval Queue with bulk selection, individual actions, override/reject dialogs, User Dashboard with consent toggle and recommendation display, ConsentToggle component, UserRecommendationCard component, RecommendationCard component, Checkbox component, UserInfoCard, PersonaDisplay, SignalDisplay components, Progress component, loading/error states, responsive layout, enum system for constants
+- **Next**: Evaluation system and AWS deployment
+- **Priority**: Evaluation system and AWS deployment
 
 ### Database
 - **Status**: ✅ Complete - All models implemented, data loaded, features computed, personas assigned
@@ -673,5 +691,5 @@
   - Verified and working in development
 
 ## Next Milestone
-**User Dashboard**: User-facing dashboard with consent toggle and recommendation display (PR #27)
+**Evaluation System**: Create evaluation metrics script and Parquet export to S3
 

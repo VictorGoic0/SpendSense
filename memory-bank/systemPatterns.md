@@ -110,7 +110,16 @@ User Dashboard (React UI)
   - Frontend override dialog with form validation and tone checking
 
 ### 7. User Interface (`ui/user/`)
-- Consent management toggle
+- ✅ User Dashboard (PR #27 Complete)
+  - ConsentToggle component: Switch with confirmation dialogs for grant/revoke
+  - UserRecommendationCard component: Read-only recommendation display with markdown rendering
+  - UserDashboard page: Parallel data fetching, consent management, recommendations display
+  - Empty states: No consent CTA, "coming soon" for pending recommendations
+  - Responsive layout with loading/error states
+- ✅ Consent Management (PR #27 Complete)
+  - Backend endpoints: POST `/consent`, GET `/consent/{user_id}`
+  - ConsentLog audit trail for all consent changes
+  - Frontend integration with grant/revoke flows
 - Personalized recommendation feed
 - Educational content display
 - Rationale transparency
@@ -191,6 +200,17 @@ User Dashboard (React UI)
   - **All recommendations persisted** regardless of warnings - operator reviews and decides
 - **Eligibility**: Filter partner offers based on user income/credit profile
 - **Mandatory Disclosures**: Append to every recommendation content
+
+### Consent Management Pattern
+- **Consent Endpoints**: POST `/consent`, GET `/consent/{user_id}` (PR #27 Complete)
+  - POST `/consent`: Updates user consent_status, updates consent_granted_at or consent_revoked_at timestamps
+  - Creates ConsentLog entry for audit trail (action: "granted" or "revoked")
+  - Returns ConsentResponse with updated status
+  - GET `/consent/{user_id}`: Returns consent status, timestamps, and full history from ConsentLog
+- **Consent Schemas**: ConsentRequest (user_id, action), ConsentHistoryItem (action, timestamp), ConsentResponse (user_id, consent_status, timestamps, history)
+- **Frontend Integration**: ConsentToggle component with Switch, confirmation dialogs, status display
+- **User Dashboard**: Consent management integrated with automatic recommendation fetch on grant, recommendations cleared on revoke
+- **Audit Trail**: All consent changes logged in consent_log table with timestamps
 
 ### Approval Workflow Pattern
 - **Default Status**: All recommendations start as `pending_approval`
@@ -282,6 +302,8 @@ User Dashboard (React UI)
   - POST /recommendations/{recommendation_id}/reject - Reject a recommendation (PR #24 Complete)
   - POST /recommendations/bulk-approve - Bulk approve multiple recommendations (PR #25 Complete)
   - GET /operator/review - Get approval queue (all non-approved recommendations) (PR #26 Complete)
+  - POST /consent - Update user consent status (grant/revoke) (PR #27 Complete)
+  - GET /consent/{user_id} - Get user consent status and history (PR #27 Complete)
 
 ### Frontend Constants & Enums Pattern
 - **Centralized Enums**: All enum values defined in `frontend/src/constants/enums.js`

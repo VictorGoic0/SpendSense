@@ -1,9 +1,29 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #26 Complete - Frontend Approval Queue Page Complete with Markdown Rendering, Expandable Content, and Server Concurrency Optimizations
+**Status**: PR #27 Complete - User Dashboard & Consent Management Complete
 
 ## Recent Changes
+- ✅ **PR #27 Complete: Frontend - User Dashboard & Consent (all 44 tasks finished)**
+  - Backend consent endpoints created:
+    - Created `backend/app/routers/consent.py` router with POST `/consent` and GET `/consent/{user_id}` endpoints
+    - Added consent schemas to `backend/app/schemas.py`: ConsentRequest, ConsentHistoryItem, ConsentResponse
+    - POST `/consent` endpoint: Updates user consent status (grant/revoke), creates ConsentLog entries for audit trail
+    - GET `/consent/{user_id}` endpoint: Returns consent status, timestamps, and full consent history
+    - Router registered in `backend/app/main.py`
+    - Error handling: 404 for user not found, 500 for server errors, comprehensive logging
+  - Frontend components created:
+    - ConsentToggle component (`frontend/src/components/ConsentToggle.jsx`): Switch component with confirmation dialogs, status badge, last updated timestamp, grant/revoke flows
+    - UserRecommendationCard component (`frontend/src/components/UserRecommendationCard.jsx`): Read-only recommendation display with markdown rendering, expandable content/rationale, persona badge
+  - UserDashboard page (`frontend/src/pages/UserDashboard.jsx`):
+    - Data fetching: Parallel fetch of user, consent, and recommendations on mount
+    - Consent management: Integrated ConsentToggle with grant/revoke flows, automatic recommendation fetch after grant, recommendations cleared on revoke
+    - Recommendations display: Shows approved recommendations when consent granted, expandable content, markdown rendering
+    - Empty states: No consent CTA card, consent granted but no recommendations "coming soon" message
+    - Error handling: Error alerts with retry capability
+    - Responsive layout: Mobile-friendly grid layout
+    - Loading states: Skeleton loaders during data fetch
+  - All 44 tasks completed (7 backend + 37 frontend)
 - ✅ **Server Concurrency Optimizations Complete**
   - Implemented uvicorn workers (4 workers) for concurrent request handling
   - Enabled SQLite WAL (Write-Ahead Logging) mode for concurrent reads during writes
@@ -582,7 +602,8 @@
   - All 74 tasks completed
 
 ## Next Steps
-1. **PR #27: Frontend - User Dashboard & Consent** - Create user-facing dashboard with consent toggle and recommendation display (0/37 tasks)
+1. **Evaluation System** - Create evaluation metrics script and Parquet export to S3
+2. **AWS Deployment** - Deploy backend to Lambda and frontend to Vercel/Netlify
 
 ## Active Decisions and Considerations
 
