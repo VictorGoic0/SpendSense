@@ -79,6 +79,37 @@
 - [x] 53. Check that all percentages = 100% (or close)
 - [x] 54. Verify persona distribution shows all 5 types
 
+### Performance Testing - OpenAI Latency Investigation
+- [x] 55. Investigate 20-second average recommendation generation latency
+- [x] 56. Implement detailed timing logs in recommendations.py:
+   - SQL query duration tracking
+   - OpenAI query duration tracking
+   - Tone validation duration tracking
+   - DB save duration tracking
+   - Total request duration tracking
+- [x] 57. Create `_write_timing_log()` function to output logs to JSON file
+- [x] 58. Generate timing logs to `docs/recommendation_timing_logs.json`
+- [x] 59. Identify bottleneck: OpenAI API call (~17,000ms out of ~17,081ms total)
+- [x] 60. Test optimization strategy #1: Switch to gpt-3.5-turbo
+- [x] 61. Record results: 67% faster (17s → 5.5s), most effective optimization
+- [x] 62. Revert to gpt-4o-mini for quality
+- [x] 63. Test optimization strategy #2: Reduce data sent to OpenAI
+   - Reduce transactions from 10 → 5
+   - Remove high_utilization_cards details
+   - Remove recurring_merchants array
+- [x] 64. Record results: No improvement (18.8s), context size not a factor
+- [x] 65. Revert data reduction changes
+- [x] 66. Test optimization strategy #3: Remove JSON mode from OpenAI call
+- [x] 67. Record results: 35% slower (23s), JSON mode is beneficial
+- [x] 68. Revert all optimization changes to original state
+- [x] 69. Create `docs/x/` directory
+- [x] 70. Create `docs/recommendation-latency-testing/recommendation_timing_results.md` with test results `recommendation_timing_results.md` and `recommendation_timing_logs.json`
+- [x] 71. Create `docs/OPENAI_LATENCY_TESTING.md` with full methodology and findings
+- [x] 72. Key finding documented: Model choice (gpt-4o-mini vs gpt-3.5-turbo) is the only significant performance factor
+- [x] 73. Comment out timing log infrastructure in recommendations.py for future use
+- [x] 74. Decision: Keep gpt-4o-mini for quality over speed in MVP
+- [x] 75. Update memory bank with performance testing findings
+
 ---
 
 ## PR #29: Parquet Export & S3 Integration

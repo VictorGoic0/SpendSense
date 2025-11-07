@@ -12,6 +12,7 @@ import uuid
 import json
 import time
 import logging
+from pathlib import Path
 
 from app.database import get_db
 from app.models import User, Persona, Recommendation, OperatorAction
@@ -31,6 +32,41 @@ from datetime import datetime
 
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 logger = logging.getLogger(__name__)
+
+
+# TIMING LOG FUNCTION - COMMENTED OUT AFTER TESTING
+# Uncomment this function to enable timing log collection for performance testing
+# def _write_timing_log(timing_log: Dict[str, Any]) -> None:
+#     """
+#     Write timing log to a temporary file in the root directory.
+#     
+#     Args:
+#         timing_log: Dictionary containing timing information
+#     """
+#     try:
+#         # Get root directory (two levels up from backend/app/routers)
+#         root_dir = Path(__file__).parent.parent.parent.parent
+#         log_file = root_dir / "docs" / "recommendation_timing_logs.json"
+#         
+#         # Read existing logs if file exists
+#         existing_logs = []
+#         if log_file.exists():
+#             try:
+#                 with open(log_file, 'r') as f:
+#                     existing_logs = json.load(f)
+#             except (json.JSONDecodeError, IOError):
+#                 existing_logs = []
+#         
+#         # Append new log entry
+#         existing_logs.append(timing_log)
+#         
+#         # Write back to file
+#         with open(log_file, 'w') as f:
+#             json.dump(existing_logs, f, indent=2)
+#         
+#     except Exception as e:
+#         # Don't fail the request if logging fails
+#         logger.warning(f"Failed to write timing log: {str(e)}")
 
 
 @router.post("/generate/{user_id}")
@@ -74,6 +110,22 @@ async def generate_recommendations(
         500: Server error (OpenAI failure, database error)
     """
     start_time = time.time()
+    
+    # TIMING LOG COLLECTION - COMMENTED OUT AFTER TESTING
+    # Uncomment this section to enable detailed timing collection for performance testing
+    # timing_log = {
+    #     "user_id": user_id,
+    #     "window_days": window_days,
+    #     "timestamp": datetime.now().isoformat(),
+    #     "sql_query_duration_ms": None,
+    #     "openai_query_duration_ms": None,
+    #     "tone_validation_duration_ms": None,
+    #     "db_save_duration_ms": None,
+    #     "total_request_duration_ms": None,
+    #     "status": "in_progress",
+    #     "error": None,
+    #     "recommendations_count": None
+    # }
     
     try:
         # ========================================================================
@@ -131,6 +183,14 @@ async def generate_recommendations(
                 )
             ).first()
             
+            # TIMING LOG - COMMENTED OUT
+            # end_time = time.time()
+            # timing_log["total_request_duration_ms"] = int((end_time - start_time) * 1000)
+            # timing_log["status"] = "cached"
+            # timing_log["persona_type"] = persona.persona_type if persona else None
+            # timing_log["recommendations_count"] = len(existing_recommendations)
+            # _write_timing_log(timing_log)
+            
             # Return 200 for cached results
             if response is not None:
                 response.status_code = status.HTTP_200_OK
@@ -165,7 +225,13 @@ async def generate_recommendations(
         
         # Build user context using build_user_context()
         logger.info(f"Building context for user {user_id}, window {window_days}d, persona {persona_type}")
+        # TIMING LOG - COMMENTED OUT
+        # sql_query_start = time.time()
         user_context = build_user_context(db, user_id, window_days)
+        # sql_query_end = time.time()
+        # sql_query_duration_ms = int((sql_query_end - sql_query_start) * 1000)
+        # timing_log["sql_query_duration_ms"] = sql_query_duration_ms
+        # logger.info(f"SQL query duration: {sql_query_duration_ms}ms for user {user_id}")
         
         # Validate context
         if not validate_context(user_context):
@@ -180,6 +246,8 @@ async def generate_recommendations(
         
         # Call generate_recommendations_via_openai() with persona and context
         logger.info(f"Generating recommendations via OpenAI for user {user_id}, persona {persona_type}")
+        # TIMING LOG - COMMENTED OUT
+        # openai_query_start = time.time()
         generation_start = time.time()
         
         try:
@@ -193,6 +261,10 @@ async def generate_recommendations(
         
         generation_end = time.time()
         generation_time_ms = int((generation_end - generation_start) * 1000)
+        # TIMING LOG - COMMENTED OUT
+        # openai_query_duration_ms = generation_time_ms
+        # timing_log["openai_query_duration_ms"] = openai_query_duration_ms
+        # logger.info(f"OpenAI query duration: {openai_query_duration_ms}ms for user {user_id}")
         
         if not generated_recommendations:
             raise HTTPException(
@@ -208,6 +280,8 @@ async def generate_recommendations(
         
         # For each generated recommendation, validate tone
         recommendations_to_save = []
+        # TIMING LOG - COMMENTED OUT
+        # tone_validation_start = time.time()
         
         for rec_dict in generated_recommendations:
             # Extract content field
@@ -247,13 +321,19 @@ async def generate_recommendations(
                 "generation_time_ms": rec_dict.get("generation_time_ms", generation_time_ms)
             })
         
+        # TIMING LOG - COMMENTED OUT
+        # tone_validation_end = time.time()
+        # tone_validation_duration_ms = int((tone_validation_end - tone_validation_start) * 1000)
+        # timing_log["tone_validation_duration_ms"] = tone_validation_duration_ms
+        
         # ========================================================================
         # Save to Database
         # ========================================================================
         
         # For each recommendation (including those with warnings):
         recommendation_objects = []
-        current_time = time.time()
+        # TIMING LOG - COMMENTED OUT
+        # db_save_start = time.time()
         
         for rec_data in recommendations_to_save:
             # Generate recommendation_id (rec_{uuid})
@@ -292,6 +372,11 @@ async def generate_recommendations(
         for rec in recommendation_objects:
             db.refresh(rec)
         
+        # TIMING LOG - COMMENTED OUT
+        # db_save_end = time.time()
+        # db_save_duration_ms = int((db_save_end - db_save_start) * 1000)
+        # timing_log["db_save_duration_ms"] = db_save_duration_ms
+        # timing_log["recommendations_count"] = len(recommendation_objects)
         logger.info(f"Saved {len(recommendation_objects)} recommendations to database for user {user_id}")
         
         # ========================================================================
@@ -316,9 +401,19 @@ async def generate_recommendations(
                 "metadata_json": rec.metadata_json
             })
         
-        # Calculate total generation time
+        # Calculate total request time
         end_time = time.time()
-        total_generation_time_ms = int((end_time - start_time) * 1000)
+        total_request_time_ms = int((end_time - start_time) * 1000)
+        # TIMING LOG - COMMENTED OUT
+        # timing_log["total_request_duration_ms"] = total_request_time_ms
+        # timing_log["status"] = "success"
+        # timing_log["persona_type"] = persona_type
+        
+        # Log request completion
+        logger.info(f"Request completed for user {user_id} in {total_request_time_ms}ms")
+        
+        # TIMING LOG - COMMENTED OUT
+        # _write_timing_log(timing_log)
         
         # Return 201 for newly created recommendations
         if response is not None:
@@ -329,16 +424,28 @@ async def generate_recommendations(
             "user_id": user_id,
             "persona": persona_type,
             "recommendations": recommendations_list,
-            "generation_time_ms": total_generation_time_ms
+            "generation_time_ms": total_request_time_ms
         }
     
-    except HTTPException:
+    except HTTPException as e:
+        # TIMING LOG - COMMENTED OUT
+        # end_time = time.time()
+        # timing_log["total_request_duration_ms"] = int((end_time - start_time) * 1000)
+        # timing_log["status"] = "error"
+        # timing_log["error"] = f"HTTP {e.status_code}: {e.detail}"
+        # _write_timing_log(timing_log)
         # Re-raise HTTP exceptions
         raise
     
     except Exception as e:
         # Rollback database transaction on error
         db.rollback()
+        # TIMING LOG - COMMENTED OUT
+        # end_time = time.time()
+        # timing_log["total_request_duration_ms"] = int((end_time - start_time) * 1000)
+        # timing_log["status"] = "error"
+        # timing_log["error"] = str(e)
+        # _write_timing_log(timing_log)
         logger.error(f"Error generating recommendations for user {user_id}: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
