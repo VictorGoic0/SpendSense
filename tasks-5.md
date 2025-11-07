@@ -3,110 +3,110 @@
 ## PR #17: OpenAI Integration Setup & Prompt Templates
 
 ### OpenAI Dependencies
-- [ ] 1. Add `openai==1.3.5` to backend/requirements.txt
-- [ ] 2. Install OpenAI SDK: `pip install openai`
-- [ ] 3. Add `OPENAI_API_KEY=sk-...` to .env file
-- [ ] 4. Add .env to .gitignore if not already there
+- [x] 1. Add `openai==1.3.5` to backend/requirements.txt
+- [x] 2. Install OpenAI SDK: `pip install openai`
+- [x] 3. Add `OPENAI_API_KEY=sk-...` to .env file
+- [x] 4. Add .env to .gitignore if not already there
 
 ### Prompts Directory
-- [ ] 5. Create `backend/app/prompts/` directory
-- [ ] 6. Create `backend/app/prompts/__init__.py`
+- [x] 5. Create `backend/app/prompts/` directory
+- [x] 6. Create `backend/app/prompts/__init__.py`
 
 ### Base Prompt Template
-- [ ] 7. Create `backend/app/prompts/base_template.txt`
-- [ ] 8. Write shared rules that apply to all personas:
+- [x] 7. Create `backend/app/prompts/base_template.txt`
+- [x] 8. Write shared rules that apply to all personas:
    - NEVER provide regulated financial advice
    - ALWAYS use educational, empowering tone
    - NO shaming language
    - EVERY recommendation must cite specific user data
    - Use plain language
    - Format output as JSON
-- [ ] 9. Define JSON output structure with keys:
+- [x] 9. Define JSON output structure with keys:
    - title (string)
    - content (string, markdown format)
    - rationale (string, "because..." format)
    - metadata (object with priority, tags, links)
-- [ ] 10. Add mandatory disclosure text to append to all recommendations
+- [x] 10. Add mandatory disclosure text to append to all recommendations
 
 ### High Utilization Prompt
-- [ ] 11. Create `backend/app/prompts/high_utilization.txt`
-- [ ] 12. Include base template rules
-- [ ] 13. Add persona description: "User struggling with credit card debt"
-- [ ] 14. Define focus areas:
+- [x] 11. Create `backend/app/prompts/high_utilization.txt`
+- [x] 12. Include base template rules
+- [x] 13. Add persona description: "User struggling with credit card debt"
+- [x] 14. Define focus areas:
     - Debt paydown strategies (avalanche vs snowball)
     - Credit utilization impact on scores
     - Payment automation
     - Balance transfer education
     - Interest calculation transparency
-- [ ] 15. Define tone: Supportive, non-judgmental, action-oriented
-- [ ] 16. Add avoid/use examples for language
-- [ ] 17. Add instruction to generate 3-5 recommendations
+- [x] 15. Define tone: Supportive, non-judgmental, action-oriented
+- [x] 16. Add avoid/use examples for language
+- [x] 17. Add instruction to generate 3-5 recommendations
 
 ### Variable Income Prompt
-- [ ] 18. Create `backend/app/prompts/variable_income.txt`
-- [ ] 19. Include base template rules
-- [ ] 20. Add persona description: "User with irregular income"
-- [ ] 21. Define focus areas:
+- [x] 18. Create `backend/app/prompts/variable_income.txt`
+- [x] 19. Include base template rules
+- [x] 20. Add persona description: "User with irregular income"
+- [x] 21. Define focus areas:
     - Percent-based budgeting
     - Emergency fund building
     - Income smoothing techniques
     - Cash flow buffer optimization
     - "Feast or famine" expense management
-- [ ] 22. Define tone: Practical, empathetic, normalizing
-- [ ] 23. Add examples of relatable scenarios
-- [ ] 24. Add instruction to generate 3-5 recommendations
+- [x] 22. Define tone: Practical, empathetic, normalizing
+- [x] 23. Add examples of relatable scenarios
+- [x] 24. Add instruction to generate 3-5 recommendations
 
 ### Subscription Heavy Prompt
-- [ ] 25. Create `backend/app/prompts/subscription_heavy.txt`
-- [ ] 26. Include base template rules
-- [ ] 27. Add persona description: "User with many subscriptions"
-- [ ] 28. Define focus areas:
+- [x] 25. Create `backend/app/prompts/subscription_heavy.txt`
+- [x] 26. Include base template rules
+- [x] 27. Add persona description: "User with many subscriptions"
+- [x] 28. Define focus areas:
     - Subscription audit checklists
     - Cancellation/negotiation tactics
     - Free alternative recommendations
     - Bill alert setup
     - Annual vs monthly cost comparisons
-- [ ] 29. Define tone: Helpful, non-preachy, empowering
-- [ ] 30. Add instruction to highlight potential annual savings
-- [ ] 31. Add instruction to generate 3-5 recommendations
+- [x] 29. Define tone: Helpful, non-preachy, empowering
+- [x] 30. Add instruction to highlight potential annual savings
+- [x] 31. Add instruction to generate 3-5 recommendations
 
 ### Savings Builder Prompt
-- [ ] 32. Create `backend/app/prompts/savings_builder.txt`
-- [ ] 33. Include base template rules
-- [ ] 34. Add persona description: "User actively building savings/emergency fund"
-- [ ] 35. Define focus areas:
+- [x] 32. Create `backend/app/prompts/savings_builder.txt`
+- [x] 33. Include base template rules
+- [x] 34. Add persona description: "User actively building savings/emergency fund"
+- [x] 35. Define focus areas:
     - Goal setting frameworks (3-6 month targets)
     - Automation strategies
     - High-yield savings account education
     - CD basics
     - Progress tracking and milestone celebration
-- [ ] 36. Define tone: Encouraging, motivational, celebrating progress
-- [ ] 37. Add instruction to acknowledge current savings behavior positively
-- [ ] 38. Add instruction to generate 3-5 recommendations
+- [x] 36. Define tone: Encouraging, motivational, celebrating progress
+- [x] 37. Add instruction to acknowledge current savings behavior positively
+- [x] 38. Add instruction to generate 3-5 recommendations
 
 ### Wealth Builder Prompt
-- [ ] 39. Create `backend/app/prompts/wealth_builder.txt`
-- [ ] 40. Include base template rules
-- [ ] 41. Add persona description: "Affluent user ready for investment/retirement planning"
-- [ ] 42. Define focus areas:
+- [x] 39. Create `backend/app/prompts/wealth_builder.txt`
+- [x] 40. Include base template rules
+- [x] 41. Add persona description: "Affluent user ready for investment/retirement planning"
+- [x] 42. Define focus areas:
     - Tax-advantaged investing (401k, IRA, HSA)
     - Asset allocation basics
     - Retirement planning milestones
     - Estate planning fundamentals
     - Charitable giving tax strategies
-- [ ] 43. Define tone: Sophisticated but accessible, forward-looking
-- [ ] 44. Add instruction to AVOID specific investment recommendations
-- [ ] 45. Add instruction to EDUCATE on concepts like employer match
-- [ ] 46. Add instruction to generate 3-5 recommendations
+- [x] 43. Define tone: Sophisticated but accessible, forward-looking
+- [x] 44. Add instruction to AVOID specific investment recommendations
+- [x] 45. Add instruction to EDUCATE on concepts like employer match
+- [x] 46. Add instruction to generate 3-5 recommendations
 
 ### Prompt Loader Utility
-- [ ] 47. Create `backend/app/utils/prompt_loader.py`
-- [ ] 48. Create function `load_prompt(persona_type: str) -> str`:
+- [x] 47. Create `backend/app/utils/prompt_loader.py`
+- [x] 48. Create function `load_prompt(persona_type: str) -> str`:
     - Construct file path to prompt file
     - Read file contents
     - Return as string
-- [ ] 49. Add error handling for file not found
-- [ ] 50. Cache loaded prompts in memory (dict) for performance
+- [x] 49. Add error handling for file not found
+- [x] 50. Cache loaded prompts in memory (dict) for performance
 
 ---
 
