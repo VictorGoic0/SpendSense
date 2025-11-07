@@ -56,10 +56,14 @@ User Dashboard (React UI)
 - Mandatory disclosures
 
 ### 6. Operator Interface (`ui/operator/`)
-- User list with persona distribution
-- Approval queue (pending recommendations)
-- Override workflow (edit live recommendations)
-- Metrics dashboard
+- ✅ Metrics dashboard (PR #12 Complete)
+  - Total users, users with consent, pending approvals, avg latency metrics
+  - Persona distribution bar chart
+  - Recommendation status breakdown chart
+  - Loading and error states
+- User list with persona distribution (PR #15+)
+- Approval queue (pending recommendations) (PR #16+)
+- Override workflow (edit live recommendations) (PR #16+)
 
 ### 7. User Interface (`ui/user/`)
 - Consent management toggle
@@ -149,6 +153,18 @@ User Dashboard (React UI)
 - React UI makes API calls via Axios
 - CORS enabled for local development
 - API base URL configurable (local vs AWS)
+- Path alias `@src` configured for cleaner imports
+- Fast Refresh compatible (component-only exports)
+
+### Frontend Constants & Enums Pattern
+- **Centralized Enums**: All enum values defined in `frontend/src/constants/enums.js`
+- **Never Hardcode**: Always use enum values instead of string literals
+- **Available Enums**:
+  - `UserType`: CUSTOMER, OPERATOR, ALL (for filters)
+  - `ConsentStatus`: GRANTED (true), REVOKED (false), ALL (for filters)
+  - `ConsentAction`: GRANT, REVOKE
+- **Helper Functions**: `getConsentStatusDisplay()`, `getUserTypeDisplay()` for UI text
+- **Documentation**: See `frontend/src/constants/README.md` for usage examples
 
 ### Backend → Database
 - SQLAlchemy ORM for all database operations

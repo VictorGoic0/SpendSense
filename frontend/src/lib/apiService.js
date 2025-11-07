@@ -1,4 +1,5 @@
 import api from './api';
+import { ConsentAction } from '../constants/enums';
 
 /**
  * Get list of users
@@ -106,7 +107,7 @@ export async function bulkApprove(operatorId, recIds) {
 /**
  * Update user consent
  * @param {string|number} userId - User ID
- * @param {string} action - Consent action ('grant' or 'revoke')
+ * @param {string} action - Consent action (use ConsentAction enum: ConsentAction.GRANT or ConsentAction.REVOKE)
  * @returns {Promise} API response
  */
 export async function updateConsent(userId, action) {

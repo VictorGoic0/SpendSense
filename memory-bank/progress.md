@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #11 Complete - Frontend Project Setup & Basic Routing Working
+**Status**: PR #12 Complete - Frontend Operator Dashboard (Metrics & Charts) Working
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -188,34 +188,42 @@
   - Layout component: Navigation header with active state styling
   - Page placeholders: All 5 pages created (OperatorDashboard, OperatorUserList, OperatorUserDetail, OperatorApprovalQueue, UserDashboard)
   - Configuration files: vite.config.js, tailwind.config.js, jsconfig.json updated
+- ✅ **PR #12: Frontend - Operator Dashboard (Metrics & Charts) Complete**
+  - Dashboard data fetching: useState/useEffect hooks, API integration, error handling
+  - MetricsCard component: Reusable card component with title, value, subtitle
+  - UI components: Skeleton and Alert components created
+  - Dashboard layout: Responsive grid with 4 metrics cards (Total Users, Users with Consent, Pending Approvals, Avg Latency)
+  - Charts: Persona Distribution and Recommendation Status bar charts using Recharts
+  - Loading states: Skeleton placeholders for cards and charts
+  - Error states: Alert component with retry functionality
+  - Fast Refresh fixes: Removed unnecessary exports, updated all imports to `@src` alias
 
 ### In Progress
-- 🔄 None - Ready for PR #12
+- 🔄 None - Ready for PR #13+
 
 ### Not Started
-- ⏳ Frontend dashboard UI - **PR #12 Next**
-- ⏳ Persona assignment engine
+- ⏳ Persona assignment engine - **PR #13+ Next**
 - ⏳ AI recommendation engine
 - ⏳ Guardrails module
-- ⏳ React UI components (operator + user views)
+- ⏳ React UI components (operator user list, user detail, approval queue, user dashboard)
 - ⏳ Evaluation system
 - ⏳ AWS deployment
 
 ## What's Left to Build
 
-### PR #12: Frontend - Operator Dashboard (Metrics & Charts) (Next)
-- [ ] Implement dashboard data fetching
-- [ ] Create metrics cards component
-- [ ] Add persona distribution and recommendation status charts
-- [ ] Handle loading and error states
+### PR #13+: Persona Assignment Engine (Next)
+- [ ] Implement rules-based persona assignment logic
+- [ ] Create persona prioritization system
+- [ ] Add persona assignment API endpoint
+- [ ] Test persona assignment with computed features
 
 ### Day 1 Deliverables (MVP)
 - [x] SQLite database schema (10 tables) - **PR #3 Complete**
 - [x] POST `/ingest` endpoint working - **PR #5 Complete**
 - [x] All behavioral signals computed (30d and 180d windows) - **PR #6-9 Complete**
 - [x] Feature computation endpoint and batch script - **PR #10 Complete**
-- [ ] React UI components built (operator dashboard, user dashboard)
-- [ ] Full integration testing possible via UI
+- [x] React UI components built (operator dashboard) - **PR #12 Complete**
+- [ ] Full integration testing possible via UI (pending backend operator dashboard endpoint)
 
 ### Day 2 Deliverables (MVP)
 - [ ] All 5 personas assigned with prioritization
@@ -239,14 +247,14 @@
 ### Backend
 - **Status**: All feature detection signals complete, feature computation endpoints working
 - **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, all 4 signal detection types (subscription, savings, credit, income), feature computation function, features router, profile router, batch computation script
-- **Next**: PR #12 (Frontend - Operator Dashboard)
-- **Priority**: Build dashboard UI with metrics and charts
+- **Next**: Persona assignment engine (PR #13+)
+- **Priority**: Implement rules-based persona assignment logic
 
 ### Frontend
-- **Status**: Routing and API setup complete, ready for dashboard UI
-- **Completed**: React 18 + Vite, Shadcn/ui configured, TailwindCSS setup, API client, API service functions, React Router setup, Layout component, page placeholders
-- **Next**: Build Operator Dashboard UI with metrics and charts (PR #12)
-- **Priority**: Implement dashboard data fetching and visualization
+- **Status**: Operator Dashboard complete with metrics and charts
+- **Completed**: React 18 + Vite, Shadcn/ui configured, TailwindCSS setup, API client, API service functions, React Router setup, Layout component, Operator Dashboard with metrics cards and charts, loading/error states, responsive layout
+- **Next**: Build Operator User List and Detail pages (PR #15+)
+- **Priority**: Persona assignment engine (PR #13+)
 
 ### Database
 - **Status**: ✅ Complete - All models implemented, data loaded, features computed
@@ -304,5 +312,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #12 Completion**: Operator Dashboard UI complete with metrics and charts, ready for persona assignment and AI integration
+**PR #13+ Completion**: Persona assignment engine complete, ready for AI recommendation generation
 

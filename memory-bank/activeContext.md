@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #11 Complete - Frontend Project Setup & Basic Routing Finished
+**Status**: PR #12 Complete - Frontend Operator Dashboard (Metrics & Charts) Finished
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -196,20 +196,47 @@
 - ✅ Python Environment Upgrade: Venv recreated with Python 3.11.9 (was 3.9.6)
   - All dependencies reinstalled with Python 3.11.9
   - VS Code settings updated with `python.analysis.diagnosticMode: "workspace"` for better import resolution
+- ✅ PR #12 Complete: Frontend - Operator Dashboard (Metrics & Charts) (all 39 implementation tasks finished)
+  - Dashboard data fetching (`frontend/src/pages/OperatorDashboard.jsx`):
+    - useState/useEffect hooks for API data fetching
+    - Loading, error, and data state management
+    - Calls `getOperatorDashboard()` API function
+    - Error handling with retry functionality
+  - UI components created:
+    - `MetricsCard.jsx`: Reusable metric card component using Shadcn Card
+    - `skeleton.jsx`: Loading skeleton component for UI placeholders
+    - `alert.jsx`: Error alert component with title and description
+  - Dashboard layout:
+    - Responsive grid layout (1 column mobile, 2 tablet, 4 desktop)
+    - 4 metrics cards: Total Users, Users with Consent, Pending Approvals, Avg Latency
+  - Charts implemented:
+    - Persona Distribution chart: Bar chart showing persona counts using Recharts
+    - Recommendation Status chart: Color-coded bar chart (pending=blue, approved=green, overridden=amber, rejected=red)
+    - Data transformation from API objects to chart-friendly arrays
+    - Responsive containers for all charts
+  - Loading states:
+    - Skeleton placeholders for metrics cards and charts
+    - Loading state shown during data fetch
+  - Error states:
+    - Alert component displays error messages
+    - Retry button allows re-fetching data
+  - Fast Refresh fixes:
+    - Removed "use client" directive (not needed in Vite/React)
+    - Removed variant exports from badge.jsx and button.jsx (Fast Refresh requires component-only exports)
+    - All imports updated to use `@src` alias consistently
 
 ## Next Steps
-1. **PR #12: Frontend - Operator Dashboard (Metrics & Charts)** - Build dashboard UI with data fetching
-   - Implement dashboard data fetching from API
-   - Create metrics cards component
-   - Add persona distribution and recommendation status charts
-   - Handle loading and error states
+1. **PR #13+: Persona Assignment Engine** - Implement rules-based persona assignment
+2. **PR #14+: AI Recommendation Generation** - Create OpenAI integration with 5 persona-specific endpoints
+3. **PR #15+: Operator User List & Detail Pages** - Build user browsing and signal visualization
+4. **PR #16+: Approval Queue** - Implement recommendation approval workflow
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Frontend dashboard** - Next task (PR #12)
-- **Persona assignment engine** - After dashboard UI (PR #13+)
+- **Persona assignment engine** - Next task (PR #13+)
 - **AI recommendation engine** - After persona assignment
+- **Operator User List & Detail Pages** - After AI integration
 
 ### Technical Decisions Made
 - **Node version** - Node.js 20 LTS (documented in techContext.md and .cursor/rules/)
@@ -224,7 +251,8 @@
 - **Pydantic** - v2.5.0 with Literal types for enum validation, date parsing validators
 - **CORS** - Configured for localhost:5173 (Vite) and localhost:3000 (React)
 - **Frontend Routing** - React Router v7 configured with BrowserRouter, all routes set up
-- **Path Aliases** - `@src` alias configured in vite.config.js and jsconfig.json for cleaner imports
+- **Path Aliases** - `@src` alias configured in vite.config.js and jsconfig.json for cleaner imports, all components updated to use `@src` consistently
+- **Fast Refresh** - Component files export only React components (not constants/variants) for Fast Refresh compatibility
 - **Batching** - Transactions processed in batches of 1000 for performance
 - **Idempotency** - Duplicate key errors handled gracefully with 409 status
 - **Pattern Detection** - Recurring pattern detection with ±5 day tolerance for weekly/monthly/quarterly intervals
@@ -233,6 +261,7 @@
 - **Credit Detection** - Queries credit card accounts and liabilities, calculates utilization metrics, detects payment patterns and overdue status
 - **Income Detection** - Detects payroll deposits, calculates pay frequency, income variability, cash flow buffer, and average monthly income
 - **Feature Computation** - Combines all signals, saves to database, provides API endpoints for computation and retrieval
+- **Frontend Dashboard** - Operator dashboard complete with metrics cards, charts (persona distribution, recommendation status), loading/error states, responsive layout
 
 ### Integration Points
 - Frontend ↔ Backend: CORS configured, API client setup complete (`frontend/src/lib/api.js`), API service functions ready (`frontend/src/lib/apiService.js`), routing structure in place
@@ -244,7 +273,7 @@
 - Data Generation ↔ Database: ✅ Complete - All synthetic data ingested successfully
 
 ## Current Blockers
-None - Ready to proceed with PR #12 (Frontend - Operator Dashboard)
+None - Ready to proceed with PR #13+ (Persona Assignment Engine)
 
 ## Active Questions
 1. ✅ Python venv upgraded to 3.11.9 - Complete
@@ -265,7 +294,8 @@ None - Ready to proceed with PR #12 (Frontend - Operator Dashboard)
 - PR #9 complete (all 33 tasks checked off)
 - PR #10 complete (all 28 tasks checked off)
 - PR #11 complete (all 39 tasks checked off)
-- Following tasks-2.md and tasks-3.md structure (PR #12 next)
+- PR #12 complete (all 39 implementation tasks checked off, testing tasks pending backend endpoint)
+- Following tasks-2.md and tasks-3.md structure (PR #13+ next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility
