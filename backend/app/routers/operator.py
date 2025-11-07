@@ -4,10 +4,11 @@ Operator Router
 Endpoints for operator dashboard and operator-specific functionality.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional, Literal
+import logging
 
 from app.database import get_db
 from app.models import User, Persona, Recommendation, UserFeature, Transaction, Account, Liability
@@ -18,6 +19,7 @@ from app.services.feature_detection import (
 )
 
 router = APIRouter(prefix="/operator", tags=["operator"])
+logger = logging.getLogger(__name__)
 
 
 @router.get("/dashboard")
@@ -352,4 +354,114 @@ async def get_user_signals(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching user signals: {str(e)}")
+
+
+@router.get("/review")
+async def get_approval_queue(
+    status: Optional[Literal["pending_approval", "overridden", "rejected"]] = Query(
+        default=None,
+        description="Filter by recommendation status (default: all non-approved)"
+    ),
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    Get approval queue - all recommendations that are not approved.
+    
+    This endpoint:
+    1. Fetches all recommendations where status != 'approved'
+    2. Optionally filters by specific status (pending_approval, overridden, rejected)
+    3. Orders by generated_at ascending (oldest first, queue order)
+    4. Includes user information for display
+    5. Returns recommendations with all relevant fields
+    
+    Args:
+        status: Optional status filter (pending_approval, overridden, rejected)
+               If not provided, returns all non-approved recommendations
+        db: Database session
+    
+    Returns:
+        Dictionary with:
+        - recommendations: List of recommendation objects with user info
+        - total: Total count of recommendations in queue
+    
+    Raises:
+        500: Server error (database error)
+    """
+    try:
+        # ========================================================================
+        # Query Recommendations
+        # ========================================================================
+        
+        # Build base query: all recommendations that are NOT approved
+        # Use JOIN to get user info in single query (optimization)
+        query = db.query(
+            Recommendation,
+            User.full_name,
+            User.user_id
+        ).join(
+            User, Recommendation.user_id == User.user_id
+        ).filter(
+            Recommendation.status != 'approved'
+        )
+        
+        # Apply status filter if provided
+        if status:
+            query = query.filter(Recommendation.status == status)
+        
+        # Order by generated_at ascending (oldest first, queue order)
+        query = query.order_by(Recommendation.generated_at.asc())
+        
+        # Execute query
+        results = query.all()
+        
+        # Get total count (for pagination info)
+        count_query = db.query(func.count(Recommendation.recommendation_id)).filter(
+            Recommendation.status != 'approved'
+        )
+        if status:
+            count_query = count_query.filter(Recommendation.status == status)
+        total_count = count_query.scalar()
+        
+        logger.info(
+            f"Retrieved {len(results)} recommendations from approval queue "
+            f"(status={status}, total={total_count})"
+        )
+        
+        # ========================================================================
+        # Format Response
+        # ========================================================================
+        
+        recommendations_list = []
+        for rec, user_name, user_id in results:
+            recommendations_list.append({
+                "recommendation_id": rec.recommendation_id,
+                "user_id": rec.user_id,
+                "user_name": user_name,
+                "title": rec.title,
+                "content": rec.content,
+                "rationale": rec.rationale,
+                "status": rec.status,
+                "persona_type": rec.persona_type,
+                "window_days": rec.window_days,
+                "content_type": rec.content_type,
+                "generated_at": rec.generated_at.isoformat() if rec.generated_at else None,
+                "generation_time_ms": rec.generation_time_ms,
+                "approved_by": rec.approved_by,
+                "approved_at": rec.approved_at.isoformat() if rec.approved_at else None,
+                "override_reason": rec.override_reason,
+                "original_content": rec.original_content,
+                "metadata_json": rec.metadata_json
+            })
+        
+        return {
+            "recommendations": recommendations_list,
+            "total": total_count or 0
+        }
+    
+    except Exception as e:
+        logger.error(f"Error fetching approval queue: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching approval queue: {str(e)}"
+        )
 
