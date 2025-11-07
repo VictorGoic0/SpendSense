@@ -164,3 +164,19 @@ export async function rejectRecommendation(recId, operatorId, reason) {
   return response.data;
 }
 
+/**
+ * Generate recommendations for a user
+ * @param {string|number} userId - User ID
+ * @param {number} windowDays - Time window in days (optional, default: 30)
+ * @param {boolean} forceRegenerate - Force regeneration even if recommendations exist (optional, default: false)
+ * @returns {Promise} API response
+ */
+export async function generateRecommendations(userId, windowDays = 30, forceRegenerate = false) {
+  const params = {
+    window_days: windowDays,
+    force_regenerate: forceRegenerate,
+  };
+  const response = await api.post(`/recommendations/generate/${userId}`, null, { params });
+  return response.data;
+}
+

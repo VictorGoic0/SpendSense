@@ -311,14 +311,14 @@
 ### Persona Assignment Logic
 - [x] 10. Create `assign_persona(db, user_id: str, window_days: int) -> tuple[str, float, dict]`:
   - Query UserFeature for user and window
-  - If no features found, return ('general_wellness', 0.0, {})
+  - If no features found, return ('savings_builder', 0.1, {}) as fallback
   - Create list of matched personas with priorities
 - [x] 11. Check wealth_builder first (priority 1.0)
 - [x] 12. Check high_utilization (priority 0.95 if util>=80%, else 0.8)
 - [x] 13. Check savings_builder (priority 0.7)
 - [x] 14. Check variable_income (priority 0.6)
 - [x] 15. Check subscription_heavy (priority 0.5)
-- [x] 16. If no matches, return ('general_wellness', 0.0, {})
+- [x] 16. If no matches, return ('savings_builder', 0.2, {}) as fallback
 - [x] 17. Sort matched personas by priority (descending)
 - [x] 18. Return highest priority: (persona_type, confidence_score, reasoning_dict)
 
@@ -398,7 +398,7 @@
   - Total users processed
   - Persona distribution for 30d
   - Persona distribution for 180d
-  - Users with no persona (general_wellness)
+  - Users with fallback persona assignments (low confidence savings_builder)
 - [x] 15. Add __main__ block to run script
 
 ### Persona Distribution Validation

@@ -242,7 +242,7 @@ def assign_persona(db: Session, user_id: str, window_days: int) -> Tuple[str, fl
     4. variable_income (priority 0.6)
     5. subscription_heavy (priority 0.5)
     
-    If no matches, returns 'general_wellness' with 0.0 confidence.
+    If no matches, returns 'savings_builder' with low confidence (0.1 if no features, 0.2 if features exist but no match).
     
     Args:
         db: Database session
@@ -260,14 +260,14 @@ def assign_persona(db: Session, user_id: str, window_days: int) -> Tuple[str, fl
         )
     ).first()
     
-    # If no features found, return general_wellness
+    # If no features found, return savings_builder as fallback with very low confidence
     if not features:
-        logger.warning(f"No features found for user {user_id}, window {window_days}d")
-        return ('general_wellness', 0.0, {
+        logger.warning(f"No features found for user {user_id}, window {window_days}d - assigning savings_builder as fallback")
+        return ('savings_builder', 0.1, {
             'matched_criteria': [],
             'feature_values': {},
             'timestamp': datetime.now().isoformat(),
-            'reason': 'No features computed for this user/window'
+            'reason': 'No features computed for this user/window - fallback assignment'
         })
     
     # Create list of matched personas with priorities
@@ -377,13 +377,14 @@ def assign_persona(db: Session, user_id: str, window_days: int) -> Tuple[str, fl
             }
         })
     
-    # If no matches, return general_wellness
+    # If no matches, return savings_builder as fallback with low confidence
     if not matched_personas:
-        return ('general_wellness', 0.0, {
+        logger.info(f"No persona criteria matched for user {user_id}, window {window_days}d - assigning savings_builder as fallback")
+        return ('savings_builder', 0.2, {
             'matched_criteria': [],
             'feature_values': {},
             'timestamp': datetime.now().isoformat(),
-            'reason': 'No persona criteria matched'
+            'reason': 'No persona criteria matched - fallback assignment'
         })
     
     # Sort matched personas by priority (descending)

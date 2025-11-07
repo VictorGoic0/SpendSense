@@ -265,7 +265,7 @@
     - Processes all users, assigns personas for both 30-day and 180-day windows
     - Progress reporting and summary statistics
     - Validation warnings for missing persona types
-  - Database schema: Updated Persona model and schema to include 'general_wellness' persona type
+  - Fallback behavior: When no persona matches, assigns 'savings_builder' with low confidence (0.1 if no features, 0.2 if features exist but no match)
   - Successfully assigned personas to 71 users (142 persona records: 71 users × 2 windows)
   - Note: Synthetic data variance enhancement needed - some persona types (wealth_builder, variable_income) not well represented in current test data
 - ✅ **PR #17 Complete: OpenAI Integration Setup & Prompt Templates (all 50 tasks finished)**
@@ -485,7 +485,7 @@
 - [x] Add persona assignment API endpoint (POST /personas/{user_id}/assign)
 - [x] Add persona retrieval API endpoint (GET /personas/{user_id})
 - [x] Create batch assignment script for all users
-- [x] Update database schema to include 'general_wellness' persona type
+- [x] Fallback persona behavior: Use 'savings_builder' with low confidence when no persona matches
 - [x] Assign personas to all 71 users (142 records: 30d and 180d windows)
 
 ### Day 1 Deliverables (MVP)
@@ -573,7 +573,7 @@
 - **Test Script**: `scripts/test_persona_assignment.py` (tests assignment logic and database persistence)
 - **Batch Script**: `scripts/assign_all_personas.py` (assigns personas to all users)
 - **Personas Assigned**: 142 records (71 users × 2 windows: 30d and 180d)
-- **Distribution**: 30d - 44 high_utilization, 10 subscription_heavy, 1 savings_builder, 16 general_wellness; 180d - 44 high_utilization, 19 subscription_heavy, 8 general_wellness
+- **Distribution**: 30d - 44 high_utilization, 10 subscription_heavy, 1 savings_builder (with fallback assignments tracked separately); 180d - 44 high_utilization, 19 subscription_heavy (with fallback assignments tracked separately)
 - **Note**: Synthetic data variance enhancement needed - wealth_builder and variable_income personas not well represented in current test data
 - **Next**: AI recommendation generation (PR #17+)
 

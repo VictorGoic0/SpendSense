@@ -53,25 +53,25 @@ def main():
         start_time = time.time()
         persona_30d_counter = Counter()
         persona_180d_counter = Counter()
-        users_with_no_persona_30d = 0
-        users_with_no_persona_180d = 0
+        fallback_30d_count = 0
+        fallback_180d_count = 0
         
         # For each user
         for idx, user in enumerate(users, 1):
             try:
                 # Assign persona for 30-day window
                 persona_30d = assign_and_save_persona(db, user.user_id, 30)
-                if persona_30d.persona_type == 'general_wellness':
-                    users_with_no_persona_30d += 1
-                else:
-                    persona_30d_counter[persona_30d.persona_type] += 1
+                persona_30d_counter[persona_30d.persona_type] += 1
+                # Track fallback assignments (low confidence savings_builder)
+                if persona_30d.persona_type == 'savings_builder' and persona_30d.confidence_score < 0.3:
+                    fallback_30d_count += 1
                 
                 # Assign persona for 180-day window
                 persona_180d = assign_and_save_persona(db, user.user_id, 180)
-                if persona_180d.persona_type == 'general_wellness':
-                    users_with_no_persona_180d += 1
-                else:
-                    persona_180d_counter[persona_180d.persona_type] += 1
+                persona_180d_counter[persona_180d.persona_type] += 1
+                # Track fallback assignments (low confidence savings_builder)
+                if persona_180d.persona_type == 'savings_builder' and persona_180d.confidence_score < 0.3:
+                    fallback_180d_count += 1
                 
                 # Print progress (every 10 users)
                 if idx % 10 == 0:
@@ -98,9 +98,9 @@ def main():
         for persona_type, count in sorted(persona_30d_counter.items(), key=lambda x: x[1], reverse=True):
             percentage = (count / len(users)) * 100
             print(f"  {persona_type:25s}: {count:3d} ({percentage:5.1f}%)")
-        if users_with_no_persona_30d > 0:
-            percentage = (users_with_no_persona_30d / len(users)) * 100
-            print(f"  {'general_wellness':25s}: {users_with_no_persona_30d:3d} ({percentage:5.1f}%)")
+        if fallback_30d_count > 0:
+            percentage = (fallback_30d_count / len(users)) * 100
+            print(f"  {'(fallback savings_builder)':25s}: {fallback_30d_count:3d} ({percentage:5.1f}%)")
         print()
         
         # Persona distribution for 180d window
@@ -109,9 +109,9 @@ def main():
         for persona_type, count in sorted(persona_180d_counter.items(), key=lambda x: x[1], reverse=True):
             percentage = (count / len(users)) * 100
             print(f"  {persona_type:25s}: {count:3d} ({percentage:5.1f}%)")
-        if users_with_no_persona_180d > 0:
-            percentage = (users_with_no_persona_180d / len(users)) * 100
-            print(f"  {'general_wellness':25s}: {users_with_no_persona_180d:3d} ({percentage:5.1f}%)")
+        if fallback_180d_count > 0:
+            percentage = (fallback_180d_count / len(users)) * 100
+            print(f"  {'(fallback savings_builder)':25s}: {fallback_180d_count:3d} ({percentage:5.1f}%)")
         print()
         
         # Verify all 5 persona types are represented

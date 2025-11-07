@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getUser, getUserProfile, getOperatorUserSignals, getRecommendations } from '../lib/apiService';
+import { getUser, getUserProfile, getOperatorUserSignals, getRecommendations, generateRecommendations } from '../lib/apiService';
 import UserInfoCard from '../components/UserInfoCard';
 import PersonaDisplay from '../components/PersonaDisplay';
 import SignalDisplay from '../components/SignalDisplay';
@@ -92,6 +92,19 @@ export default function OperatorUserDetail() {
   const getPersona180d = () => {
     if (!profile?.personas) return null;
     return profile.personas.find(p => p.window_days === 180);
+  };
+
+  // Handle generate recommendations button click (non-blocking)
+  const handleGenerateRecommendations = () => {
+    if (!userId) return;
+    
+    // Fire and forget - no loading state, no blocking
+    // Request runs in background; recommendations will appear on page refresh
+    generateRecommendations(userId, 30, false)
+      .catch((error) => {
+        // Silently handle errors - user can retry if needed
+        console.error('Error generating recommendations:', error);
+      });
   };
 
   // Loading skeleton
@@ -222,7 +235,7 @@ export default function OperatorUserDetail() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Recommendations</CardTitle>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={handleGenerateRecommendations}>
                 Generate Recommendations
               </Button>
             </div>

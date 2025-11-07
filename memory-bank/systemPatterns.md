@@ -48,6 +48,7 @@ User Dashboard (React UI)
 - **Router File**: `backend/app/routers/personas.py`
 - **Check Functions**: high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder
 - **Priority Order**: wealth_builder (1.0) → high_utilization (0.95/0.8) → savings_builder (0.7) → variable_income (0.6) → subscription_heavy (0.5)
+- **Fallback Behavior**: When no persona matches, assign `savings_builder` with low confidence (0.1 if no features, 0.2 if features exist but no match)
 - **Reasoning**: JSON-serialized dict with matched_criteria, feature_values, timestamp, priority
 - **API Endpoints**: POST /personas/{user_id}/assign, GET /personas/{user_id}
 - **Batch Script**: `scripts/assign_all_personas.py`

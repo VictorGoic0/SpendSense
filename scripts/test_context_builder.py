@@ -196,8 +196,7 @@ def test_context_builder(db, user_id: str, window_days: int):
             'variable_income',
             'subscription_heavy',
             'savings_builder',
-            'wealth_builder',
-            'general_wellness'
+            'wealth_builder'
         ]
         if context['persona_type'] in valid_personas or context['persona_type'] is None:
             print(f"    ✅ Persona type valid: {context['persona_type']}")

@@ -1743,7 +1743,7 @@ When multiple personas match, apply this prioritization:
            matched_personas.append(('subscription_heavy', 0.5))
        
        if not matched_personas:
-           return ('general_wellness', 0.0)  # default
+           return ('savings_builder', 0.2)  # fallback with low confidence
        
        # Return highest priority persona
        matched_personas.sort(key=lambda x: x[1], reverse=True)

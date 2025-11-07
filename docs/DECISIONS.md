@@ -262,3 +262,20 @@ This document tracks key architectural and technical decisions made during the d
 - All components updated to use `@src` consistently
 - Location: `frontend/vite.config.js` and `frontend/jsconfig.json`
 
+## Persona Assignment Decisions
+
+### Savings Builder as Default Fallback Persona
+**Decision**: Use `savings_builder` as the default fallback persona when no persona criteria match
+**Rationale**:
+- Ensures recommendation generation can always proceed (all 5 personas have prompt files)
+- `savings_builder` is the most general positive persona, suitable for users who don't fit specific categories
+- Low confidence scores (0.1-0.2) clearly indicate fallback assignments
+- Avoids need for special handling or missing prompt files
+- Maintains system consistency - all users get valid personas
+**Implementation**:
+- When no features are computed: Assign `savings_builder` with confidence 0.1
+- When features exist but no persona matches: Assign `savings_builder` with confidence 0.2
+- Confidence scores signal to operators that these are fallback assignments
+- Removed `general_wellness` persona type entirely (no prompt file, no explicit criteria)
+- Location: `backend/app/services/persona_assignment.py` lines 264-271 and 380-387
+

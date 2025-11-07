@@ -313,12 +313,10 @@
   - Batch assignment script (`scripts/assign_all_personas.py`):
     - Processes all users, assigns personas for both 30-day and 180-day windows
     - Progress reporting every 10 users
-    - Summary statistics: Total users processed, persona distribution for 30d and 180d windows, users with general_wellness
+    - Summary statistics: Total users processed, persona distribution for 30d and 180d windows, fallback assignments tracked separately
     - Validation warnings for missing persona types
-  - Database schema update: Added 'general_wellness' to Persona model CHECK constraint and PersonaResponse schema
-  - Successfully assigned personas to 71 users:
-    - 30d window: 44 high_utilization, 10 subscription_heavy, 1 savings_builder, 16 general_wellness
-    - 180d window: 44 high_utilization, 19 subscription_heavy, 8 general_wellness
+  - Fallback behavior: When no persona matches, assigns 'savings_builder' with low confidence (0.1 if no features, 0.2 if features exist but no match)
+  - Successfully assigned personas to 71 users (142 persona records: 71 users × 2 windows)
   - Note: Some persona types (wealth_builder, variable_income) not represented in current synthetic data - will enhance data generation later for better variance
 - ✅ **PR #17 Complete: OpenAI Integration Setup & Prompt Templates (all 50 tasks finished)**
   - OpenAI dependencies:
