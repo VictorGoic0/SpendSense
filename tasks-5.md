@@ -113,129 +113,129 @@
 ## PR #18: Recommendation Engine Service - Context Building
 
 ### Recommendation Service File
-- [ ] 1. Create `backend/app/services/recommendation_engine.py`
-- [ ] 2. Import OpenAI client
-- [ ] 3. Import database models
-- [ ] 4. Import prompt loader utility
-- [ ] 5. Create OpenAI client instance with API key from env
+- [x] 1. Create `backend/app/services/recommendation_engine.py`
+- [x] 2. Import OpenAI client
+- [x] 3. Import database models
+- [x] 4. Import prompt loader utility
+- [x] 5. Create OpenAI client instance with API key from env
 
 ### User Context Builder - Basic Info
-- [ ] 6. Create `build_user_context(db, user_id: str, window_days: int) -> dict`:
-- [ ] 7. Query User record
-- [ ] 8. Query UserFeature record for window
-- [ ] 9. Query Persona record for window
-- [ ] 10. Create base context dict with:
+- [x] 6. Create `build_user_context(db, user_id: str, window_days: int) -> dict`:
+- [x] 7. Query User record
+- [x] 8. Query UserFeature record for window
+- [x] 9. Query Persona record for window
+- [x] 10. Create base context dict with:
     - user_id
     - window_days
     - persona_type
 
 ### User Context Builder - Features
-- [ ] 11. Add features to context dict:
+- [x] 11. Add features to context dict:
     - subscription signals (merchants, spend)
     - savings signals (inflow, growth, emergency fund)
     - credit signals (utilization, flags)
     - income signals (payroll, variability, buffer)
-- [ ] 12. Convert feature object to dict
-- [ ] 13. Round float values to 2 decimal places for readability
+- [x] 12. Convert feature object to dict
+- [x] 13. Round float values to 2 decimal places for readability
 
 ### User Context Builder - Accounts
-- [ ] 14. Query Account records for user
-- [ ] 15. For each account, create account info dict:
+- [x] 14. Query Account records for user
+- [x] 15. For each account, create account info dict:
     - type (checking, savings, credit card, etc.)
     - name (masked: "Checking ****1234")
     - balance (current balance)
-- [ ] 16. Add accounts list to context
-- [ ] 17. Limit to top 5 accounts by balance for token efficiency
+- [x] 16. Add accounts list to context
+- [x] 17. Limit to top 5 accounts by balance for token efficiency
 
 ### User Context Builder - Recent Transactions
-- [ ] 18. Query Transaction records for user in last 30 days
-- [ ] 19. Sort by date descending
-- [ ] 20. Limit to 10 most recent transactions
-- [ ] 21. For each transaction, create transaction dict:
+- [x] 18. Query Transaction records for user in last 30 days
+- [x] 19. Sort by date descending
+- [x] 20. Limit to 10 most recent transactions
+- [x] 21. For each transaction, create transaction dict:
     - date (formatted as string)
     - merchant (merchant_name)
     - amount (rounded to 2 decimals)
     - type (deposit/expense based on amount sign)
-- [ ] 22. Add transactions list to context
+- [x] 22. Add transactions list to context
 
 ### User Context Builder - Specific Data Points
-- [ ] 23. For credit cards with high utilization, add detailed info:
+- [x] 23. For credit cards with high utilization, add detailed info:
     - Last 4 digits
     - Current balance
     - Credit limit
     - Utilization percentage
     - Monthly interest charges (if available)
-- [ ] 24. For recurring merchants, add list of merchant names
-- [ ] 25. For savings accounts, add growth trend info
-- [ ] 26. Return complete context dict
+- [x] 24. For recurring merchants, add list of merchant names
+- [x] 25. For savings accounts, add growth trend info
+- [x] 26. Return complete context dict
 
 ### Context Validation
-- [ ] 27. Create `validate_context(context: dict) -> bool`:
+- [x] 27. Create `validate_context(context: dict) -> bool`:
     - Check required fields present
     - Check data types correct
     - Return True if valid, False otherwise
-- [ ] 28. Add logging for invalid context
+- [x] 28. Add logging for invalid context
 
 ### Testing Context Building
-- [ ] 29. Create test script `scripts/test_context_builder.py`
-- [ ] 30. Test with multiple user IDs
-- [ ] 31. Print context dict for review
-- [ ] 32. Verify all required fields present
-- [ ] 33. Verify data looks realistic
-- [ ] 34. Check token count of context (should be <2000 tokens)
+- [x] 29. Create test script `scripts/test_context_builder.py`
+- [x] 30. Test with multiple user IDs
+- [x] 31. Print context dict for review
+- [x] 32. Verify all required fields present
+- [x] 33. Verify data looks realistic
+- [x] 34. Check token count of context (should be <2000 tokens)
 
 ---
 
 ## PR #19: Recommendation Engine Service - OpenAI Integration
 
 ### OpenAI Call Function
-- [ ] 1. In recommendation_engine.py, create `generate_recommendations_via_openai(persona_type: str, user_context: dict) -> list`:
-- [ ] 2. Load system prompt for persona type using prompt_loader
-- [ ] 3. Convert user_context dict to JSON string
-- [ ] 4. Record start time for latency tracking
+- [x] 1. In recommendation_engine.py, create `generate_recommendations_via_openai(persona_type: str, user_context: dict) -> list`:
+- [x] 2. Load system prompt for persona type using prompt_loader
+- [x] 3. Convert user_context dict to JSON string
+- [x] 4. Record start time for latency tracking
 
 ### OpenAI API Call
-- [ ] 5. Call OpenAI chat completions API:
+- [x] 5. Call OpenAI chat completions API:
    - model: "gpt-4o-mini"
    - messages: system prompt + user context
    - response_format: {"type": "json_object"}
    - temperature: 0.7
-- [ ] 6. Wrap in try/except for error handling
-- [ ] 7. Record end time and calculate latency in milliseconds
+- [x] 6. Wrap in try/except for error handling
+- [x] 7. Record end time and calculate latency in milliseconds
 
 ### Response Parsing
-- [ ] 8. Extract message content from response
-- [ ] 9. Parse JSON string to dict
-- [ ] 10. Extract recommendations array from response
-- [ ] 11. For each recommendation:
+- [x] 8. Extract message content from response
+- [x] 9. Parse JSON string to dict
+- [x] 10. Extract recommendations array from response
+- [x] 11. For each recommendation:
     - Validate required fields (title, content, rationale)
     - Add generation_time_ms
     - Add persona_type
-- [ ] 12. Return list of recommendation dicts
+- [x] 12. Return list of recommendation dicts
 
 ### Error Handling
-- [ ] 13. Handle OpenAI API errors:
+- [x] 13. Handle OpenAI API errors:
     - Rate limit errors → wait and retry (exponential backoff)
     - Invalid API key → log error and raise exception
     - Model not found → log error and raise exception
     - JSON parsing errors → log and return empty list
-- [ ] 14. Add comprehensive logging for debugging
+- [x] 14. Add comprehensive logging for debugging
 
 ### Token Usage Tracking
-- [ ] 15. Extract token usage from OpenAI response
-- [ ] 16. Log tokens used (prompt + completion)
-- [ ] 17. Calculate estimated cost
-- [ ] 18. Add to recommendation metadata
+- [x] 15. Extract token usage from OpenAI response
+- [x] 16. Log tokens used (prompt + completion)
+- [x] 17. Calculate estimated cost
+- [x] 18. Return token usage separately (NOT saved to DB, only for logging/review in test output file)
 
 ### Testing OpenAI Integration
-- [ ] 19. Create test script `scripts/test_openai_generation.py`
-- [ ] 20. Test with each persona type (5 tests)
-- [ ] 21. Verify JSON response structure
-- [ ] 22. Verify 3-5 recommendations returned per call
-- [ ] 23. Verify rationales cite specific data
-- [ ] 24. Check content quality and tone
-- [ ] 25. Measure latency (should be <5 seconds)
-- [ ] 26. Print generated recommendations for review
+- [x] 19. Create test script `scripts/test_openai_generation.py`
+- [x] 20. Test with each persona type (5 tests)
+- [x] 21. Verify JSON response structure
+- [x] 22. Verify 3-5 recommendations returned per call
+- [x] 23. Verify rationales cite specific data
+- [x] 24. Check content quality and tone
+- [x] 25. Measure latency (should be <5 seconds)
+- [x] 26. Print generated recommendations for review
 
 ---
 

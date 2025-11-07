@@ -11,6 +11,8 @@ from datetime import datetime, timedelta, date
 from typing import Dict, Any, Optional, List
 import logging
 import os
+import json
+import time
 from dotenv import load_dotenv
 
 from app.models import User, UserFeature, Persona, Account, Transaction, Liability
@@ -376,4 +378,242 @@ def validate_context(context: Dict[str, Any]) -> bool:
     
     logger.debug(f"Context validation passed for user {context['user_id']}")
     return True
+
+
+# ============================================================================
+# OpenAI Integration
+# ============================================================================
+
+def generate_recommendations_via_openai(persona_type: str, user_context: dict) -> list:
+    """
+    Generate recommendations using OpenAI API based on persona type and user context.
+    
+    Args:
+        persona_type: Persona type string (e.g., 'high_utilization', 'variable_income')
+        user_context: Dictionary with user data, features, accounts, transactions
+    
+    Returns:
+        List of recommendation dictionaries with title, content, rationale, and metadata.
+        
+        Note: Metadata includes token_usage and estimated_cost_usd for logging/review purposes.
+        These fields should be STRIPPED from metadata before saving to database (see PR #21).
+    """
+    # Load system prompt for persona type using prompt_loader
+    system_prompt = load_prompt(persona_type)
+    
+    # Convert user_context dict to JSON string
+    user_context_json = json.dumps(user_context, indent=2)
+    
+    # Record start time for latency tracking
+    start_time = time.time()
+    
+    # Get OpenAI client
+    client = get_openai_client()
+    
+    # Call OpenAI chat completions API with retry logic for rate limits
+    max_retries = 3
+    retry_count = 0
+    base_delay = 1  # Start with 1 second delay
+    
+    while retry_count <= max_retries:
+        try:
+            logger.debug(f"Making OpenAI API call for persona {persona_type} (attempt {retry_count + 1}/{max_retries + 1})")
+            
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_context_json}
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.7
+            )
+            
+            # Record end time and calculate latency in milliseconds
+            end_time = time.time()
+            latency_ms = int((end_time - start_time) * 1000)
+            
+            logger.info(f"OpenAI API call completed for persona {persona_type} in {latency_ms}ms")
+            
+            # Extract token usage from OpenAI response
+            token_usage = None
+            if hasattr(response, 'usage') and response.usage:
+                token_usage = {
+                    "prompt_tokens": response.usage.prompt_tokens,
+                    "completion_tokens": response.usage.completion_tokens,
+                    "total_tokens": response.usage.total_tokens
+                }
+                
+                # Log tokens used (prompt + completion)
+                logger.info(
+                    f"Token usage for persona {persona_type}: "
+                    f"prompt={token_usage['prompt_tokens']}, "
+                    f"completion={token_usage['completion_tokens']}, "
+                    f"total={token_usage['total_tokens']}"
+                )
+                
+                # Calculate estimated cost
+                # gpt-4o-mini pricing: $0.15 per 1M input tokens, $0.60 per 1M output tokens
+                input_cost_per_1m = 0.15
+                output_cost_per_1m = 0.60
+                
+                input_cost = (token_usage['prompt_tokens'] / 1_000_000) * input_cost_per_1m
+                output_cost = (token_usage['completion_tokens'] / 1_000_000) * output_cost_per_1m
+                total_cost = input_cost + output_cost
+                
+                estimated_cost = {
+                    "input_cost_usd": round(input_cost, 6),
+                    "output_cost_usd": round(output_cost, 6),
+                    "total_cost_usd": round(total_cost, 6)
+                }
+                
+                logger.info(
+                    f"Estimated cost for persona {persona_type}: "
+                    f"${estimated_cost['total_cost_usd']:.6f} "
+                    f"(input: ${estimated_cost['input_cost_usd']:.6f}, "
+                    f"output: ${estimated_cost['output_cost_usd']:.6f})"
+                )
+            else:
+                logger.warning(f"No token usage data in response for persona {persona_type}")
+                token_usage = {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0
+                }
+                estimated_cost = {
+                    "input_cost_usd": 0.0,
+                    "output_cost_usd": 0.0,
+                    "total_cost_usd": 0.0
+                }
+            
+            # Extract message content from response
+            message_content = response.choices[0].message.content
+            
+            logger.debug(f"Received response content length: {len(message_content)} characters")
+            
+            # Parse JSON string to dict
+            try:
+                response_dict = json.loads(message_content)
+                logger.debug(f"Successfully parsed JSON response for persona {persona_type}")
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse JSON response for persona {persona_type}: {str(e)}")
+                logger.debug(f"Response content (first 500 chars): {message_content[:500]}")
+                # JSON parsing errors → log and return empty list
+                return []
+            
+            # Extract recommendations array from response
+            if "recommendations" not in response_dict:
+                logger.error(f"Response missing 'recommendations' key for persona {persona_type}")
+                logger.debug(f"Response keys: {list(response_dict.keys())}")
+                return []
+            
+            recommendations_raw = response_dict["recommendations"]
+            
+            if not isinstance(recommendations_raw, list):
+                logger.error(f"Recommendations is not a list for persona {persona_type}, got {type(recommendations_raw)}")
+                return []
+            
+            logger.debug(f"Found {len(recommendations_raw)} raw recommendations for persona {persona_type}")
+            
+            # For each recommendation: validate required fields and add metadata
+            recommendations = []
+            for idx, rec in enumerate(recommendations_raw):
+                # Validate required fields (title, content, rationale)
+                if not isinstance(rec, dict):
+                    logger.warning(f"Recommendation {idx} is not a dict, skipping")
+                    continue
+                
+                if "title" not in rec or not rec["title"]:
+                    logger.warning(f"Recommendation {idx} missing 'title', skipping")
+                    continue
+                
+                if "content" not in rec or not rec["content"]:
+                    logger.warning(f"Recommendation {idx} missing 'content', skipping")
+                    continue
+                
+                if "rationale" not in rec or not rec["rationale"]:
+                    logger.warning(f"Recommendation {idx} missing 'rationale', skipping")
+                    continue
+                
+                # Create recommendation dict with validated fields
+                recommendation = {
+                    "title": rec["title"],
+                    "content": rec["content"],
+                    "rationale": rec["rationale"],
+                    "generation_time_ms": latency_ms,
+                    "persona_type": persona_type,
+                }
+                
+                # Add metadata if present
+                if "metadata" in rec and isinstance(rec["metadata"], dict):
+                    recommendation["metadata"] = rec["metadata"]
+                else:
+                    recommendation["metadata"] = {}
+                
+                # Add token usage and cost to metadata for logging/review
+                # IMPORTANT: These fields should be STRIPPED from metadata before saving to DB
+                # (token_usage and estimated_cost_usd are for monitoring/review only)
+                recommendation["metadata"]["token_usage"] = token_usage
+                recommendation["metadata"]["estimated_cost_usd"] = estimated_cost["total_cost_usd"]
+                
+                recommendations.append(recommendation)
+            
+            logger.info(f"Parsed {len(recommendations)} valid recommendations for persona {persona_type}")
+            
+            # Return list of recommendation dicts
+            # Note: Metadata includes token_usage and estimated_cost_usd which should be
+            # stripped before saving to database (see PR #21 endpoint implementation)
+            return recommendations
+            
+        except Exception as e:
+            # Record end time even on error for latency tracking
+            end_time = time.time()
+            latency_ms = int((end_time - start_time) * 1000)
+            
+            # Handle OpenAI API errors
+            error_type = type(e).__name__
+            error_message = str(e)
+            
+            # Check for rate limit errors
+            if "rate_limit" in error_message.lower() or "429" in error_message or hasattr(e, 'status_code') and e.status_code == 429:
+                if retry_count < max_retries:
+                    # Exponential backoff: wait 1s, 2s, 4s
+                    delay = base_delay * (2 ** retry_count)
+                    logger.warning(
+                        f"Rate limit error for persona {persona_type} (attempt {retry_count + 1}). "
+                        f"Retrying in {delay}s..."
+                    )
+                    time.sleep(delay)
+                    retry_count += 1
+                    continue
+                else:
+                    logger.error(
+                        f"Rate limit error for persona {persona_type} after {max_retries} retries. "
+                        f"Failed after {latency_ms}ms"
+                    )
+                    raise
+            
+            # Check for invalid API key
+            elif "invalid" in error_message.lower() and "api" in error_message.lower() and "key" in error_message.lower():
+                logger.error(f"Invalid API key error for persona {persona_type}: {error_message}")
+                raise ValueError(f"Invalid OpenAI API key: {error_message}")
+            
+            # Check for authentication errors (401)
+            elif hasattr(e, 'status_code') and e.status_code == 401:
+                logger.error(f"Authentication error for persona {persona_type}: {error_message}")
+                raise ValueError(f"OpenAI API authentication failed: {error_message}")
+            
+            # Check for model not found errors
+            elif "model" in error_message.lower() and ("not found" in error_message.lower() or "does not exist" in error_message.lower()):
+                logger.error(f"Model not found error for persona {persona_type}: {error_message}")
+                raise ValueError(f"OpenAI model not found: {error_message}")
+            
+            # Other errors - log comprehensively and raise
+            else:
+                logger.error(
+                    f"OpenAI API call failed for persona {persona_type} after {latency_ms}ms. "
+                    f"Error type: {error_type}, Error: {error_message}"
+                )
+                logger.debug(f"Full error details: {repr(e)}")
+                raise
 

@@ -1,0 +1,388 @@
+{
+  "test_run_timestamp": "2025-11-07T10:39:23.714306",
+  "total_tests": 3,
+  "persona_types_tested": [
+    "high_utilization",
+    "variable_income",
+    "subscription_heavy",
+    "savings_builder",
+    "wealth_builder"
+  ],
+  "results": [
+    {
+      "test_timestamp": "2025-11-07T10:38:54.010365",
+      "persona_type": "high_utilization",
+      "user_id": "usr_dbbfe0c0-b3bc-4127-a234-8faca842daf0",
+      "window_days": 30,
+      "total_latency_ms": 13729.29,
+      "token_usage": {
+        "prompt_tokens": 1406,
+        "completion_tokens": 797,
+        "total_tokens": 2203
+      },
+      "estimated_cost_usd": 0.000689,
+      "recommendations_count": 4,
+      "recommendations": [
+        {
+          "title": "Create a Debt Paydown Plan",
+          "content": "Your current credit card balance is **$3,024.66** with a limit of **$5,797.53**, resulting in a **52.17%** utilization rate. While this is above the optimal level of **30%**, it’s manageable with a structured approach. Consider using the **avalanche method** to pay down your credit card debt. This involves prioritizing payments towards the card with the highest interest rate first, but since you currently have no interest charges, you can focus on reducing the balance more aggressively. Aim to pay more than the **minimum payment of $54.02** each month to reduce your balance faster. \n\nFor instance, if you can allocate an additional **$200** monthly towards your credit card, you could pay off your balance in approximately **15 months**. This is a great opportunity to improve your credit health.",
+          "rationale": "because your utilization is currently at **52.17%**, which is above the recommended level and can impact your credit score.",
+          "generation_time_ms": 13728,
+          "metadata": {
+            "priority": "high",
+            "tags": [
+              "debt",
+              "credit",
+              "utilization"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1406,
+              "completion_tokens": 797,
+              "total_tokens": 2203
+            },
+            "estimated_cost_usd": 0.000689
+          }
+        },
+        {
+          "title": "Automate Your Payments",
+          "content": "Consider setting up automatic payments for your credit card to ensure you never miss a payment and maintain a good payment history. This can help improve your credit score over time. You can set it to pay your minimum balance or a fixed amount that is higher than the minimum. For example, if you automate a payment of **$75** monthly, you’ll not only cover the minimum but also reduce your balance more effectively. Remember, automating your payments helps you avoid late fees and keeps you on track with your financial goals.",
+          "rationale": "because you are currently only making minimum payments, which can prolong debt repayment and affect your credit utilization negatively.",
+          "generation_time_ms": 13728,
+          "metadata": {
+            "priority": "medium",
+            "tags": [
+              "payments",
+              "automation",
+              "debt"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1406,
+              "completion_tokens": 797,
+              "total_tokens": 2203
+            },
+            "estimated_cost_usd": 0.000689
+          }
+        },
+        {
+          "title": "Track Your Monthly Spending",
+          "content": "With your average monthly recurring spend of **$228.99**, it’s important to keep an eye on your overall expenses. Review your recent transactions to identify areas where you can cut back. For instance, consider reducing spending at merchants like **Target** or **Amazon** where you spent a total of **$303.87** recently. By cutting back on non-essential purchases, you can free up more cash to allocate towards your debt repayment.",
+          "rationale": "because reducing discretionary spending can increase the funds available for debt repayment and help you lower your credit utilization faster.",
+          "generation_time_ms": 13728,
+          "metadata": {
+            "priority": "medium",
+            "tags": [
+              "budgeting",
+              "spending",
+              "debt"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1406,
+              "completion_tokens": 797,
+              "total_tokens": 2203
+            },
+            "estimated_cost_usd": 0.000689
+          }
+        },
+        {
+          "title": "Build Your Emergency Fund",
+          "content": "Currently, you have a solid savings balance of **$14,648.71**, which is great! However, with a cash flow buffer of **0 months**, it’s wise to build an emergency fund to handle unexpected expenses. Ideally, aim for **3 to 6 months** of living expenses saved. This will not only provide financial security but also reduce the need to rely on credit cards in emergencies, helping keep your utilization low.",
+          "rationale": "because having an emergency fund can prevent potential future debt accumulation and ensure you stay within a healthy utilization ratio.",
+          "generation_time_ms": 13728,
+          "metadata": {
+            "priority": "low",
+            "tags": [
+              "savings",
+              "emergency fund",
+              "financial health"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1406,
+              "completion_tokens": 797,
+              "total_tokens": 2203
+            },
+            "estimated_cost_usd": 0.000689
+          }
+        }
+      ],
+      "user_context_summary": {
+        "persona_type": "high_utilization",
+        "subscription_signals": {
+          "recurring_merchants": 1,
+          "monthly_recurring_spend": 228.99,
+          "subscription_spend_share": 0.1
+        },
+        "savings_signals": {
+          "net_savings_inflow": 0.0,
+          "savings_growth_rate": 0.0,
+          "emergency_fund_months": 6.23
+        },
+        "credit_signals": {
+          "avg_utilization": 0.52,
+          "max_utilization": 0.52,
+          "utilization_30_flag": true,
+          "utilization_50_flag": true,
+          "utilization_80_flag": false,
+          "minimum_payment_only_flag": true,
+          "interest_charges_present": false,
+          "any_overdue": false
+        },
+        "income_signals": {
+          "payroll_detected": false,
+          "median_pay_gap_days": null,
+          "income_variability": null,
+          "cash_flow_buffer_months": 0.0,
+          "avg_monthly_income": 0.0
+        },
+        "accounts_count": 3,
+        "transactions_count": 10
+      }
+    },
+    {
+      "test_timestamp": "2025-11-07T10:39:06.310293",
+      "persona_type": "subscription_heavy",
+      "user_id": "usr_c456f75f-1c82-4005-88ea-c18a0e43667e",
+      "window_days": 30,
+      "total_latency_ms": 12291.57,
+      "token_usage": {
+        "prompt_tokens": 1398,
+        "completion_tokens": 544,
+        "total_tokens": 1942
+      },
+      "estimated_cost_usd": 0.000536,
+      "recommendations_count": 3,
+      "recommendations": [
+        {
+          "title": "Conduct a Subscription Audit",
+          "content": "You currently have **3 recurring merchants** with a total monthly spend of **$1,012.89**, which represents **25%** of your overall spending. Start by categorizing your subscriptions into three groups: essential, nice-to-have, and unused. This way, you can clearly see which subscriptions are crucial and which ones you might want to reconsider. Given your overall monthly spend, this audit could reveal potential savings. For example, if you identify just one non-essential subscription costing **$50/month** to cancel, you could save **$600 annually**. \n\nAdditionally, consider setting up a quarterly review to reassess your subscriptions and ensure they still meet your needs.",
+          "rationale": "because you have a significant monthly spend on subscriptions, which could be optimized for better financial health.",
+          "generation_time_ms": 12290,
+          "metadata": {
+            "priority": "high",
+            "tags": [
+              "subscriptions",
+              "audit",
+              "savings"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1398,
+              "completion_tokens": 544,
+              "total_tokens": 1942
+            },
+            "estimated_cost_usd": 0.000536
+          }
+        },
+        {
+          "title": "Explore Annual Billing Options",
+          "content": "Some of your subscriptions might offer discounts for opting into annual billing instead of monthly. This typically saves you **10-20%**. For example, if you have a subscription that costs **$30/month**, switching to annual billing could save you up to **$72** over the year. Review your subscriptions and check if any provide this option. This small change can significantly enhance your savings without altering your usage.",
+          "rationale": "because your total monthly subscription spend is substantial, and switching to annual billing could provide significant savings.",
+          "generation_time_ms": 12290,
+          "metadata": {
+            "priority": "medium",
+            "tags": [
+              "subscriptions",
+              "annual billing",
+              "savings"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1398,
+              "completion_tokens": 544,
+              "total_tokens": 1942
+            },
+            "estimated_cost_usd": 0.000536
+          }
+        },
+        {
+          "title": "Implement a Subscription Tracker",
+          "content": "To manage your subscriptions effectively moving forward, consider using an app or a simple spreadsheet to track your subscriptions, their costs, and renewal dates. This can help prevent unexpected charges and keep your spending in check. Setting up bill alerts can also remind you of upcoming payments, allowing you to evaluate whether you still want to keep a service. By monitoring your subscriptions regularly, you can make more informed decisions about your spending.",
+          "rationale": "because currently, you are not tracking your subscriptions, which could help in managing your spending efficiently.",
+          "generation_time_ms": 12290,
+          "metadata": {
+            "priority": "medium",
+            "tags": [
+              "subscriptions",
+              "tracking",
+              "management"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1398,
+              "completion_tokens": 544,
+              "total_tokens": 1942
+            },
+            "estimated_cost_usd": 0.000536
+          }
+        }
+      ],
+      "user_context_summary": {
+        "persona_type": "subscription_heavy",
+        "subscription_signals": {
+          "recurring_merchants": 3,
+          "monthly_recurring_spend": 1012.89,
+          "subscription_spend_share": 0.25
+        },
+        "savings_signals": {
+          "net_savings_inflow": 0.0,
+          "savings_growth_rate": 0.0,
+          "emergency_fund_months": 0.0
+        },
+        "credit_signals": {
+          "avg_utilization": 0.2,
+          "max_utilization": 0.35,
+          "utilization_30_flag": true,
+          "utilization_50_flag": false,
+          "utilization_80_flag": false,
+          "minimum_payment_only_flag": false,
+          "interest_charges_present": false,
+          "any_overdue": false
+        },
+        "income_signals": {
+          "payroll_detected": false,
+          "median_pay_gap_days": null,
+          "income_variability": null,
+          "cash_flow_buffer_months": 0.0,
+          "avg_monthly_income": 0.0
+        },
+        "accounts_count": 5,
+        "transactions_count": 10
+      }
+    },
+    {
+      "test_timestamp": "2025-11-07T10:39:23.713327",
+      "persona_type": "savings_builder",
+      "user_id": "usr_fb182f25-467f-4b93-b1d3-7dc88dac743a",
+      "window_days": 30,
+      "total_latency_ms": 17391.45,
+      "token_usage": {
+        "prompt_tokens": 1400,
+        "completion_tokens": 775,
+        "total_tokens": 2175
+      },
+      "estimated_cost_usd": 0.000675,
+      "recommendations_count": 4,
+      "recommendations": [
+        {
+          "title": "Automate Your Savings",
+          "content": "You've done an excellent job building your savings with a balance of **$6,874.44** and a net inflow of **$164.11** this month! To further accelerate your progress, consider setting up an automatic transfer to your savings account every payday. Even an additional **$25 to $50** per month can make a significant difference over time. This not only simplifies saving but also ensures you consistently contribute to your financial goals.\n\nBy automating your savings, you'll be able to grow your emergency fund and work towards the target of **3-6 months of expenses** for peace of mind. With your current **2.7 months** of coverage, you're on the right track, but increasing your monthly contributions can help you reach that target sooner!",
+          "rationale": "because your current savings balance is **$6,874.44** and you have a positive net inflow of **$164.11**.",
+          "generation_time_ms": 17389,
+          "metadata": {
+            "priority": "high",
+            "tags": [
+              "savings",
+              "automation",
+              "emergency-fund"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1400,
+              "completion_tokens": 775,
+              "total_tokens": 2175
+            },
+            "estimated_cost_usd": 0.000675
+          }
+        },
+        {
+          "title": "Explore High-Yield Savings Accounts",
+          "content": "With your current savings growth rate of **2%**, you might want to explore high-yield savings accounts that offer better interest rates than traditional savings accounts. This could potentially increase your returns on savings significantly. Look for accounts with rates that are **1% or higher** to maximize your interest earnings. Moving your savings to a high-yield account can help you grow your balance faster, especially as you work towards building a robust emergency fund.",
+          "rationale": "because optimizing your savings growth can enhance the current rate of **2%** you're receiving.",
+          "generation_time_ms": 17389,
+          "metadata": {
+            "priority": "medium",
+            "tags": [
+              "savings",
+              "high-yield",
+              "interest"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1400,
+              "completion_tokens": 775,
+              "total_tokens": 2175
+            },
+            "estimated_cost_usd": 0.000675
+          }
+        },
+        {
+          "title": "Set Specific Savings Milestones",
+          "content": "You're doing a great job with your savings, and setting specific milestones can help keep you motivated! Aim to reach **3 months of expenses** in your emergency fund next. Given that you currently have coverage for **2.7 months**, you’re very close! To hit this target, you could aim to save an additional **$1,000** over the next few months, which breaks down to about **$333** per month. Monitoring your progress and celebrating when you hit these milestones can keep you engaged and motivated.",
+          "rationale": "because you are just **0.3 months** short of reaching a significant milestone in your emergency fund.",
+          "generation_time_ms": 17389,
+          "metadata": {
+            "priority": "high",
+            "tags": [
+              "savings",
+              "milestones",
+              "emergency-fund"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1400,
+              "completion_tokens": 775,
+              "total_tokens": 2175
+            },
+            "estimated_cost_usd": 0.000675
+          }
+        },
+        {
+          "title": "Increase Your Savings Rate as Income Allows",
+          "content": "With an average monthly income of **$818.38**, consider increasing your savings rate as you receive raises or bonuses. Even small increases of **$25 or $50** can lead to substantial growth in your savings over time. This incremental approach can help you build your savings without feeling a significant pinch in your budget. As you increase your contributions, you'll get closer to achieving your emergency fund goals and other savings targets.",
+          "rationale": "because even small increases in your savings rate can lead to significant growth over time.",
+          "generation_time_ms": 17389,
+          "metadata": {
+            "priority": "medium",
+            "tags": [
+              "savings",
+              "growth",
+              "income"
+            ],
+            "links": [],
+            "token_usage": {
+              "prompt_tokens": 1400,
+              "completion_tokens": 775,
+              "total_tokens": 2175
+            },
+            "estimated_cost_usd": 0.000675
+          }
+        }
+      ],
+      "user_context_summary": {
+        "persona_type": "savings_builder",
+        "subscription_signals": {
+          "recurring_merchants": 1,
+          "monthly_recurring_spend": 65.04,
+          "subscription_spend_share": 0.02
+        },
+        "savings_signals": {
+          "net_savings_inflow": 164.11,
+          "savings_growth_rate": 0.02,
+          "emergency_fund_months": 2.7
+        },
+        "credit_signals": {
+          "avg_utilization": 0.0,
+          "max_utilization": 0.0,
+          "utilization_30_flag": false,
+          "utilization_50_flag": false,
+          "utilization_80_flag": false,
+          "minimum_payment_only_flag": false,
+          "interest_charges_present": false,
+          "any_overdue": false
+        },
+        "income_signals": {
+          "payroll_detected": true,
+          "median_pay_gap_days": 23,
+          "income_variability": 0.02,
+          "cash_flow_buffer_months": 4.23,
+          "avg_monthly_income": 818.38
+        },
+        "accounts_count": 4,
+        "transactions_count": 10
+      }
+    }
+  ]
+}
