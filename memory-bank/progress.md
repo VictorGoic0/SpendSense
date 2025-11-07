@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #8 Complete - Feature Detection Service - Credit Signals Working
+**Status**: PR #11 Complete - Frontend Project Setup & Basic Routing Working
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -164,12 +164,36 @@
 - ✅ **Python Environment Upgrade**: Venv recreated with Python 3.11.9
   - All dependencies reinstalled
   - VS Code settings updated for better import resolution
+- ✅ **PR #9: Feature Detection Service - Income Signals Complete**
+  - Added `compute_income_signals()` function to feature_detection.py
+  - Payroll identification: Filters for ACH deposits, income categories, or payroll merchant names
+  - Income pattern analysis: Calculates median pay gap days between paydays
+  - Income variability: Computes coefficient of variation (std_dev / mean)
+  - Cash flow buffer: Calculates months of expenses covered by checking balance
+  - Average monthly income: Sums payroll amounts, normalizes to monthly average
+  - Investment account detection: Added `detect_investment_accounts()` function
+  - Test script updated with comprehensive income detection tests
+- ✅ **PR #10: Feature Computation Endpoint & Batch Script Complete**
+  - Created `compute_all_features()` function that combines all 4 signal types
+  - Features router: POST `/compute/{user_id}` endpoint with window_days parameter
+  - Profile router: GET `/{user_id}` endpoint returns features and personas
+  - Batch computation script processes all users for both 30d and 180d windows
+  - Successfully computed and saved 142 feature records (71 users × 2 windows)
+  - Average computation time: 0.013 seconds per user
+- ✅ **PR #11: Frontend - Project Setup & Basic Routing Complete**
+  - Vite configuration: Port 5173, `@src` path alias configured
+  - API client (`frontend/src/lib/api.js`): Axios instance with interceptors
+  - API service functions (`frontend/src/lib/apiService.js`): All 12 functions implemented
+  - React Router setup: BrowserRouter with all routes configured
+  - Layout component: Navigation header with active state styling
+  - Page placeholders: All 5 pages created (OperatorDashboard, OperatorUserList, OperatorUserDetail, OperatorApprovalQueue, UserDashboard)
+  - Configuration files: vite.config.js, tailwind.config.js, jsconfig.json updated
 
 ### In Progress
-- 🔄 None - Ready for PR #9
+- 🔄 None - Ready for PR #12
 
 ### Not Started
-- ⏳ Income signals detection - **PR #9 Next**
+- ⏳ Frontend dashboard UI - **PR #12 Next**
 - ⏳ Persona assignment engine
 - ⏳ AI recommendation engine
 - ⏳ Guardrails module
@@ -179,20 +203,17 @@
 
 ## What's Left to Build
 
-### PR #9: Feature Detection Service - Income Signals (Next)
-- [ ] Add `compute_income_signals()` function to feature_detection.py
-- [ ] Detect payroll deposits (ACH, positive amounts, income categories)
-- [ ] Calculate median pay gap days
-- [ ] Calculate income variability (coefficient of variation)
-- [ ] Calculate cash flow buffer months
-- [ ] Calculate average monthly income
-- [ ] Detect investment accounts
-- [ ] Test with users having regular/irregular income patterns
+### PR #12: Frontend - Operator Dashboard (Metrics & Charts) (Next)
+- [ ] Implement dashboard data fetching
+- [ ] Create metrics cards component
+- [ ] Add persona distribution and recommendation status charts
+- [ ] Handle loading and error states
 
 ### Day 1 Deliverables (MVP)
 - [x] SQLite database schema (10 tables) - **PR #3 Complete**
 - [x] POST `/ingest` endpoint working - **PR #5 Complete**
-- [ ] All behavioral signals computed (30d and 180d windows) - **In Progress (PR #6, #7, #8 complete, PR #9 next)**
+- [x] All behavioral signals computed (30d and 180d windows) - **PR #6-9 Complete**
+- [x] Feature computation endpoint and batch script - **PR #10 Complete**
 - [ ] React UI components built (operator dashboard, user dashboard)
 - [ ] Full integration testing possible via UI
 
@@ -216,23 +237,24 @@
 ## Current Status
 
 ### Backend
-- **Status**: Subscription, savings, and credit signals detection complete, ready for income signals
-- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, subscription detection, savings detection, credit detection
-- **Next**: PR #9 (feature detection service - income signals)
-- **Priority**: Implement income pattern detection
+- **Status**: All feature detection signals complete, feature computation endpoints working
+- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, all 4 signal detection types (subscription, savings, credit, income), feature computation function, features router, profile router, batch computation script
+- **Next**: PR #12 (Frontend - Operator Dashboard)
+- **Priority**: Build dashboard UI with metrics and charts
 
 ### Frontend
-- **Status**: Structure initialized, ready for component development
-- **Completed**: React 18 + Vite, Shadcn/ui configured, TailwindCSS setup, project directories
-- **Next**: Build UI components after backend endpoints are ready
-- **Priority**: Wait for feature detection endpoints before building UI
+- **Status**: Routing and API setup complete, ready for dashboard UI
+- **Completed**: React 18 + Vite, Shadcn/ui configured, TailwindCSS setup, API client, API service functions, React Router setup, Layout component, page placeholders
+- **Next**: Build Operator Dashboard UI with metrics and charts (PR #12)
+- **Priority**: Implement dashboard data fetching and visualization
 
 ### Database
-- **Status**: ✅ Complete - All models implemented and data loaded
+- **Status**: ✅ Complete - All models implemented, data loaded, features computed
 - **Completed**: SQLAlchemy configuration, all 10 models, relationships, indexes, constraints, initialization
 - **Database File**: `backend/spendsense.db` (verified with DB Browser)
 - **Data Loaded**: 75 users, 272 accounts, 15,590 transactions, 92 liabilities
-- **Next**: Compute behavioral features (PR #6, #7 complete, PR #8 next)
+- **Features Computed**: 142 feature records (71 users × 2 windows: 30d and 180d)
+- **Next**: Persona assignment (after frontend setup)
 
 ### Data Generation
 - **Status**: ✅ Complete and tested
@@ -252,11 +274,14 @@
 - **Usage**: ✅ Data ready for feature detection
 
 ### Feature Detection
-- **Status**: ✅ Subscription, Savings & Credit Signals Complete - Service module created
-- **Completed**: Helper functions, subscription detection logic, pattern recognition, spend calculations, savings detection (net inflow, growth rate, emergency fund), credit detection (utilization, payment patterns, overdue status)
+- **Status**: ✅ All Signal Types Complete - Service module complete with computation endpoints
+- **Completed**: Helper functions, all 4 signal detection types (subscription, savings, credit, income), investment account detection, feature computation function, features router, profile router, batch computation script
 - **Service File**: `backend/app/services/feature_detection.py`
-- **Test Script**: `scripts/test_feature_detection.py` (tests subscription, savings, and credit signals)
-- **Next**: Implement income signals (PR #9)
+- **Routers**: `backend/app/routers/features.py`, `backend/app/routers/profile.py`
+- **Test Script**: `scripts/test_feature_detection.py` (tests all 4 signal types)
+- **Batch Script**: `scripts/compute_all_features.py` (computes features for all users)
+- **Features Computed**: 142 records (71 users × 2 windows)
+- **Next**: Persona assignment (after frontend setup)
 
 ### AI Integration
 - **Status**: Not implemented
@@ -279,5 +304,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #9 Completion**: Income signals detection implemented, ready for feature computation endpoint and persona assignment
+**PR #12 Completion**: Operator Dashboard UI complete with metrics and charts, ready for persona assignment and AI integration
 

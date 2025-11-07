@@ -197,73 +197,72 @@
 ## PR #11: Frontend - Project Setup & Basic Routing
 
 ### Frontend Configuration
-1. Navigate to frontend/ directory
-2. Update `vite.config.js` to set port 5173
-3. Update `vite.config.js` to add proxy for API calls (http://localhost:8000)
-4. Create `.env` file with `VITE_API_BASE_URL=http://localhost:8000`
+- [x] 1. Navigate to frontend/ directory
+- [x] 2. Update `vite.config.js` to set port 5173
+- [x] 3. Create `.env` file with `VITE_API_BASE_URL=http://localhost:8000`
 
 ### API Client Setup
-5. Create `frontend/src/lib/api.js`
-6. Import axios
-7. Create axios instance with baseURL from env variable
-8. Set default headers (Content-Type: application/json)
-9. Add request interceptor for logging (optional)
-10. Add response interceptor for error handling
-11. Export axios instance as `api`
+- [x] 4. Create `frontend/src/lib/api.js`
+- [x] 5. Import axios
+- [x] 6. Create axios instance with baseURL from env variable
+- [x] 7. Set default headers (Content-Type: application/json)
+- [x] 8. Add request interceptor for logging (optional)
+- [x] 9. Add response interceptor for error handling
+- [x] 10. Export axios instance as `api`
 
 ### API Service Functions
-12. Create `frontend/src/lib/apiService.js`
-13. Import api client
-14. Create async function `getUsers(params)` - GET /users
-15. Create async function `getUser(userId)` - GET /users/{userId}
-16. Create async function `getUserProfile(userId, window)` - GET /profile/{userId}
-17. Create async function `getRecommendations(userId, status)` - GET /recommendations/{userId}
-18. Create async function `getOperatorDashboard()` - GET /operator/dashboard
-19. Create async function `getOperatorUserSignals(userId)` - GET /operator/users/{userId}/signals
-20. Create async function `getApprovalQueue(status)` - GET /operator/review
-21. Create async function `approveRecommendation(recId, operatorId, notes)` - POST /recommendations/{recId}/approve
-22. Create async function `bulkApprove(operatorId, recIds)` - POST /recommendations/bulk-approve
-23. Create async function `updateConsent(userId, action)` - POST /consent
-24. Create async function `getConsent(userId)` - GET /consent/{userId}
-25. Export all functions
+- [x] 11. Create `frontend/src/lib/apiService.js`
+- [x] 12. Import api client
+- [x] 13. Create async function `getUsers(params)` - GET /users
+- [x] 14. Create async function `getUser(userId)` - GET /users/{userId}
+- [x] 15. Create async function `getUserProfile(userId, window)` - GET /profile/{userId}
+- [x] 16. Create async function `getRecommendations(userId, status)` - GET /recommendations/{userId}
+- [x] 17. Create async function `getOperatorDashboard()` - GET /operator/dashboard
+- [x] 18. Create async function `getOperatorUserSignals(userId)` - GET /operator/users/{userId}/signals
+- [x] 19. Create async function `getApprovalQueue(status)` - GET /operator/review
+- [x] 20. Create async function `approveRecommendation(recId, operatorId, notes)` - POST /recommendations/{recId}/approve
+- [x] 21. Create async function `bulkApprove(operatorId, recIds)` - POST /recommendations/bulk-approve
+- [x] 22. Create async function `updateConsent(userId, action)` - POST /consent
+- [x] 23. Create async function `getConsent(userId)` - GET /consent/{userId}
+- [x] 24. Export all functions
 
 ### Routing Setup
-26. Update `frontend/src/App.jsx`
-27. Import BrowserRouter, Routes, Route from react-router-dom
-28. Create route structure:
+- [x] 25. Update `frontend/src/App.jsx`
+- [x] 26. Import BrowserRouter, Routes, Route from react-router-dom
+- [x] 27. Create route structure:
     - / → redirect to /operator/dashboard
     - /operator/dashboard → OperatorDashboard
     - /operator/users → OperatorUserList
     - /operator/users/:userId → OperatorUserDetail
     - /operator/approval-queue → OperatorApprovalQueue
     - /user/:userId/dashboard → UserDashboard
-29. Wrap routes in BrowserRouter
+- [x] 28. Wrap routes in BrowserRouter
 
 ### Layout Component
-30. Create `frontend/src/components/Layout.jsx`
-31. Create basic navigation header with links:
+- [x] 29. Create `frontend/src/components/Layout.jsx`
+- [x] 30. Create basic navigation header with links:
     - Operator Dashboard
     - User List
     - Approval Queue
-32. Add main content area that renders children
-33. Style with Tailwind classes
-34. Export Layout component
+- [x] 31. Add main content area that renders children
+- [x] 32. Style with Tailwind classes
+- [x] 33. Export Layout component
 
 ### Page Placeholders
-35. Create `frontend/src/pages/OperatorDashboard.jsx` with placeholder div
-36. Create `frontend/src/pages/OperatorUserList.jsx` with placeholder div
-37. Create `frontend/src/pages/OperatorUserDetail.jsx` with placeholder div
-38. Create `frontend/src/pages/OperatorApprovalQueue.jsx` with placeholder div
-39. Create `frontend/src/pages/UserDashboard.jsx` with placeholder div
-40. Each page should render page title and "Coming soon" message
+- [x] 34. Create `frontend/src/pages/OperatorDashboard.jsx` with placeholder div
+- [x] 35. Create `frontend/src/pages/OperatorUserList.jsx` with placeholder div
+- [x] 36. Create `frontend/src/pages/OperatorUserDetail.jsx` with placeholder div
+- [x] 37. Create `frontend/src/pages/OperatorApprovalQueue.jsx` with placeholder div
+- [x] 38. Create `frontend/src/pages/UserDashboard.jsx` with placeholder div
+- [x] 39. Each page should render page title and "Coming soon" message
 
 ### Testing Navigation
-41. Start backend: `uvicorn app.main:app --reload`
-42. Start frontend: `npm run dev`
-43. Verify frontend accessible at http://localhost:5173
-44. Test navigation between placeholder pages
-45. Verify no console errors
-46. Verify CORS working (check network tab)
+- [ ] 40. Start backend: `uvicorn app.main:app --reload`
+- [ ] 41. Start frontend: `npm run dev`
+- [ ] 42. Verify frontend accessible at http://localhost:5173
+- [ ] 43. Test navigation between placeholder pages
+- [ ] 44. Verify no console errors
+- [ ] 45. Verify CORS working (check network tab)
 
 ---
 
