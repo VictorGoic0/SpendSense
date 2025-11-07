@@ -201,49 +201,49 @@
 ## PR #7: Feature Detection Service - Savings Signals
 
 ### Savings Detection - Account Filtering
-1. Add `compute_savings_signals(db, user_id, window_days)` function to feature_detection.py
-2. Get savings-type accounts for user:
+- [x] 1. Add `compute_savings_signals(db, user_id, window_days)` function to feature_detection.py
+- [x] 2. Get savings-type accounts for user:
    - Account types: savings, money market, cash management, HSA
    - Use `get_accounts_by_type()` helper
-3. If no savings accounts, return zero values for all metrics
+- [x] 3. If no savings accounts, return zero values for all metrics
 
 ### Savings Detection - Net Inflow Calculation
-4. For each savings account:
+- [x] 4. For each savings account:
    - Get all transactions in window
    - Separate deposits (amount > 0) and withdrawals (amount < 0)
    - Calculate net_inflow = sum(deposits) + sum(withdrawals)
-5. Sum net_inflow across all savings accounts
-6. Calculate monthly_net_inflow = net_inflow / (window_days / 30)
+- [x] 5. Sum net_inflow across all savings accounts
+- [x] 6. Calculate monthly_net_inflow = net_inflow / (window_days / 30)
 
 ### Savings Detection - Growth Rate
-7. For each savings account:
+- [x] 7. For each savings account:
    - Get current balance from account record
    - Calculate balance at start of window:
      - Get balance_current
      - Subtract net_inflow during window
    - Calculate growth_rate = (current - start) / start (if start > 0)
-8. Calculate average growth_rate across all savings accounts
+- [x] 8. Calculate average growth_rate across all savings accounts
 
 ### Savings Detection - Emergency Fund
-9. Calculate total savings balance (sum across all savings accounts)
-10. Get checking account transactions to estimate monthly expenses:
+- [x] 9. Calculate total savings balance (sum across all savings accounts)
+- [x] 10. Get checking account transactions to estimate monthly expenses:
     - Filter to expense transactions (amount < 0)
     - Sum absolute values
     - Divide by number of months in window
-11. Calculate emergency_fund_months = savings_balance / avg_monthly_expenses
-12. Handle edge case: if expenses = 0, set emergency_fund_months = 0
+- [x] 11. Calculate emergency_fund_months = savings_balance / avg_monthly_expenses
+- [x] 12. Handle edge case: if expenses = 0, set emergency_fund_months = 0
 
 ### Savings Detection - Response
-13. Return dict with:
+- [x] 13. Return dict with:
     - net_savings_inflow (float)
     - savings_growth_rate (float, 0-1)
     - emergency_fund_months (float)
-14. Add error handling for division by zero
-15. Add logging for debugging
+- [x] 14. Add error handling for division by zero
+- [x] 15. Add logging for debugging
 
 ### Testing Savings Detection
-16. Test with users who have positive savings patterns
-17. Test with users who have no savings accounts
-18. Verify growth rate calculations
-19. Verify emergency fund calculations
-20. Log results for validation
+- [x] 16. Test with users who have positive savings patterns
+- [x] 17. Test with users who have no savings accounts
+- [x] 18. Verify growth rate calculations
+- [x] 19. Verify emergency fund calculations
+- [x] 20. Log results for validation

@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #6 Complete - Feature Detection Service - Subscription Signals Working
+**Status**: PR #7 Complete - Feature Detection Service - Savings Signals Working
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -112,13 +112,38 @@
   - Test script created (`scripts/test_feature_detection.py`)
   - Tests subscription detection for multiple users with both 30-day and 180-day windows
   - Logs results with merchant examples for validation
+- ✅ **PR #7: Feature Detection Service - Savings Signals Complete**
+  - Added `compute_savings_signals()` function to feature_detection.py
+  - Savings account filtering:
+    - Filters accounts by type: savings, money market, cash management, HSA
+    - Returns zero values if no savings accounts found
+  - Net inflow calculation:
+    - Separates deposits (amount > 0) and withdrawals (amount < 0) per account
+    - Calculates net_inflow per account (deposits + withdrawals)
+    - Sums net_inflow across all savings accounts
+    - Normalizes to monthly net inflow (net_inflow / months_in_window)
+  - Growth rate calculation:
+    - Calculates start balance (current balance - net inflow)
+    - Computes growth rate per account: (current - start) / start
+    - Averages growth rates across all savings accounts
+  - Emergency fund calculation:
+    - Calculates total savings balance across all savings accounts
+    - Estimates monthly expenses from checking account transactions (expenses = amount < 0)
+    - Calculates emergency_fund_months: savings_balance / avg_monthly_expenses
+    - Handles edge case: sets to 0 if expenses = 0
+  - Returns dict with:
+    - `net_savings_inflow` (float, monthly average)
+    - `savings_growth_rate` (float, 0-1, average across accounts)
+    - `emergency_fund_months` (float, months of expenses covered)
+  - Error handling: Division by zero protection, logging infrastructure
+  - Test script updated to test savings detection for users with and without savings accounts
+  - Validates growth rate and emergency fund calculations
 
 ### In Progress
-- 🔄 None - Ready for PR #7
+- 🔄 None - Ready for PR #8
 
 ### Not Started
-- ⏳ Savings signals detection - **PR #7 Next**
-- ⏳ Credit signals detection
+- ⏳ Credit signals detection - **PR #8 Next**
 - ⏳ Income signals detection
 - ⏳ Persona assignment engine
 - ⏳ AI recommendation engine
@@ -129,18 +154,20 @@
 
 ## What's Left to Build
 
-### PR #7: Feature Detection Service - Savings Signals (Next)
-- [ ] Add `compute_savings_signals()` function to feature_detection.py
-- [ ] Filter savings-type accounts
-- [ ] Calculate net savings inflow
-- [ ] Calculate savings growth rate
-- [ ] Calculate emergency fund months
-- [ ] Test with users who have savings patterns
+### PR #8: Feature Detection Service - Credit Signals (Next)
+- [ ] Add `compute_credit_signals()` function to feature_detection.py
+- [ ] Query credit card liabilities for user
+- [ ] Calculate average and max utilization
+- [ ] Detect utilization flags (30%, 50%, 80% thresholds)
+- [ ] Detect minimum payment only pattern
+- [ ] Detect interest charges
+- [ ] Detect overdue status
+- [ ] Test with users who have credit card accounts
 
 ### Day 1 Deliverables (MVP)
 - [x] SQLite database schema (10 tables) - **PR #3 Complete**
 - [x] POST `/ingest` endpoint working - **PR #5 Complete**
-- [ ] All behavioral signals computed (30d and 180d windows) - **In Progress (PR #6, #7)**
+- [ ] All behavioral signals computed (30d and 180d windows) - **In Progress (PR #6, #7 complete, PR #8, #9 next)**
 - [ ] React UI components built (operator dashboard, user dashboard)
 - [ ] Full integration testing possible via UI
 
@@ -164,10 +191,10 @@
 ## Current Status
 
 ### Backend
-- **Status**: Subscription signals detection complete, ready for savings signals
-- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, subscription detection
-- **Next**: PR #7 (feature detection service - savings signals)
-- **Priority**: Implement savings pattern detection
+- **Status**: Subscription and savings signals detection complete, ready for credit signals
+- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, subscription detection, savings detection
+- **Next**: PR #8 (feature detection service - credit signals)
+- **Priority**: Implement credit pattern detection
 
 ### Frontend
 - **Status**: Structure initialized, ready for component development
@@ -180,7 +207,7 @@
 - **Completed**: SQLAlchemy configuration, all 10 models, relationships, indexes, constraints, initialization
 - **Database File**: `backend/spendsense.db` (verified with DB Browser)
 - **Data Loaded**: 75 users, 272 accounts, 15,590 transactions, 92 liabilities
-- **Next**: Compute behavioral features (PR #6 complete, PR #7 next)
+- **Next**: Compute behavioral features (PR #6, #7 complete, PR #8 next)
 
 ### Data Generation
 - **Status**: ✅ Complete and tested
@@ -200,11 +227,11 @@
 - **Usage**: ✅ Data ready for feature detection
 
 ### Feature Detection
-- **Status**: ✅ Subscription Signals Complete - Service module created
-- **Completed**: Helper functions, subscription detection logic, pattern recognition, spend calculations
+- **Status**: ✅ Subscription & Savings Signals Complete - Service module created
+- **Completed**: Helper functions, subscription detection logic, pattern recognition, spend calculations, savings detection (net inflow, growth rate, emergency fund)
 - **Service File**: `backend/app/services/feature_detection.py`
-- **Test Script**: `scripts/test_feature_detection.py`
-- **Next**: Implement savings signals (PR #7)
+- **Test Script**: `scripts/test_feature_detection.py` (tests both subscription and savings signals)
+- **Next**: Implement credit signals (PR #8)
 
 ### AI Integration
 - **Status**: Not implemented
@@ -227,5 +254,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #7 Completion**: Savings signals detection implemented, ready for credit signals and income signals
+**PR #8 Completion**: Credit signals detection implemented, ready for income signals and persona assignment
 

@@ -13,8 +13,11 @@ from sqlalchemy import and_, func
 from datetime import datetime, timedelta, date
 from collections import Counter
 from typing import List, Dict, Optional
+import logging
 
 from app.models import Transaction, Account
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -183,5 +186,126 @@ def compute_subscription_signals(db: Session, user_id: str, window_days: int) ->
         "recurring_merchants": len(recurring_merchants),
         "monthly_recurring_spend": monthly_recurring_spend,
         "subscription_spend_share": subscription_spend_share
+    }
+
+
+# ============================================================================
+# Savings Detection
+# ============================================================================
+
+def compute_savings_signals(db: Session, user_id: str, window_days: int) -> Dict[str, float]:
+    """
+    Compute savings-related behavioral signals for a user.
+    
+    Detects:
+    - Net savings inflow (deposits - withdrawals, normalized to monthly)
+    - Savings growth rate (percentage change in balance over window)
+    - Emergency fund months (savings balance / monthly expenses)
+    
+    Args:
+        db: Database session
+        user_id: User ID to analyze
+        window_days: Time window in days (30 or 180)
+    
+    Returns:
+        Dictionary with:
+        - net_savings_inflow: float (monthly average)
+        - savings_growth_rate: float (0-1, average growth rate across accounts)
+        - emergency_fund_months: float (months of expenses covered)
+    """
+    # Get savings-type accounts
+    savings_account_types = ['savings', 'money market', 'cash management', 'HSA']
+    savings_accounts = get_accounts_by_type(db, user_id, savings_account_types)
+    
+    # If no savings accounts, return zero values
+    if not savings_accounts:
+        # No logging needed for normal case
+        return {
+            "net_savings_inflow": 0.0,
+            "savings_growth_rate": 0.0,
+            "emergency_fund_months": 0.0
+        }
+    
+    # Calculate net inflow for each savings account
+    total_net_inflow = 0.0
+    account_growth_rates = []
+    
+    for account in savings_accounts:
+        # Get all transactions for this account in window
+        cutoff_date = date.today() - timedelta(days=window_days)
+        account_transactions = db.query(Transaction).filter(
+            and_(
+                Transaction.account_id == account.account_id,
+                Transaction.date >= cutoff_date
+            )
+        ).all()
+        
+        # Separate deposits and withdrawals
+        deposits = [txn.amount for txn in account_transactions if txn.amount > 0]
+        withdrawals = [txn.amount for txn in account_transactions if txn.amount < 0]
+        
+        # Calculate net inflow for this account
+        account_net_inflow = sum(deposits) + sum(withdrawals)  # withdrawals are already negative
+        total_net_inflow += account_net_inflow
+        
+        # Calculate growth rate for this account
+        current_balance = account.balance_current or 0.0
+        start_balance = current_balance - account_net_inflow
+        
+        if start_balance > 0:
+            growth_rate = (current_balance - start_balance) / start_balance
+            account_growth_rates.append(growth_rate)
+        elif start_balance == 0 and current_balance > 0:
+            # Account started at 0, grew to current_balance
+            account_growth_rates.append(1.0)  # 100% growth (or could use a different calculation)
+        # If start_balance < 0, skip (invalid state)
+    
+    # Calculate monthly net inflow
+    months_in_window = window_days / 30.0
+    net_savings_inflow = total_net_inflow / months_in_window if months_in_window > 0 else 0.0
+    
+    # Calculate average growth rate
+    savings_growth_rate = sum(account_growth_rates) / len(account_growth_rates) if account_growth_rates else 0.0
+    
+    # Calculate total savings balance
+    total_savings_balance = sum(account.balance_current or 0.0 for account in savings_accounts)
+    
+    # Calculate emergency fund months
+    # Get checking account transactions to estimate monthly expenses
+    checking_accounts = get_accounts_by_type(db, user_id, ['checking'])
+    
+    avg_monthly_expenses = 0.0
+    if checking_accounts:
+        # Get all checking account transactions in window
+        checking_transactions = []
+        for checking_account in checking_accounts:
+            cutoff_date = date.today() - timedelta(days=window_days)
+            account_transactions = db.query(Transaction).filter(
+                and_(
+                    Transaction.account_id == checking_account.account_id,
+                    Transaction.date >= cutoff_date
+                )
+            ).all()
+            checking_transactions.extend(account_transactions)
+        
+        # Filter to expense transactions (amount < 0)
+        expenses = [abs(txn.amount) for txn in checking_transactions if txn.amount < 0]
+        total_expenses = sum(expenses)
+        
+        # Calculate average monthly expenses
+        if months_in_window > 0:
+            avg_monthly_expenses = total_expenses / months_in_window
+    
+    # Calculate emergency fund months
+    if avg_monthly_expenses > 0:
+        emergency_fund_months = total_savings_balance / avg_monthly_expenses
+    else:
+        # Edge case: no expenses detected
+        emergency_fund_months = 0.0
+    
+    return {
+        "net_savings_inflow": net_savings_inflow,
+        "savings_growth_rate": savings_growth_rate,
+        "emergency_fund_months": emergency_fund_months
     }
 
