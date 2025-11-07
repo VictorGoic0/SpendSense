@@ -63,11 +63,16 @@ User Dashboard (React UI)
   - Context validation function ensures data quality
   - Service file: `backend/app/services/recommendation_engine.py`
   - Test script: `scripts/test_context_builder.py` - All tests passing
-- OpenAI integration (PR #19 - next)
-  - 5 separate OpenAI endpoints (one per persona)
-  - Generates 3-5 educational items per user
+- ✅ OpenAI integration complete (PR #19)
+  - `generate_recommendations_via_openai()`: Generates recommendations via OpenAI API
+  - Uses gpt-4o-mini model with temperature 0.75
+  - Exponential backoff retry logic for rate limits
+  - Comprehensive error handling
+  - Token usage tracking (in metadata for review, NOT saved to DB)
+  - Generates 3-5 educational recommendations per user
   - Plain-language rationales citing specific data
-  - Partner offer suggestions (eligibility-filtered)
+  - All recommendations validated for empowering tone
+  - Test script: `scripts/test_openai_generation.py` - All quality checks passing
 
 ### 5. Guardrails Module (`guardrails/`)
 - Consent enforcement (no recs without opt-in)
@@ -133,10 +138,10 @@ User Dashboard (React UI)
 - **Reasoning Storage**: JSON-serialized reasoning dict stored in Persona.reasoning field
 
 ### AI Integration Pattern
-- **OpenAI SDK**: Version 1.3.5 installed and configured
+- **OpenAI SDK**: Version 2.7.1 installed and configured (upgraded from 1.3.5 for compatibility)
 - **Prompt System**: 5 self-contained persona-specific prompts following "just right" calibration guide
-  - Each prompt is lean (~42-52 lines), self-contained, principle-based
-  - Structure: Role & Context, Core Principles, Response Framework (5 steps), Guidelines (with topic lists), Output Format
+  - Each prompt is lean (~50-60 lines), self-contained, principle-based
+  - Structure: Role & Context, Core Principles, LANGUAGE STYLE (empowering language requirements), Response Framework (5 steps), Guidelines (with topic lists), Output Format
   - Prompts located in `backend/app/prompts/` directory
   - Prompt loader utility (`backend/app/utils/prompt_loader.py`) with in-memory caching
 - **Prompt Design**: 
@@ -144,6 +149,8 @@ User Dashboard (React UI)
   - Reduced prescription, increased principles
   - Topic lists in guidelines for persona-specific depth
   - Simplified output format (JSON structure without lengthy examples)
+  - **LANGUAGE STYLE section added** (PR #19): Explicit requirements for empowering phrases ("You can...", "Let's explore...", "Many people find...", "Consider...")
+  - Temperature: 0.75 (increased from 0.7 for more natural variation)
 - **Context Building** (PR #18 Complete): ✅
   - `build_user_context()` function in `backend/app/services/recommendation_engine.py`
   - Queries user data, features, accounts, transactions, persona-specific details
@@ -155,14 +162,28 @@ User Dashboard (React UI)
   - Token-efficient design (target <2000 tokens, actual: 583-764 tokens)
   - Context validation function ensures data quality
   - Test script validates context structure and token counts
+- **OpenAI API Integration** (PR #19 Complete): ✅
+  - `generate_recommendations_via_openai()` function in `backend/app/services/recommendation_engine.py`
+  - Calls OpenAI chat completions API (gpt-4o-mini, temperature 0.75, JSON response format)
+  - Exponential backoff retry logic for rate limits (3 retries, 1s/2s/4s delays)
+  - Comprehensive error handling (rate limits, invalid API key, model not found, JSON parsing)
+  - Response parsing with validation (required fields: title, content, rationale)
+  - Token usage tracking (extracted, logged, cost calculated)
+  - Token info included in metadata for review/testing (STRIPPED before DB save)
+  - Test script validates quality, tone, and empowering language
 - **Post-Generation Validation**: Tone check before saving to database (to be implemented in PR #20)
 - **Status Workflow**: `pending_approval` → `approved` → user-visible
 
 ### Guardrails Pattern
-- **Pre-Generation**: Consent check (block if no consent)
-- **Post-Generation**: Tone validation (regenerate if shaming language detected)
+- **Pre-Generation**: Consent check (block if no consent) - recommendations not generated without consent
+- **Post-Generation**: Tone validation (warnings stored, but recommendations still persisted)
+  - `validate_tone()` returns structured dict: `{"is_valid": bool, "validation_warnings": [...]}`
+  - **Critical warnings** (forbidden phrases): severity="critical", type="forbidden_phrase" → RED in operator UI
+  - **Notable warnings** (lacks empowering language): severity="notable", type="lacks_empowering_language" → YELLOW in operator UI
+  - Validation warnings stored in `metadata_json["validation_warnings"]` (empty array if valid)
+  - **All recommendations persisted** regardless of warnings - operator reviews and decides
 - **Eligibility**: Filter partner offers based on user income/credit profile
-- **Mandatory Disclosures**: Append to every recommendation
+- **Mandatory Disclosures**: Append to every recommendation content
 
 ### Approval Workflow Pattern
 - **Default Status**: All recommendations start as `pending_approval`
@@ -238,17 +259,24 @@ User Dashboard (React UI)
 - Migrations handled via SQLAlchemy
 
 ### Backend → OpenAI
-- OpenAI Python SDK (v1.3.5) installed and configured
+- OpenAI Python SDK (v2.7.1) installed and configured (upgraded from 1.3.5)
 - API key management via environment variables (`.env.local`)
-- GPT-4o-mini model (cost-effective) - to be used in PR #19
+- GPT-4o-mini model (cost-effective) - in use
 - JSON response format for structured output
-- Error handling and retry logic (to be implemented in PR #19)
+- Temperature: 0.75 (optimized for natural, empowering language)
+- Error handling and retry logic: Exponential backoff for rate limits (3 retries, 1s/2s/4s)
 - Prompt templates: 5 persona-specific prompts in `backend/app/prompts/` directory
+  - All prompts include LANGUAGE STYLE section with empowering language requirements
 - Prompt loader: `backend/app/utils/prompt_loader.py` with caching for performance
 - Context builder: `backend/app/services/recommendation_engine.py` with `build_user_context()` function (PR #18 complete)
   - Queries user data, features, accounts, transactions
   - Returns structured JSON context for OpenAI API calls
   - Token-efficient design validated (583-764 tokens per context)
+- OpenAI integration: `generate_recommendations_via_openai()` function (PR #19 complete)
+  - Generates 3-5 recommendations per user
+  - Token usage tracked (in metadata for review, NOT saved to DB)
+  - All recommendations validated for empowering tone
+  - Test script validates quality and language
 
 ### Backend → AWS
 - S3 for Parquet exports

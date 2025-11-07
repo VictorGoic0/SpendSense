@@ -1164,36 +1164,100 @@ user_data_payload = {
 
 **Post-Generation Check:**
 ```python
-def validate_tone(content: str) -> tuple[bool, str]:
+def validate_tone(content: str) -> Dict[str, Any]:
     """
-    Checks generated content for inappropriate language.
-    Returns (is_valid, error_message)
+    Validates content for tone compliance.
+    
+    Returns:
+        {
+            "is_valid": bool,  # True if no warnings, False if any warnings exist
+            "validation_warnings": [
+                {
+                    "severity": "critical" | "notable",
+                    "type": "forbidden_phrase" | "lacks_empowering_language",
+                    "message": str  # Human-readable description
+                }
+            ]
+        }
+    
+    Examples:
+        # Valid content (no warnings)
+        {
+            "is_valid": True,
+            "validation_warnings": []
+        }
+        
+        # Invalid: Contains forbidden phrase
+        {
+            "is_valid": False,
+            "validation_warnings": [
+                {
+                    "severity": "critical",
+                    "type": "forbidden_phrase",
+                    "message": "Contains shaming language: 'you're overspending'"
+                }
+            ]
+        }
+        
+        # Invalid: Lacks empowering language
+        {
+            "is_valid": False,
+            "validation_warnings": [
+                {
+                    "severity": "notable",
+                    "type": "lacks_empowering_language",
+                    "message": "Content lacks empowering tone - no empowering keywords found"
+                }
+            ]
+        }
     """
     
-    # Forbidden phrases
+    warnings = []
+    
+    # Forbidden phrases (CRITICAL - RED in operator UI)
     shame_phrases = [
         "you're overspending",
         "bad habit",
         "poor financial decision",
         "irresponsible",
-        "wasteful spending"
+        "wasteful spending",
+        "you should stop",
+        "you need to"
     ]
     
     content_lower = content.lower()
     
     for phrase in shame_phrases:
         if phrase in content_lower:
-            return False, f"Content contains shaming language: '{phrase}'"
+            warnings.append({
+                "severity": "critical",
+                "type": "forbidden_phrase",
+                "message": f"Contains shaming language: '{phrase}'"
+            })
     
-    # Ensure empowering language present
-    empowering_keywords = ["you can", "let's", "many people", "common challenge", "opportunity"]
+    # Ensure empowering language present (NOTABLE - YELLOW in operator UI)
+    empowering_keywords = ["you can", "let's", "many people", "common challenge", "opportunity", "consider", "explore"]
     if not any(keyword in content_lower for keyword in empowering_keywords):
-        return False, "Content lacks empowering tone"
+        warnings.append({
+            "severity": "notable",
+            "type": "lacks_empowering_language",
+            "message": "Content lacks empowering tone - no empowering keywords found"
+        })
     
-    return True, ""
+    return {
+        "is_valid": len(warnings) == 0,
+        "validation_warnings": warnings
+    }
 ```
 
-**If validation fails:** Regenerate with modified prompt emphasizing tone requirements.
+**Validation Flow:**
+1. **All recommendations are persisted** to database with `status='pending_approval'`, regardless of validation warnings
+2. **Validation warnings stored in metadata**: `metadata_json["validation_warnings"]` contains array of warnings (empty if valid)
+3. **Operator UI displays warnings**:
+   - **Critical warnings** (forbidden phrases) → RED badge/alert
+   - **Notable warnings** (lacks empowering language) → YELLOW badge/alert
+4. **Operator can approve/decline** recommendations regardless of warnings (human oversight)
+5. **Warnings are informational** - they flag potential issues but don't block persistence or approval
 
 ### Caching Strategy (Stretch Goal - Redis)
 

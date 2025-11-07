@@ -80,7 +80,7 @@ uvicorn[standard]==0.24.0
 sqlalchemy==2.0.23
 pydantic==2.5.0
 python-dotenv==1.0.0
-openai==1.3.5
+openai==2.7.1
 pandas==2.1.3
 pyarrow==14.0.1
 faker==20.1.0

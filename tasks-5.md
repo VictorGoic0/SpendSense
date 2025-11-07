@@ -246,7 +246,9 @@
 - [ ] 2. Import database models
 
 ### Tone Validation - Forbidden Phrases
-- [ ] 3. Create `validate_tone(content: str) -> tuple[bool, str]`:
+- [ ] 3. Create `validate_tone(content: str) -> Dict[str, Any]`:
+   - Returns structured dict with `is_valid` (bool) and `validation_warnings` (array)
+   - Format: `{"is_valid": bool, "validation_warnings": [{"severity": "critical"|"notable", "type": str, "message": str}]}`
 - [ ] 4. Define list of forbidden shaming phrases:
    - "you're overspending"
    - "bad habit"
@@ -257,7 +259,10 @@
    - "you need to"
 - [ ] 5. Convert content to lowercase for checking
 - [ ] 6. Loop through forbidden phrases
-- [ ] 7. If any phrase found, return (False, f"Contains shaming language: {phrase}")
+- [ ] 7. If any phrase found, add to warnings array:
+   - severity: "critical"
+   - type: "forbidden_phrase"
+   - message: f"Contains shaming language: '{phrase}'"
 
 ### Tone Validation - Empowering Language
 - [ ] 8. Define list of empowering keywords that should be present:
@@ -269,8 +274,13 @@
    - "consider"
    - "explore"
 - [ ] 9. Check if at least one empowering keyword present
-- [ ] 10. If none found, return (False, "Lacks empowering tone")
-- [ ] 11. If all checks pass, return (True, "")
+- [ ] 10. If none found, add to warnings array:
+   - severity: "notable"
+   - type: "lacks_empowering_language"
+   - message: "Content lacks empowering tone - no empowering keywords found"
+- [ ] 11. Return result dict:
+   - If warnings exist: `{"is_valid": False, "validation_warnings": [...]}`
+   - If all checks pass: `{"is_valid": True, "validation_warnings": []}`
 
 ### Consent Validation
 - [ ] 12. Create `check_consent(db, user_id: str) -> bool`:
@@ -356,21 +366,24 @@
 ### Generate Recommendations Endpoint - Validate Tone
 - [ ] 21. For each generated recommendation:
     - Extract content field
-    - Call guardrails.validate_tone()
-    - If validation fails:
-      - Log failure
-      - Either skip recommendation or regenerate
-- [ ] 22. Keep only recommendations that pass tone check
+    - Call guardrails.validate_tone() → returns `{"is_valid": bool, "validation_warnings": [...]}`
+    - Store validation_warnings in recommendation metadata:
+      - Initialize metadata dict if not present
+      - Set `metadata["validation_warnings"] = tone_result["validation_warnings"]`
+      - Empty array if valid, populated array if warnings exist
+    - Log warnings if any (for monitoring)
+    - **IMPORTANT**: Do NOT skip recommendations with warnings - persist all for operator review
 
 ### Generate Recommendations Endpoint - Save to Database
-- [ ] 23. For each valid recommendation:
+- [ ] 23. For each recommendation (including those with warnings):
     - Generate recommendation_id (rec_{uuid})
     - Create Recommendation model instance
     - Set fields: user_id, persona_type, window_days, content_type, title, content, rationale
-    - Set status='pending_approval'
+    - Set status='pending_approval' (all recommendations start pending, regardless of warnings)
     - Set generation_time_ms
     - Set generated_at timestamp
     - Append mandatory disclosure to content
+    - Set metadata_json: Serialize metadata dict (includes validation_warnings) to JSON string
 - [ ] 24. Bulk insert recommendations
 - [ ] 25. Commit transaction
 
@@ -399,8 +412,12 @@
 - [ ] 35. Test with consented user → should succeed
 - [ ] 36. Test with non-consented user → should return 403
 - [ ] 37. Test with user without persona → should return 400
-- [ ] 38. Verify recommendations saved in database
-- [ ] 39. Verify status='pending_approval'
+- [ ] 38. Verify recommendations saved in database (including those with warnings)
+- [ ] 39. Verify status='pending_approval' for all recommendations
 - [ ] 40. Verify content includes disclosure
 - [ ] 41. Verify rationales cite specific data
 - [ ] 42. Check generation_time_ms < 5000
+- [ ] 43. Verify validation_warnings stored in metadata_json:
+    - Empty array for valid recommendations
+    - Populated array with severity/type/message for invalid recommendations
+- [ ] 44. Verify recommendations with warnings are still persisted (not skipped)

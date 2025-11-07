@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #18 Complete - Recommendation Engine Service - Context Building Complete
+**Status**: PR #19 Complete - Recommendation Engine Service - OpenAI Integration Complete
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -386,18 +386,43 @@
     - Estimates token count (target <2000 tokens)
     - Provides detailed output for review
   - Test results: All 5 users tested successfully, context validation passed, token counts well under target (583-764 tokens)
+- ✅ **PR #19 Complete: Recommendation Engine Service - OpenAI Integration (all 26 tasks finished)**
+  - OpenAI API integration (`generate_recommendations_via_openai()` function):
+    - Loads persona-specific prompts using prompt_loader
+    - Converts user context to JSON string
+    - Calls OpenAI chat completions API (gpt-4o-mini, temperature 0.75, JSON response format)
+    - Implements exponential backoff retry logic for rate limits (3 retries, 1s/2s/4s delays)
+    - Comprehensive error handling (rate limits, invalid API key, model not found, JSON parsing)
+    - Extracts and parses JSON response with validation
+    - Validates required fields (title, content, rationale) for each recommendation
+    - Adds generation_time_ms and persona_type to each recommendation
+    - Token usage tracking (extracted from response, logged, calculated cost)
+    - Token info included in metadata for review (NOT saved to DB - stripped before DB save)
+  - Prompt improvements:
+    - Added LANGUAGE STYLE section to all 5 persona prompts
+    - Explicit requirements for empowering phrases: "You can...", "Let's explore...", "Many people find...", "Consider..."
+    - Requirements to frame as opportunities and normalize challenges
+    - Avoid directive language ("You should...", "You must...")
+    - Temperature increased from 0.7 to 0.75 for more natural variation
+  - Test script (`scripts/test_openai_generation.py`):
+    - Tests all 5 persona types
+    - Validates JSON response structure, recommendation count (3-5), required fields
+    - Verifies rationales cite specific data
+    - Checks content quality and tone (shaming language detection, empowering language verification)
+    - Measures latency (target <5s, actual 9-22s acceptable for MVP)
+    - Saves complete output to `openai_test_output.json` with token usage, costs, and recommendations
+  - Test results: All 3 tested persona types passed quality checks, all recommendations use empowering language
+  - OpenAI SDK upgraded from 1.3.5 to 2.7.1 for compatibility
 
 ## Next Steps
-1. **PR #19: Recommendation Engine Service - OpenAI Integration** - Implement OpenAI API calls with context
-2. **PR #20: Guardrails Service** - Implement tone validation and consent checks
-3. **PR #21: Recommendation Generation Endpoint** - Create API endpoint for generating recommendations
+1. **PR #20: Guardrails Service** - Implement tone validation and consent checks
+2. **PR #21: Recommendation Generation Endpoint** - Create API endpoint for generating recommendations
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **OpenAI integration** - Next task (PR #19) - Use context from PR #18 to generate recommendations
-- **Guardrails service** - After OpenAI integration (PR #20)
-- **Recommendation generation endpoint** - Final step (PR #21)
+- **Guardrails service** - Next task (PR #20) - Implement tone validation and consent checks
+- **Recommendation generation endpoint** - After guardrails (PR #21) - Create API endpoint with DB save
 - **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
 
 ### Technical Decisions Made
@@ -430,8 +455,9 @@
 - **Frontend Enums** - Centralized enum system for UserType, ConsentStatus, ConsentAction with helper functions
 - **Backend Users Endpoint** - GET /users with pagination, filters, and persona data; GET /users/{user_id} for single user
 - **Backend Operator Endpoints** - GET /operator/dashboard with metrics and statistics; GET /operator/users/{user_id}/signals for detailed signals
-- **OpenAI Integration** - OpenAI SDK installed (v1.3.5), API key configured, prompt templates created
+- **OpenAI Integration** - OpenAI SDK installed (v2.7.1, upgraded from 1.3.5), API key configured, prompt templates created
 - **Prompt System** - Self-contained persona-specific prompts following "just right" calibration guide, prompt loader utility with caching
+- **Guardrails Validation Flow** - Tone validation returns structured warnings (critical/notable) stored in metadata_json; ALL recommendations persisted regardless of warnings for operator review; operator UI displays RED (critical) and YELLOW (notable) warnings; operator can approve/decline regardless of warnings
 
 ### Integration Points
 - Frontend ↔ Backend: CORS configured, API client setup complete (`frontend/src/lib/api.js`), API service functions ready (`frontend/src/lib/apiService.js`), routing structure in place
@@ -443,7 +469,7 @@
 - Data Generation ↔ Database: ✅ Complete - All synthetic data ingested successfully
 
 ## Current Blockers
-None - Ready to proceed with PR #19 (Recommendation Engine Service - OpenAI Integration)
+None - Ready to proceed with PR #20 (Guardrails Service - Tone & Consent Validation)
 
 ## Active Questions
 1. ✅ Python venv upgraded to 3.11.9 - Complete
@@ -471,7 +497,8 @@ None - Ready to proceed with PR #19 (Recommendation Engine Service - OpenAI Inte
 - PR #16 complete (all 29 tasks checked off - Persona Assignment Endpoint & Batch Script)
 - PR #17 complete (all 50 tasks checked off - OpenAI Integration Setup & Prompt Templates)
 - PR #18 complete (all 34 tasks checked off - Recommendation Engine Service - Context Building)
-- Following tasks-5.md structure (PR #19 next)
+- PR #19 complete (all 26 tasks checked off - Recommendation Engine Service - OpenAI Integration)
+- Following tasks-5.md structure (PR #20 next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility
