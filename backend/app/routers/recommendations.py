@@ -7,7 +7,7 @@ Endpoints for generating AI-powered financial recommendations.
 from fastapi import APIRouter, Depends, HTTPException, Query, status, Response
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Literal
 import uuid
 import json
 import time
@@ -337,6 +337,132 @@ async def generate_recommendations(
         # Rollback database transaction on error
         db.rollback()
         logger.error(f"Error generating recommendations for user {user_id}: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Server error: {str(e)}"
+        )
+
+
+@router.get("/{user_id}")
+async def get_recommendations(
+    user_id: str,
+    status: Optional[Literal["pending_approval", "approved", "overridden", "rejected"]] = Query(
+        default=None,
+        description="Filter by recommendation status"
+    ),
+    window_days: Optional[int] = Query(
+        default=None,
+        ge=1,
+        le=365,
+        description="Filter by window_days (default: return all)"
+    ),
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    Get recommendations for a user.
+    
+    This endpoint:
+    1. Validates user exists
+    2. Queries recommendations with optional filters (status, window_days)
+    3. Returns recommendations ordered by generated_at (newest first)
+    4. Limits results to 50 recommendations
+    
+    Note: Access control will be implemented when authentication is added.
+    
+    Args:
+        user_id: User ID to get recommendations for
+        status: Optional status filter (pending_approval, approved, overridden, rejected)
+        window_days: Optional window_days filter (default: return all)
+        db: Database session
+    
+    Returns:
+        Dictionary with:
+        - recommendations: List of recommendation objects
+        - total: Total count of recommendations
+    
+    Raises:
+        404: User not found
+        500: Server error (database error)
+    """
+    try:
+        # ========================================================================
+        # Validation
+        # ========================================================================
+        
+        # Check if user exists
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if not user:
+            logger.warning(f"User not found: {user_id}")
+            raise HTTPException(status_code=404, detail=f"User with ID '{user_id}' not found")
+        
+        # ========================================================================
+        # Query Recommendations
+        # ========================================================================
+        # TODO: Future authentication will enforce access control properly
+        # For now, return all recommendations when no status filter is provided
+        
+        # Build base query
+        query = db.query(Recommendation).filter(Recommendation.user_id == user_id)
+        
+        # Apply status filter if provided
+        if status:
+            query = query.filter(Recommendation.status == status)
+        
+        # Apply window_days filter if provided
+        if window_days is not None:
+            query = query.filter(Recommendation.window_days == window_days)
+        
+        # Order by generated_at descending (newest first)
+        query = query.order_by(Recommendation.generated_at.desc())
+        
+        # Limit to 50 recommendations (pagination could be added later)
+        recommendations = query.limit(50).all()
+        
+        # Get total count before limiting (for pagination info)
+        total_query = db.query(Recommendation).filter(Recommendation.user_id == user_id)
+        if status:
+            total_query = total_query.filter(Recommendation.status == status)
+        if window_days is not None:
+            total_query = total_query.filter(Recommendation.window_days == window_days)
+        total_count = total_query.count()
+        
+        logger.info(
+            f"Retrieved {len(recommendations)} recommendations for user {user_id} "
+            f"(status={status}, window_days={window_days}, total={total_count})"
+        )
+        
+        # ========================================================================
+        # Response Formatting
+        # ========================================================================
+        
+        # Convert recommendation models to schema objects
+        recommendations_list = []
+        for rec in recommendations:
+            recommendations_list.append({
+                "recommendation_id": rec.recommendation_id,
+                "title": rec.title,
+                "content": rec.content,
+                "rationale": rec.rationale,
+                "status": rec.status,
+                "persona_type": rec.persona_type,
+                "generated_at": rec.generated_at.isoformat() if rec.generated_at else None,
+                "approved_by": rec.approved_by,
+                "approved_at": rec.approved_at.isoformat() if rec.approved_at else None,
+            })
+        
+        # Return JSON response with recommendations list and total count
+        return {
+            "recommendations": recommendations_list,
+            "total": total_count
+        }
+    
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    
+    except Exception as e:
+        # Handle database errors
+        logger.error(f"Error getting recommendations for user {user_id}: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
             detail=f"Server error: {str(e)}"
