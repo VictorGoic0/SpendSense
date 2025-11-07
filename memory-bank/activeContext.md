@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #13 Complete - Frontend Operator User List Page & Backend Endpoints Finished
+**Status**: PR #14 Complete - Frontend Operator User Detail Page Complete
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -247,19 +247,43 @@
     - GET /operator/dashboard: Total users, users with consent, persona distribution (30d), recommendation status breakdown, average latency metrics
   - Router registration: Both routers registered in main.py
   - All functionality tested and working
+- ✅ PR #14 Complete: Frontend - Operator User Detail Page (all 52 implementation tasks finished)
+  - Backend endpoints added:
+    - GET /users/{user_id}: Returns user with personas for both 30d and 180d windows
+    - GET /operator/users/{user_id}/signals: Returns detailed signals for operator view with:
+      - 30d_signals and 180d_signals objects containing subscriptions, savings, credit, income
+      - Recurring merchant names (array), credit card details (per-card), income frequency
+      - Uses UserFeature data for most fields, queries additional details as needed
+  - Frontend components created:
+    - UserInfoCard: Displays user name, email, user type, consent status with badges, consent dates
+    - PersonaDisplay: Shows persona type with large badge, confidence score as percentage, assigned date, color-coded by persona type
+    - SignalDisplay: Comprehensive signal visualization component with 4 views:
+      - Subscriptions: Recurring merchants count, monthly spend, spend share with progress bar, merchant list
+      - Savings: Net inflow, growth rate, emergency fund coverage with color-coded progress bar (red/yellow/green)
+      - Credit: Avg/max utilization with progress bars, per-card details (last_four, utilization, balance, limit), warning badges for flags
+      - Income: Payroll detection badge, avg monthly income, pay gap, variability, cash flow buffer with warnings
+    - Progress component: Shadcn-style progress bar component created
+  - OperatorUserDetail page:
+    - Two-column responsive layout (left: user info + personas, right: signals with tabs)
+    - Tab navigation for signal types (subscriptions, savings, credit, income)
+    - Displays signals for both 30d and 180d windows
+    - Recommendations section: Fetches and displays recommendations with status badges, "Generate Recommendations" button placeholder
+    - Back navigation button linking to user list
+    - Loading states: Skeleton placeholders for all sections
+    - Error states: Alert component with retry functionality
+    - Data fetching: Parallel API calls for user, profile, signals, and recommendations
 
 ## Next Steps
-1. **PR #14: Operator User Detail Page** - Build user detail page with signals and personas
-2. **PR #15: Persona Assignment Engine** - Implement rules-based persona assignment
-3. **PR #16+: AI Recommendation Generation** - Create OpenAI integration with 5 persona-specific endpoints
-4. **PR #17+: Approval Queue** - Implement recommendation approval workflow
+1. **PR #15: Persona Assignment Engine** - Implement rules-based persona assignment
+2. **PR #16+: AI Recommendation Generation** - Create OpenAI integration with 5 persona-specific endpoints
+3. **PR #17+: Approval Queue** - Implement recommendation approval workflow
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Operator User Detail Page** - Next task (PR #14)
-- **Persona assignment engine** - After user detail page (PR #15)
+- **Persona assignment engine** - Next task (PR #15)
 - **AI recommendation engine** - After persona assignment
+- **Approval Queue** - After recommendation generation
 
 ### Technical Decisions Made
 - **Node version** - Node.js 20 LTS (documented in techContext.md and .cursor/rules/)
@@ -286,9 +310,11 @@
 - **Feature Computation** - Combines all signals, saves to database, provides API endpoints for computation and retrieval
 - **Frontend Dashboard** - Operator dashboard complete with metrics cards, charts (persona distribution, recommendation status), loading/error states, responsive layout
 - **Frontend User List** - Operator user list complete with table, filters, pagination, search, loading/error states, responsive layout
+- **Frontend User Detail** - Operator user detail page complete with two-column layout, tabs, signal displays, recommendations section, back navigation, loading/error states
+- **Frontend Components** - UserInfoCard, PersonaDisplay, SignalDisplay (all 4 signal types), Progress component
 - **Frontend Enums** - Centralized enum system for UserType, ConsentStatus, ConsentAction with helper functions
-- **Backend Users Endpoint** - GET /users with pagination, filters, and persona data
-- **Backend Operator Dashboard Endpoint** - GET /operator/dashboard with metrics and statistics
+- **Backend Users Endpoint** - GET /users with pagination, filters, and persona data; GET /users/{user_id} for single user
+- **Backend Operator Endpoints** - GET /operator/dashboard with metrics and statistics; GET /operator/users/{user_id}/signals for detailed signals
 
 ### Integration Points
 - Frontend ↔ Backend: CORS configured, API client setup complete (`frontend/src/lib/api.js`), API service functions ready (`frontend/src/lib/apiService.js`), routing structure in place
@@ -300,7 +326,7 @@
 - Data Generation ↔ Database: ✅ Complete - All synthetic data ingested successfully
 
 ## Current Blockers
-None - Ready to proceed with PR #14 (Operator User Detail Page)
+None - Ready to proceed with PR #15 (Persona Assignment Engine)
 
 ## Active Questions
 1. ✅ Python venv upgraded to 3.11.9 - Complete
@@ -323,7 +349,8 @@ None - Ready to proceed with PR #14 (Operator User Detail Page)
 - PR #11 complete (all 39 tasks checked off)
 - PR #12 complete (all 39 implementation tasks checked off)
 - PR #13 complete (all 61 tasks checked off, including backend endpoints)
-- Following tasks-4.md structure (PR #14 next)
+- PR #14 complete (all 52 implementation tasks checked off, including backend endpoints)
+- Following tasks-4.md structure (PR #15 next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility

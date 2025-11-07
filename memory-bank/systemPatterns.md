@@ -67,7 +67,13 @@ User Dashboard (React UI)
   - Search by name or email
   - Loading skeletons and error handling
   - Backend GET /users endpoint with pagination and filters
-- User detail page with persona distribution (PR #14+)
+- ✅ User detail page (PR #14 Complete)
+  - Two-column layout with user info, personas (30d/180d), and signal displays
+  - Tab navigation for signal types (subscriptions, savings, credit, income)
+  - Signal visualization with progress bars and color coding
+  - Recommendations section with status badges
+  - Back navigation and loading/error states
+  - Backend GET /users/{user_id} and GET /operator/users/{user_id}/signals endpoints
 - Approval queue (pending recommendations) (PR #16+)
 - Override workflow (edit live recommendations) (PR #16+)
 
@@ -163,7 +169,9 @@ User Dashboard (React UI)
 - Fast Refresh compatible (component-only exports)
 - **Backend Endpoints Available**:
   - GET /users - User list with pagination and filters
+  - GET /users/{user_id} - Single user with personas for both windows
   - GET /operator/dashboard - Dashboard metrics and statistics
+  - GET /operator/users/{user_id}/signals - Detailed signals for operator view (30d and 180d)
   - GET /profile/{user_id} - User profile with features and personas
   - POST /features/compute/{user_id} - Compute features for user
   - POST /ingest - Bulk data ingestion
