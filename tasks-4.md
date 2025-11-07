@@ -164,60 +164,60 @@
 - [x] 28. Use Shadcn Card and Progress components
 
 ### Signal Display Component - Savings
-- [ ] 29. In SignalDisplay, add savings view:
+- [x] 29. In SignalDisplay, add savings view:
   - Net savings inflow ($)
   - Savings growth rate (%)
   - Emergency fund coverage (months)
-- [ ] 30. Use progress bar for emergency fund (target: 3-6 months)
-- [ ] 31. Color code: <1 month (red), 1-3 (yellow), 3+ (green)
+- [x] 30. Use progress bar for emergency fund (target: 3-6 months)
+- [x] 31. Color code: <1 month (red), 1-3 (yellow), 3+ (green)
 
 ### Signal Display Component - Credit
-- [ ] 32. In SignalDisplay, add credit view:
+- [x] 32. In SignalDisplay, add credit view:
   - Average utilization (%)
   - Max utilization (%)
   - List of credit cards with individual utilization
   - Flags: minimum payment only, interest charges, overdue
-- [ ] 33. Use progress bars for utilization
-- [ ] 34. Color code utilization: <30% (green), 30-50% (yellow), >50% (red)
-- [ ] 35. Show warning badges for flags
+- [x] 33. Use progress bars for utilization
+- [x] 34. Color code utilization: <30% (green), 30-50% (yellow), >50% (red)
+- [x] 35. Show warning badges for flags
 
 ### Signal Display Component - Income
-- [ ] 36. In SignalDisplay, add income view:
+- [x] 36. In SignalDisplay, add income view:
   - Payroll detected (yes/no badge)
   - Average monthly income ($)
   - Median pay gap (days)
   - Income variability (%)
   - Cash flow buffer (months)
-- [ ] 37. Show warning if buffer < 1 month
-- [ ] 38. Show warning if high variability (>30%)
+- [x] 37. Show warning if buffer < 1 month
+- [x] 38. Show warning if high variability (>30%)
 
 ### User Detail Page Layout
-- [ ] 39. In OperatorUserDetail.jsx, create two-column layout
-- [ ] 40. Left column:
+- [x] 39. In OperatorUserDetail.jsx, create two-column layout
+- [x] 40. Left column:
   - UserInfoCard at top
   - Persona display for 30d
   - Persona display for 180d
-- [ ] 41. Right column:
+- [x] 41. Right column:
   - Tab navigation for signal types
   - SignalDisplay for selected tab (30d signals)
   - SignalDisplay for 180d signals below
 
 ### Recommendations Section
-- [ ] 42. Add section below signals for user recommendations
-- [ ] 43. Fetch recommendations for this user
-- [ ] 44. Display list of recommendations with status badges
-- [ ] 45. Add "Generate Recommendations" button (wire up later)
-- [ ] 46. Show message if no recommendations yet
+- [x] 42. Add section below signals for user recommendations
+- [x] 43. Fetch recommendations for this user
+- [x] 44. Display list of recommendations with status badges
+- [x] 45. Add "Generate Recommendations" button (wire up later)
+- [x] 46. Show message if no recommendations yet
 
 ### Back Navigation
-- [ ] 47. Add back button at top of page
-- [ ] 48. Link back to user list page
-- [ ] 49. Use Shadcn Button component
+- [x] 47. Add back button at top of page
+- [x] 48. Link back to user list page
+- [x] 49. Use Shadcn Button component
 
 ### Loading & Error States
-- [ ] 50. Show loading skeletons for each section
-- [ ] 51. Show error alert if any API call fails
-- [ ] 52. Add retry buttons
+- [x] 50. Show loading skeletons for each section
+- [x] 51. Show error alert if any API call fails
+- [x] 52. Add retry buttons
 
 ### Testing User Detail
 - [ ] 53. Navigate to detail page from user list
