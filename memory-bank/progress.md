@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #17 Complete - OpenAI Integration Setup & Prompt Templates Complete
+**Status**: PR #18 Complete - Recommendation Engine Service - Context Building Complete
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -280,12 +280,30 @@
     - `wealth_builder.txt`: Tax-advantaged investing, asset allocation, retirement planning, estate planning, charitable giving (educational only)
   - Prompt structure: Role & Context, Core Principles, Response Framework (5 steps), Guidelines (with topic lists), Output Format
   - Prompt loader utility: `backend/app/utils/prompt_loader.py` with caching, error handling, validation
+- ✅ **PR #18 Complete: Recommendation Engine Service - Context Building (all 34 tasks finished)**
+  - Recommendation engine service (`backend/app/services/recommendation_engine.py`):
+    - OpenAI client setup function ready for PR #19
+    - User context builder (`build_user_context()`) that queries all necessary user data:
+      - User, UserFeature, Persona records
+      - Top 5 accounts by balance (with masked names)
+      - Last 10 transactions (last 30 days)
+      - High utilization credit cards (when applicable)
+      - Recurring merchants list (when applicable)
+      - Savings account growth info (when applicable)
+    - Context structure includes all behavioral signals, accounts, transactions, and persona-specific data
+    - Context validation function (`validate_context()`) with comprehensive checks
+    - All float values rounded to 2 decimal places
+    - Token-efficient design (limits data to essential items)
+  - Test script (`scripts/test_context_builder.py`):
+    - Tests multiple users with comprehensive validation
+    - Token count estimation (all under 2000 token target)
+    - Data quality checks
+  - Test results: All 5 users tested successfully, context validation passed, token counts 583-764 tokens
 
 ### In Progress
-- 🔄 None - Ready for PR #18
+- 🔄 None - Ready for PR #19
 
 ### Not Started
-- ⏳ Recommendation engine service (context building) - **PR #18 Next**
 - ⏳ OpenAI integration (API calls) - **PR #19 Next**
 - ⏳ Guardrails module - **PR #20 Next**
 - ⏳ Recommendation generation endpoint - **PR #21 Next**
@@ -401,11 +419,13 @@
 - **Next**: AI recommendation generation (PR #17+)
 
 ### AI Integration
-- **Status**: OpenAI SDK installed, prompt templates complete
-- **Completed**: OpenAI SDK (v1.3.5) installed, API key configured, 5 persona-specific prompts created, prompt loader utility with caching
+- **Status**: OpenAI SDK installed, prompt templates complete, context building complete
+- **Completed**: OpenAI SDK (v1.3.5) installed, API key configured, 5 persona-specific prompts created, prompt loader utility with caching, recommendation engine service with context building
 - **Prompt Files**: `backend/app/prompts/` directory with 5 self-contained prompts (high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder)
 - **Prompt Loader**: `backend/app/utils/prompt_loader.py` with `load_prompt()` function and in-memory caching
-- **Next**: Build recommendation engine service with context building (PR #18)
+- **Recommendation Engine**: `backend/app/services/recommendation_engine.py` with `build_user_context()` and `validate_context()` functions
+- **Test Script**: `scripts/test_context_builder.py` - All tests passing, token counts under target
+- **Next**: OpenAI API integration with context (PR #19)
 - **Priority**: Day 2 - after persona assignment
 
 ### Infrastructure

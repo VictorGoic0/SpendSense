@@ -56,10 +56,18 @@ User Dashboard (React UI)
 - **Note**: Synthetic data variance enhancement needed - wealth_builder and variable_income personas not well represented in current test data
 
 ### 4. Recommendation Engine (`recommend/`)
-- 5 separate OpenAI endpoints (one per persona)
-- Generates 3-5 educational items per user
-- Plain-language rationales citing specific data
-- Partner offer suggestions (eligibility-filtered)
+- ✅ Context building service complete (PR #18)
+  - `build_user_context()`: Queries user data, features, accounts, transactions
+  - Returns structured context dict with all behavioral signals and relevant data
+  - Token-efficient design (top 5 accounts, last 10 transactions, top 10 recurring merchants)
+  - Context validation function ensures data quality
+  - Service file: `backend/app/services/recommendation_engine.py`
+  - Test script: `scripts/test_context_builder.py` - All tests passing
+- OpenAI integration (PR #19 - next)
+  - 5 separate OpenAI endpoints (one per persona)
+  - Generates 3-5 educational items per user
+  - Plain-language rationales citing specific data
+  - Partner offer suggestions (eligibility-filtered)
 
 ### 5. Guardrails Module (`guardrails/`)
 - Consent enforcement (no recs without opt-in)
@@ -136,7 +144,17 @@ User Dashboard (React UI)
   - Reduced prescription, increased principles
   - Topic lists in guidelines for persona-specific depth
   - Simplified output format (JSON structure without lengthy examples)
-- **Context Payload**: Structured JSON with user features, accounts, recent transactions (to be implemented in PR #18)
+- **Context Building** (PR #18 Complete): ✅
+  - `build_user_context()` function in `backend/app/services/recommendation_engine.py`
+  - Queries user data, features, accounts, transactions, persona-specific details
+  - Returns structured JSON context with:
+    - Base info: user_id, window_days, persona_type
+    - All behavioral signals (subscription, savings, credit, income)
+    - Top 5 accounts (masked names), last 10 transactions
+    - High utilization cards, recurring merchants, savings info (when applicable)
+  - Token-efficient design (target <2000 tokens, actual: 583-764 tokens)
+  - Context validation function ensures data quality
+  - Test script validates context structure and token counts
 - **Post-Generation Validation**: Tone check before saving to database (to be implemented in PR #20)
 - **Status Workflow**: `pending_approval` → `approved` → user-visible
 
@@ -227,6 +245,10 @@ User Dashboard (React UI)
 - Error handling and retry logic (to be implemented in PR #19)
 - Prompt templates: 5 persona-specific prompts in `backend/app/prompts/` directory
 - Prompt loader: `backend/app/utils/prompt_loader.py` with caching for performance
+- Context builder: `backend/app/services/recommendation_engine.py` with `build_user_context()` function (PR #18 complete)
+  - Queries user data, features, accounts, transactions
+  - Returns structured JSON context for OpenAI API calls
+  - Token-efficient design validated (583-764 tokens per context)
 
 ### Backend → AWS
 - S3 for Parquet exports

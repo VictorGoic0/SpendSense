@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #17 Complete - OpenAI Integration Setup & Prompt Templates Complete
+**Status**: PR #18 Complete - Recommendation Engine Service - Context Building Complete
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -352,18 +352,50 @@
     - Reduced prescription, increased principles (following "just right" calibration guide)
     - Simplified output format (no lengthy examples)
     - Topic lists included in guidelines for persona-specific depth
+- ✅ **PR #18 Complete: Recommendation Engine Service - Context Building (all 34 tasks finished)**
+  - Recommendation engine service (`backend/app/services/recommendation_engine.py`):
+    - OpenAI client setup function (`get_openai_client()`) with API key from environment
+    - User context builder (`build_user_context()`) that queries:
+      - User record (user_id, basic info)
+      - UserFeature record for window (all behavioral signals)
+      - Persona record for window (persona_type)
+      - Account records (top 5 by balance, with masked names like "Checking ****1234")
+      - Recent transactions (last 10, last 30 days, with date, merchant, amount, type)
+      - High utilization credit cards (when utilization ≥ 50%, includes balance, limit, utilization %, interest estimates)
+      - Recurring merchants list (merchants with 3+ transactions in window)
+      - Savings account growth info (when applicable, includes count, total balance, growth rate, emergency fund months)
+    - Context structure:
+      - Base info: user_id, window_days, persona_type
+      - Subscription signals: recurring_merchants, monthly_recurring_spend, subscription_spend_share
+      - Savings signals: net_savings_inflow, savings_growth_rate, emergency_fund_months
+      - Credit signals: avg_utilization, max_utilization, utilization flags, payment patterns, interest/overdue status
+      - Income signals: payroll_detected, median_pay_gap_days, income_variability, cash_flow_buffer_months, avg_monthly_income
+      - Accounts: List of top 5 accounts with masked names and balances
+      - Recent transactions: Last 10 transactions with formatted dates and amounts
+      - Optional: high_utilization_cards, recurring_merchants, savings_accounts (when applicable)
+    - Context validation (`validate_context()`):
+      - Checks all required fields present
+      - Validates data types
+      - Logs errors for debugging
+    - All float values rounded to 2 decimal places for readability
+    - Token efficiency: Limits to top 5 accounts, last 10 transactions, top 10 recurring merchants
+  - Test script (`scripts/test_context_builder.py`):
+    - Tests context building for multiple users
+    - Validates context structure and required fields
+    - Checks data quality and realism
+    - Estimates token count (target <2000 tokens)
+    - Provides detailed output for review
+  - Test results: All 5 users tested successfully, context validation passed, token counts well under target (583-764 tokens)
 
 ## Next Steps
-1. **PR #18: Recommendation Engine Service - Context Building** - Build user context from database for OpenAI
-2. **PR #19: Recommendation Engine Service - OpenAI Integration** - Implement OpenAI API calls
-3. **PR #20: Guardrails Service** - Implement tone validation and consent checks
-4. **PR #21: Recommendation Generation Endpoint** - Create API endpoint for generating recommendations
+1. **PR #19: Recommendation Engine Service - OpenAI Integration** - Implement OpenAI API calls with context
+2. **PR #20: Guardrails Service** - Implement tone validation and consent checks
+3. **PR #21: Recommendation Generation Endpoint** - Create API endpoint for generating recommendations
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Recommendation engine context building** - Next task (PR #18)
-- **OpenAI integration** - After context building (PR #19)
+- **OpenAI integration** - Next task (PR #19) - Use context from PR #18 to generate recommendations
 - **Guardrails service** - After OpenAI integration (PR #20)
 - **Recommendation generation endpoint** - Final step (PR #21)
 - **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
@@ -411,7 +443,7 @@
 - Data Generation ↔ Database: ✅ Complete - All synthetic data ingested successfully
 
 ## Current Blockers
-None - Ready to proceed with PR #18 (Recommendation Engine Service - Context Building)
+None - Ready to proceed with PR #19 (Recommendation Engine Service - OpenAI Integration)
 
 ## Active Questions
 1. ✅ Python venv upgraded to 3.11.9 - Complete
@@ -438,7 +470,8 @@ None - Ready to proceed with PR #18 (Recommendation Engine Service - Context Bui
 - PR #15 complete (all 29 tasks checked off - Persona Assignment Service)
 - PR #16 complete (all 29 tasks checked off - Persona Assignment Endpoint & Batch Script)
 - PR #17 complete (all 50 tasks checked off - OpenAI Integration Setup & Prompt Templates)
-- Following tasks-5.md structure (PR #18 next)
+- PR #18 complete (all 34 tasks checked off - Recommendation Engine Service - Context Building)
+- Following tasks-5.md structure (PR #19 next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility
