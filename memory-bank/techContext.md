@@ -49,7 +49,13 @@ python3 -m venv venv  # Uses Python 3.11.9 (via pyenv)
 source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 pip install --upgrade pip
 pip install -r requirements.txt
+# Development (with auto-reload)
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# Production/Concurrent requests (with workers) - RECOMMENDED
+uvicorn app.main:app --workers 4 --host 0.0.0.0 --port 8000
+# Note: Using 4 workers prevents blocking operations (like recommendation generation) from blocking other requests
+# Combined with SQLite WAL mode, this enables concurrent database access
 ```
 
 **Note**: Ensure Python 3.11+ is active (check with `python --version`). If using pyenv, set global version: `pyenv global 3.11.9`
@@ -70,6 +76,14 @@ AWS_SECRET_ACCESS_KEY=...
 AWS_DEFAULT_REGION=us-east-1
 S3_BUCKET_NAME=spendsense-analytics
 ```
+
+### Database Configuration
+- **SQLite with WAL Mode**: Enabled Write-Ahead Logging for concurrent access
+  - Allows multiple readers while a writer is active
+  - Prevents blocking when recommendation generation is running
+  - Automatically enabled via SQLAlchemy event listener in `backend/app/database.py`
+  - Creates `spendsense.db-wal` and `spendsense.db-shm` files (normal, managed by SQLite)
+  - See `docs/DECISIONS.md` and `docs/LIMITATIONS.md` for details and trade-offs
 
 ## Dependencies
 
@@ -156,11 +170,14 @@ mangum==0.17.0
 ## Development Workflow
 
 ### Local Development
-1. Start backend: `uvicorn app.main:app --reload`
+1. Start backend:
+   - Development: `uvicorn app.main:app --reload` (single worker, auto-reload)
+   - Production/Concurrent: `uvicorn app.main:app --workers 4 --host 0.0.0.0 --port 8000` (4 workers, no auto-reload)
 2. Start frontend: `npm run dev`
 3. Backend runs on `http://localhost:8000`
 4. Frontend runs on `http://localhost:5173`
 5. Frontend proxies API calls to backend
+6. **Note**: Use workers (4) for concurrent request handling - prevents blocking during recommendation generation
 
 ### Testing
 - Backend: `pytest tests/ -v`

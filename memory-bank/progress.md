@@ -632,6 +632,22 @@
 - **Latency**: Target <5 seconds per user recommendation generation
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
+## Server Concurrency & Performance
+
+### Concurrency Optimizations (PR #26)
+- ✅ **Uvicorn Workers**: Running with 4 workers for concurrent request handling
+  - Prevents blocking operations (like recommendation generation) from blocking other requests
+  - Each worker is a separate process, allowing true parallelism
+  - Command: `uvicorn app.main:app --workers 4 --host 0.0.0.0 --port 8000`
+- ✅ **SQLite WAL Mode**: Enabled Write-Ahead Logging for concurrent database access
+  - Allows multiple readers while a writer is active
+  - Prevents user list queries from hanging during recommendation generation
+  - Implemented via SQLAlchemy event listener in `backend/app/database.py`
+  - Trade-offs documented in DECISIONS.md and LIMITATIONS.md
+- ✅ **Issue Resolved**: User list no longer hangs when generating recommendations
+  - Combination of 4 workers + WAL mode fixes the blocking issue
+  - Verified and working in development
+
 ## Next Milestone
 **User Dashboard**: User-facing dashboard with consent toggle and recommendation display (PR #27)
 

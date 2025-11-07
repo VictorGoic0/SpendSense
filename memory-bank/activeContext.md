@@ -1,9 +1,17 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #26 Complete - Frontend Approval Queue Page Complete
+**Status**: PR #26 Complete - Frontend Approval Queue Page Complete + Server Concurrency Optimizations
 
 ## Recent Changes
+- ✅ **Server Concurrency Optimizations Complete**
+  - Implemented uvicorn workers (4 workers) for concurrent request handling
+  - Enabled SQLite WAL (Write-Ahead Logging) mode for concurrent reads during writes
+  - Fixed hanging issue: User list no longer hangs when recommendation generation is running
+  - Workers allow multiple requests to be processed concurrently even with blocking operations
+  - WAL mode allows database reads while writes are in progress
+  - Documentation updated: README.md, techContext.md, DECISIONS.md, LIMITATIONS.md, FRAMEWORK_CONCURRENCY_COMPARISON.md
+  - Location: `backend/app/database.py` (WAL mode), server startup command (workers)
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
   - Database configuration complete (SQLite setup with SQLAlchemy)
   - All 10 SQLAlchemy models implemented:

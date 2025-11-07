@@ -105,8 +105,15 @@ pip install -r requirements.txt
 ```
 
 6. Start the FastAPI server:
+
+**Development (with auto-reload):**
 ```bash
 uvicorn app.main:app --reload
+```
+
+**Production/Concurrent requests (with workers):**
+```bash
+uvicorn app.main:app --workers 4 --host 0.0.0.0 --port 8000
 ```
 
 The API will be available at `http://localhost:8000`
@@ -451,10 +458,19 @@ cd backend
 source venv/bin/activate  # or venv\Scripts\activate on Windows
 ```
 
-2. **Run server with auto-reload**:
+2. **Run server**:
+
+**Development (with auto-reload):**
 ```bash
 uvicorn app.main:app --reload
 ```
+
+**Production/Concurrent requests (with workers):**
+```bash
+uvicorn app.main:app --workers 4 --host 0.0.0.0 --port 8000
+```
+
+**Note**: Using `--workers 4` runs 4 separate processes, allowing concurrent request handling even with blocking operations (like recommendation generation). This prevents one long-running request from blocking others.
 
 3. **Access API documentation**:
 - Swagger UI: http://localhost:8000/docs

@@ -15,6 +15,9 @@ This document outlines known limitations and constraints of the SpendSense MVP.
 - **SQLite for MVP**: Not suitable for production scale or concurrent users
 - **No Connection Pooling**: SQLite has limited concurrency support
 - **Migration Required**: Must migrate to PostgreSQL for production
+- **WAL Mode Backup Complexity**: With WAL mode enabled, backups must include both `spendsense.db` and `spendsense.db-wal` files, or checkpoint before backup
+- **Network File Systems**: WAL mode doesn't work on network-mounted drives (NFS, SMB) - requires local storage
+- **WAL File Growth**: WAL file can grow if checkpoints don't run frequently (SQLite auto-checkpoints, but manual checkpoints recommended before backups)
 
 ### AI/ML Limitations
 - **Non-Deterministic Outputs**: GPT-4o-mini outputs vary between runs

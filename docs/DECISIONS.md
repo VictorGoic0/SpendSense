@@ -20,6 +20,28 @@ This document tracks key architectural and technical decisions made during the d
 - Easy migration path to PostgreSQL for production
 - File-based, easy to backup/restore
 
+### SQLite WAL Mode for Concurrency
+**Decision**: Enable WAL (Write-Ahead Logging) mode for SQLite to support concurrent reads during writes
+**Rationale**:
+- Multiple uvicorn workers need concurrent database access
+- Default SQLite mode blocks all reads during write transactions
+- WAL mode allows multiple readers while a writer is active
+- Prevents user list queries from hanging during recommendation generation
+- Essential for multi-worker FastAPI deployment
+**Implementation**:
+- Enabled via SQLAlchemy event listener in `backend/app/database.py`
+- Runs `PRAGMA journal_mode=WAL` on every database connection
+- Creates `spendsense.db-wal` and `spendsense.db-shm` files (normal, managed by SQLite)
+- Location: `backend/app/database.py` lines 23-28
+**Trade-offs**:
+- Backup complexity: Must backup both main file and WAL file, or checkpoint before backup
+- Network file systems: WAL mode doesn't work on network-mounted drives (NFS, SMB)
+- WAL file growth: Can grow if checkpoints don't run (SQLite auto-checkpoints periodically)
+- Recovery: If WAL file is corrupted, recent transactions might be lost
+**Mitigation**:
+- For production backups, run `PRAGMA wal_checkpoint(TRUNCATE)` before backup
+- WAL mode is SQLite-specific and won't be needed when migrating to PostgreSQL
+
 ### React 18 + Vite
 **Decision**: Use React 18 with Vite as build tool
 **Rationale**:
