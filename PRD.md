@@ -2556,4 +2556,508 @@ mangum==0.17.0  # AWS Lambda adapter
 
 ---
 
+## Feature Extension: Product Recommendations
+
+### Overview
+
+SpendSense will recommend relevant financial products (savings accounts, credit cards, apps, services) alongside educational content. Products are matched to users based on persona type and behavioral signals, then filtered by eligibility criteria to ensure appropriate recommendations.
+
+### Goals
+
+1. **Hybrid Recommendations**: Generate 2-3 product recommendations per user in addition to 2-3 educational recommendations (total 3-5 items)
+2. **Smart Matching**: Match products based on persona type and specific financial signals
+3. **Eligibility Filtering**: Apply hard filters for income, credit utilization, and existing accounts
+4. **Realistic Catalog**: Generate 20-25 realistic products using LLM (GPT-4o)
+5. **Transparent Display**: Show product offers with benefits, partner links, and mandatory disclosure text in UI
+
+### Product Types & Categories
+
+#### Product Types
+- `savings_account` - High-yield savings accounts, CDs, money market accounts
+- `credit_card` - Balance transfer cards, cash back cards, rewards cards
+- `app` - Budgeting apps, expense trackers, financial planning tools
+- `service` - Subscription managers, bill negotiation, credit counseling
+- `investment_account` - Robo-advisors, retirement planning, brokerage accounts
+
+#### Product Categories
+- `balance_transfer` - 0% APR balance transfer credit cards
+- `hysa` - High-yield savings accounts
+- `budgeting_app` - Budgeting and expense tracking applications
+- `subscription_manager` - Subscription tracking and cancellation services
+- `robo_advisor` - Automated investment management
+- `personal_loan` - Debt consolidation loans
+- `cash_back_card` - Cash back rewards credit cards
+- `credit_counseling` - Free or paid credit counseling services
+
+### Database Schema Extension
+
+#### product_offers Table
+```sql
+CREATE TABLE product_offers (
+    product_id TEXT PRIMARY KEY,
+    product_name TEXT NOT NULL,
+    product_type TEXT NOT NULL, -- savings_account, credit_card, app, service, investment_account
+    category TEXT NOT NULL, -- balance_transfer, hysa, budgeting_app, etc.
+    persona_targets TEXT NOT NULL, -- JSON array: ["high_utilization", "savings_builder"]
+    
+    -- Eligibility criteria
+    min_income REAL DEFAULT 0,
+    max_credit_utilization REAL DEFAULT 1.0,
+    requires_no_existing_savings BOOLEAN DEFAULT FALSE,
+    requires_no_existing_investment BOOLEAN DEFAULT FALSE,
+    min_credit_score INTEGER,
+    
+    -- Content
+    short_description TEXT NOT NULL,
+    benefits TEXT NOT NULL, -- JSON array of benefit strings
+    typical_apy_or_fee TEXT,
+    partner_link TEXT,
+    disclosure TEXT NOT NULL,
+    
+    -- Business
+    partner_name TEXT NOT NULL,
+    commission_rate REAL DEFAULT 0.0,
+    priority INTEGER DEFAULT 1,
+    active BOOLEAN DEFAULT TRUE,
+    
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_product_offers_persona ON product_offers(persona_targets);
+CREATE INDEX idx_product_offers_active ON product_offers(active);
+```
+
+#### recommendations Table Extension
+```sql
+ALTER TABLE recommendations ADD COLUMN content_type TEXT DEFAULT 'education';
+ALTER TABLE recommendations ADD COLUMN product_id TEXT;
+ALTER TABLE recommendations ADD FOREIGN KEY (product_id) REFERENCES product_offers(product_id);
+```
+
+### Product Catalog Generation
+
+#### LLM-Based Generation
+**Tool**: OpenAI GPT-4o  
+**Script**: `scripts/generate_product_catalog.py`  
+**Output**: `data/product_catalog.json`  
+**Cost**: ~$0.20 (one-time)
+
+**Prompt Structure**:
+- Generate 20-25 realistic financial products
+- 4-5 products per persona (high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder)
+- Include realistic product names (e.g., "Chase Slate Edge", "Marcus High-Yield Savings")
+- Set appropriate eligibility criteria based on product type
+- Generate 3-5 specific benefits per product
+- Use current market APY/fee rates
+
+**Example Products**:
+
+```json
+{
+  "product_id": "prod_001",
+  "product_name": "Chase Slate Edge",
+  "product_type": "credit_card",
+  "category": "balance_transfer",
+  "persona_targets": ["high_utilization"],
+  "min_income": 2500,
+  "max_credit_utilization": 0.85,
+  "min_credit_score": 670,
+  "short_description": "0% intro APR for 18 months on balance transfers",
+  "benefits": [
+    "0% intro APR on balance transfers for 18 months",
+    "No balance transfer fee for first 60 days",
+    "$0 annual fee",
+    "Credit score monitoring included"
+  ],
+  "typical_apy_or_fee": "0% intro APR for 18mo",
+  "disclosure": "This is educational content, not financial advice..."
+}
+```
+
+#### Product Seeding
+**Script**: `scripts/seed_product_catalog.py`
+- Clears existing products
+- Loads JSON catalog
+- Inserts into database
+- Prints distribution statistics
+
+### Product Matching Logic
+
+#### Relevance Scoring Algorithm
+
+**Service**: `backend/app/services/product_matcher.py`
+
+**Scoring Rules** (base score 0.5, add points for relevance):
+
+**Balance Transfer Cards**:
+- +0.3 if avg_utilization > 0.5
+- +0.2 if interest_charges_present
+- +0.2 if avg_utilization > 0.7 (bonus for very high)
+
+**HYSA (High-Yield Savings)**:
+- +0.4 if net_savings_inflow > 0 AND emergency_fund_months < 3
+- +0.2 if savings_growth_rate > 0.02
+- -0.5 if has existing HYSA (penalty)
+
+**Budgeting Apps**:
+- +0.3 if income_variability > 0.3
+- +0.3 if financial_buffer_days < 30
+- +0.2 if avg_monthly_expenses_volatility > 0.25
+
+**Subscription Managers**:
+- +0.4 if recurring_merchants >= 5
+- +0.3 if subscription_spend_share > 0.2
+
+**Investment Products (Robo-Advisors)**:
+- +0.4 if monthly_income > 5000 AND avg_utilization < 0.3
+- +0.3 if emergency_fund_months >= 3
+- -0.4 if has existing investment account (penalty)
+
+**Final Score**: Clamp to [0.0, 1.0]
+
+#### Matching Flow
+
+1. Query active products where persona_targets contains user's persona
+2. For each product, calculate relevance_score using signals
+3. Filter out products with score < 0.5 (low relevance)
+4. Sort by relevance_score descending
+5. Return top 3 products
+
+### Eligibility Filtering
+
+#### Guardrails Service Extension
+**Service**: `backend/app/services/guardrails.py`  
+**Function**: `check_product_eligibility()`
+
+**Hard Filters** (returns `(is_eligible: bool, reason: str)`):
+
+1. **Income Requirements**:
+   - If product.min_income > user's avg_monthly_income → not eligible
+   - Reason: "Income below minimum requirement"
+
+2. **Credit Utilization**:
+   - If product.max_credit_utilization < user's avg_utilization → not eligible
+   - Reason: "Credit utilization too high"
+
+3. **Existing Savings Account**:
+   - If product.requires_no_existing_savings AND user has savings account → not eligible
+   - Reason: "Already has savings account"
+
+4. **Existing Investment Account**:
+   - If product.requires_no_existing_investment AND user has investment account → not eligible
+   - Reason: "Already has investment account"
+
+5. **Category-Specific Rules**:
+   - Balance transfer cards: Require avg_utilization >= 0.3 (only show if meaningful balance to transfer)
+   - Reason: "Balance transfer not beneficial at current utilization"
+
+### Hybrid Recommendation Engine
+
+#### Updated Flow
+
+**Service**: `backend/app/services/recommendation_engine.py`  
+**Function**: `generate_combined_recommendations()`
+
+**Steps**:
+
+1. **Generate Educational Recommendations** (existing logic)
+   - Call OpenAI with persona-specific prompt
+   - Generate 2-3 educational items
+   - Set `content_type = 'education'`
+
+2. **Generate Product Recommendations** (new logic)
+   - Get user features and accounts
+   - Call `match_products()` from product_matcher
+   - Get top 3 matched products with scores
+   - Apply `check_product_eligibility()` to each
+   - Take top 1-2 eligible products
+   - Set `content_type = 'partner_offer'`
+   - Format product data for recommendation structure
+
+3. **Combine and Store**
+   - Merge educational and product recommendations
+   - Target total: 3-5 recommendations (2-3 education + 1-2 products)
+   - Generate recommendation_id for each
+   - Store in recommendations table with appropriate content_type
+   - Return combined list
+
+### API Updates
+
+#### Generate Recommendations Endpoint Update
+**Endpoint**: `POST /recommendations/generate/{user_id}`  
+**Changes**:
+- Replace `generate_recommendations()` with `generate_combined_recommendations()`
+- Store both content types in database
+- Return mixed list in response
+
+**Response Example**:
+```json
+{
+  "recommendations": [
+    {
+      "recommendation_id": "rec_123",
+      "content_type": "education",
+      "title": "Understanding Credit Utilization Impact",
+      "content": "Your credit utilization of 68% is impacting...",
+      "rationale": "With average utilization at 68%, this is..."
+    },
+    {
+      "recommendation_id": "rec_124",
+      "content_type": "partner_offer",
+      "product_id": "prod_001",
+      "product_name": "Chase Slate Edge",
+      "short_description": "0% intro APR for 18 months",
+      "benefits": ["0% intro APR...", "No balance transfer fee..."],
+      "partner_link": "https://example.com/prod_001",
+      "disclosure": "This is educational content...",
+      "rationale": "With your credit utilization at 68%, this card could save you $87/month in interest."
+    }
+  ]
+}
+```
+
+#### Optional: Product Management API
+**Router**: `backend/app/routers/products.py`
+
+```python
+GET /products - List all products
+GET /products/{product_id} - Get single product
+POST /products - Create product (manual additions)
+PUT /products/{product_id} - Update product
+DELETE /products/{product_id} - Deactivate product (soft delete)
+```
+
+### Frontend Updates
+
+#### RecommendationCard Component Extension
+**File**: `frontend/src/components/RecommendationCard.jsx`
+
+**Changes**:
+- Detect `content_type` field
+- Render different layouts based on type
+
+**For Education Type** (existing):
+- Display title, markdown content, rationale
+- Keep existing styling
+
+**For Partner Offer Type** (new):
+- Display "Partner Offer" badge (secondary variant)
+- Show product_name as title
+- Show partner_name as subtitle
+- Display short_description
+- Show benefits as bulleted list with checkmarks (✓)
+- Display typical_apy_or_fee prominently if present
+- Add "Learn More" button (links to partner_link, opens in new tab)
+- Display disclosure text (text-xs, muted, italic, bottom of card)
+- Light blue/purple background to distinguish from education cards
+- Display rationale (common for both types)
+
+**Example Product Card UI**:
+```
+┌─────────────────────────────────────────────┐
+│ 🏷️ Partner Offer                            │
+│                                             │
+│ Chase Slate Edge                            │
+│ by Chase                                    │
+│                                             │
+│ 0% intro APR for 18 months on balance      │
+│ transfers                                   │
+│                                             │
+│ ┌─ Benefits ─────────────────────────────┐ │
+│ │ ✓ 0% intro APR for 18 months          │ │
+│ │ ✓ No balance transfer fee (first 60d) │ │
+│ │ ✓ $0 annual fee                       │ │
+│ │ ✓ Credit score monitoring included    │ │
+│ └──────────────────────────────────────── │ │
+│                                             │
+│ 📊 0% intro APR for 18mo                   │
+│                                             │
+│ [Learn More →]                              │
+│                                             │
+│ Why: With your credit utilization at 68%,  │
+│ this card could save you $87/month in      │
+│ interest.                                   │
+│                                             │
+│ ⓘ This is educational content, not         │
+│   financial advice. Product terms subject   │
+│   to change.                                │
+└─────────────────────────────────────────────┘
+```
+
+#### UserDashboard Updates
+**File**: `frontend/src/pages/UserDashboard.jsx`
+
+**Changes**: Minimal (RecommendationCard handles rendering)
+- Verify recommendations list displays mix naturally
+- Test with both content types
+
+#### OperatorUserDetail Updates
+**File**: `frontend/src/pages/OperatorUserDetail.jsx`
+
+**Changes**:
+- Show content_type column in recommendations table
+- Display product_name for partner_offer rows
+- Add "Product" badge or icon
+- Optional: Filter dropdown (All / Educational Only / Products Only)
+
+### Testing Strategy
+
+#### Unit Tests
+
+**File**: `backend/tests/test_product_matcher.py`
+- Test relevance scoring for all product categories
+- Verify score calculations with different user features
+- Test that low-relevance products are filtered out
+
+**File**: `backend/tests/test_product_eligibility.py`
+- Test income requirements
+- Test credit utilization limits
+- Test existing account checks
+- Test category-specific rules
+
+#### Integration Tests
+
+**File**: `backend/tests/test_product_recommendations_integration.py`
+- Test full flow: generation → matching → filtering → storage
+- Verify mix of education + products returned
+- Test edge cases (no eligible products, all products filtered)
+
+#### Manual Testing
+1. Generate product catalog
+2. Seed into database
+3. Generate recommendations for each persona type
+4. Verify product matches make sense
+5. Test approval workflow for product recommendations
+6. Verify frontend display (benefits, links, disclosure)
+
+### Compliance & Legal
+
+#### Required Disclaimers
+
+All product recommendations MUST include:
+```
+This is educational content, not financial advice. Product terms, rates, and 
+availability subject to change. SpendSense may receive compensation from partners. 
+Consult a licensed financial advisor for personalized guidance.
+```
+
+#### Data Usage
+- Product recommendations based on transaction data (already consented)
+- No additional consent required beyond existing consent flow
+- Users can revoke consent anytime (removes all recommendations)
+
+#### Affiliate Disclosure
+- Clearly mark partner offers as "Partner Offer"
+- Disclose potential compensation (even if $0 for MVP)
+- No deceptive marketing practices
+
+### Success Metrics
+
+**Coverage**:
+- % of users receiving at least 1 product recommendation
+- Target: 60-80% (not all users will be eligible for all products)
+
+**Eligibility**:
+- % of matched products that pass eligibility filtering
+- Target: >50% (indicates matching logic is working)
+
+**Mix**:
+- Average ratio of educational to product recommendations
+- Target: 2:1 to 3:1 (more educational content than products)
+
+**Quality**:
+- Operator approval rate for product recommendations
+- Target: >80% (high confidence in matching + eligibility logic)
+
+### Implementation Timeline
+
+**Total: 4-6 hours across 8 PRs**
+
+#### PR #38: Database Schema & Product Catalog Generation (1-2 hours)
+- Create product_offers table migration
+- Generate product catalog via GPT-4o
+- Review and validate generated products
+- Create seeding script
+
+#### PR #39: Product Seeding & Database Population (30 min)
+- Implement seeding script
+- Test database insertion
+- Verify data integrity
+
+#### PR #40: Product Matching Service (60 min)
+- Implement relevance scoring algorithm
+- Create product matching function
+- Generate rationales citing user data
+
+#### PR #41: Enhanced Guardrails - Product Eligibility (45 min)
+- Implement eligibility checking
+- Add category-specific rules
+- Integration with product matcher
+
+#### PR #42: Hybrid Recommendation Engine (45 min)
+- Update recommendation engine
+- Combine education + products
+- Update database storage
+
+#### PR #43: Frontend - Product Recommendation Display (1 hour)
+- Update RecommendationCard component
+- Add product card styling
+- Test with both content types
+
+#### PR #44: Product Management API (Optional) (30 min)
+- CRUD endpoints for operators
+- Product filtering and search
+
+#### PR #45: Unit Tests & Documentation (30-60 min)
+- Write 20+ unit tests
+- Update README and decision log
+- Create product catalog documentation
+
+### Future Enhancements
+
+#### Post-MVP Phase
+- Real partner integrations with affiliate APIs
+- Click tracking and conversion analytics
+- A/B testing framework (products vs. no products)
+- Product comparison tool (side-by-side)
+- User feedback ("Was this helpful?")
+- Seasonal offers and limited-time promotions
+
+#### Production Phase
+- Machine learning for product matching (replace rule-based)
+- Real-time product availability checks via partner APIs
+- Personalized APY/rate quotes based on user's credit profile
+- Integration with credit score APIs for better eligibility
+- Automated product catalog updates (weekly scraping)
+
+### Limitations
+
+**MVP Constraints**:
+- Product catalog is LLM-generated (not live data)
+- Partner links are placeholder URLs (example.com)
+- APY rates may be outdated (but realistic for demonstration)
+- Product availability not verified in real-time
+- No actual affiliate partnerships or commission tracking
+
+**Impact**:
+- Users cannot actually sign up for products through the platform
+- Product data may not reflect current market offerings
+
+**Recommendation for Production**:
+- Integrate with real financial product APIs (CardRatings, DepositAccounts, Plaid)
+- Establish affiliate partnerships with actual financial institutions
+- Implement real-time rate updates via partner APIs
+- Add click tracking and conversion measurement
+
+---
+
+**Documentation:**
+- [ ] README with setup instructions + screenshots
+- [ ] Decision log explaining key choices (including UI-first approach)
+- [ ] Limitations documented
+- [ ] Demo video or live presentation ready
+
+---
+
 **End of PRD**

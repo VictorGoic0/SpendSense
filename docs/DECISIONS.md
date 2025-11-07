@@ -370,3 +370,52 @@ This document tracks key architectural and technical decisions made during the d
 - Re-ingest synthetic data or use pg_dump for migration
 **Location**: `backend/app/database.py` (connection string update)
 
+### Product Recommendations via LLM-Generated Catalog
+**Decision**: Use GPT-4o to generate a realistic product catalog instead of manual data entry or web scraping, then match products to users based on persona and eligibility
+**Rationale**:
+- **Speed**: 5 minutes to generate 20-25 products vs. 2-3 hours of manual research
+- **Realism**: LLM generates realistic product names, APY rates, benefits, and eligibility criteria
+- **Flexibility**: Easy to regenerate if needed, can adjust parameters in prompt
+- **Cost-effective**: ~$0.20 one-time cost vs. ongoing scraping infrastructure
+- **MVP-appropriate**: Sufficient quality for demonstrating product recommendation capability
+**Approach**:
+- **Product Generation**: GPT-4o generates 20-25 products (4-5 per persona)
+  - Realistic product names (e.g., "Chase Slate Edge", "Marcus High-Yield Savings")
+  - Benefits (3-5 bullets per product)
+  - Eligibility criteria (min_income, max_credit_utilization, existing account requirements)
+  - Realistic APY/fee values for current market
+- **Product Matching**: Rule-based relevance scoring (persona + signal based)
+  - Balance transfer cards scored higher for high utilization users
+  - HYSA products scored higher for savings builders with low emergency funds
+  - Budgeting apps scored higher for variable income users
+  - Subscription managers scored higher for subscription-heavy users
+- **Eligibility Filtering**: Hard filters prevent inappropriate offers
+  - Income requirements (balance transfer cards require $2k+ monthly income)
+  - Credit utilization limits (balance transfer cards require <85% utilization)
+  - Existing account checks (no HYSA offers if user already has one)
+- **Hybrid Recommendations**: 2-3 educational + 1-2 product offers per user
+  - Total 3-5 recommendations shown
+  - Products only shown if user is eligible
+  - Graceful degradation (only educational if no eligible products)
+**Trade-offs**:
+- Partner links are placeholder URLs (acceptable for MVP)
+- APY rates may be slightly outdated (but realistic for demonstration)
+- Product availability not verified in real-time
+- Manual disclaimers required ("educational content, not financial advice")
+**Future Enhancements**:
+- Real partner integrations with affiliate APIs (CardRatings, DepositAccounts, Plaid)
+- Live product availability checks
+- Real-time APY/rate updates via partner APIs
+- Click tracking and conversion analytics
+- A/B testing (products vs. no products)
+- Machine learning for product matching (replace rule-based scoring)
+**Implementation**:
+- Script: `scripts/generate_product_catalog.py` (GPT-4o generation)
+- Script: `scripts/seed_product_catalog.py` (database seeding)
+- Service: `backend/app/services/product_matcher.py` (relevance scoring + matching)
+- Service: `backend/app/services/guardrails.py` (eligibility filtering, updated)
+- Service: `backend/app/services/recommendation_engine.py` (hybrid recommendations, updated)
+- Database: `product_offers` table with 23 fields
+- Frontend: `RecommendationCard.jsx` (updated to display both types)
+**Timeline**: 4-6 hours total across 8 PRs (PR #38-45), ~410 tasks in tasks-10.md
+

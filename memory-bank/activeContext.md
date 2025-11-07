@@ -1,9 +1,20 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: Performance Testing Complete - OpenAI Latency Investigation & Documentation
+**Status**: Product Catalog Feature - Planning Phase Complete
 
 ## Recent Changes
+- ✅ **Product Catalog Feature Breakdown Complete (tasks-10.md)**
+  - Created comprehensive 410+ task breakdown across 8 PRs (PR #38-45)
+  - Database schema designed for product_offers table with eligibility criteria
+  - Product generation script enhanced with validation and better prompting
+  - Product matching service architecture defined (persona + signal based relevance scoring)
+  - Eligibility filtering logic designed (income, utilization, existing accounts)
+  - Hybrid recommendation engine planned (2-3 educational + 1-2 product offers)
+  - Frontend display components specified (benefits, partner links, disclosure)
+  - 20+ unit tests planned for product matching and eligibility
+  - Expected timeline: 4-6 hours total implementation
+  - Expected cost: ~$0.20 for one-time LLM-generated product catalog
 - ✅ **Performance Testing Complete: OpenAI Latency Investigation**
   - Investigated 20-second average recommendation generation latency
   - Implemented detailed timing logs (SQL query, OpenAI query, tone validation, DB save)
@@ -629,17 +640,33 @@
   - All 74 tasks completed
 
 ## Next Steps
-1. **Parquet Export & S3 Integration** - PR #29: Export user features and evaluation results to Parquet, upload to S3
-2. **Evaluation API Endpoint** - PR #30: Create API endpoints for running evaluations and retrieving metrics
-3. **Redis Caching Layer** - PR #31: Implement multi-tier Redis caching for all DB queries and API responses
-4. **PostgreSQL Migration** - PR #32: Migrate from SQLite to PostgreSQL (AWS RDS) for production
-5. **Scale Synthetic Data** - PR #33: Generate 500-1,000 users with recommendations (prerequisite for vector DB)
-6. **Vector DB Integration** - PR #34-37: Integrate Pinecone Serverless with OpenAI embeddings for sub-1s latency
-7. **AWS Deployment** - Deploy backend to Lambda and frontend to Vercel/Netlify
+1. **Product Catalog Implementation** - PR #38-45: Add product recommendations alongside educational content
+   - Generate 20-25 realistic financial products via GPT-4o
+   - Implement product matching service (persona + signal based scoring)
+   - Add eligibility filtering (income, utilization, existing accounts)
+   - Update recommendation engine to hybrid model (education + products)
+   - Update frontend to display product offers with benefits and partner links
+   - Add 20+ unit tests for product matching and eligibility
+   - **PAUSED AWS tasks** - No AWS access currently, implementing product catalog instead
+2. **Parquet Export & S3 Integration** - PR #29: Export user features and evaluation results to Parquet, upload to S3 (PAUSED - no AWS access)
+3. **Evaluation API Endpoint** - PR #30: Create API endpoints for running evaluations and retrieving metrics
+4. **Redis Caching Layer** - PR #31: Implement multi-tier Redis caching for all DB queries and API responses
+5. **PostgreSQL Migration** - PR #32: Migrate from SQLite to PostgreSQL (AWS RDS) for production (PAUSED - no AWS access)
+6. **Scale Synthetic Data** - PR #33: Generate 500-1,000 users with recommendations (prerequisite for vector DB)
+7. **Vector DB Integration** - PR #34-37: Integrate Pinecone Serverless with OpenAI embeddings for sub-1s latency
+8. **AWS Deployment** - Deploy backend to Lambda and frontend to Vercel/Netlify (PAUSED - no AWS access)
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
+- **Product Catalog Feature Implementation** (PR #38-45)
+  - **Current Focus**: Implementing product recommendations alongside educational content
+  - **Why**: Missing core feature from original PRD - discovered during implementation review
+  - **Impact**: Enables hybrid recommendations (2-3 educational + 1-2 product offers per user)
+  - **Timeline**: 4-6 hours across 8 PRs (410+ tasks in tasks-10.md)
+  - **Approach**: LLM-generated product catalog (GPT-4o), rule-based matching + eligibility filtering
+  - **Testing**: 20+ unit tests planned for product matching and eligibility logic
+- **AWS Tasks Paused**: No AWS access currently, product catalog takes priority
 - **Performance Optimization Decision Made**: Vector DB + Redis hybrid architecture (see `docs/DECISIONS.md`)
   - Based on comprehensive latency testing in `docs/OPENAI_LATENCY_TESTING.md`
   - **Problem**: 17s OpenAI latency with gpt-4o-mini (model choice is bottleneck)
@@ -648,7 +675,6 @@
   - **Prerequisites**: Scale synthetic data to 500-1,000 users first (75 users insufficient for vector DB value)
   - **Architecture**: Hybrid retrieval (vector DB with 0.85 similarity threshold, gpt-4o-mini fallback)
   - **Cost**: 80-90% reduction in OpenAI API costs, mostly free tier (Pinecone 1M vectors, ElastiCache Serverless)
-- **Next PR**: Parquet Export & S3 Integration (PR #29)
 - **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
 
 ### Technical Decisions Made
