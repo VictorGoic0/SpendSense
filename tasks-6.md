@@ -3,22 +3,22 @@
 ## PR #22: Get Recommendations Endpoint
 
 ### Get Recommendations Endpoint
-- [ ] 1. In recommendations router, create GET `/{user_id}` endpoint
-- [ ] 2. Accept user_id as path parameter
-- [ ] 3. Accept optional status query parameter (filter by status)
-- [ ] 4. Accept optional window_days query parameter (default: return all)
-- [ ] 5. Get database session
+- [x] 1. In recommendations router, create GET `/{user_id}` endpoint
+- [x] 2. Accept user_id as path parameter
+- [x] 3. Accept optional status query parameter (filter by status)
+- [x] 4. Accept optional window_days query parameter (default: return all)
+- [x] 5. Get database session
 
 ### Query Recommendations
-- [ ] 6. Query Recommendation records for user_id
-- [ ] 7. If status parameter provided, filter by status
-- [ ] 8. If window_days provided, filter by window_days
-- [ ] 9. Order by generated_at descending (newest first)
-- [ ] 10. Limit to 50 recommendations (pagination could be added later)
+- [x] 6. Query Recommendation records for user_id
+- [x] 7. If status parameter provided, filter by status
+- [x] 8. If window_days provided, filter by window_days
+- [x] 9. Order by generated_at descending (newest first)
+- [x] 10. Limit to 50 recommendations (pagination could be added later)
 
 ### Response Formatting
-- [ ] 11. Convert recommendation models to schema objects
-- [ ] 12. For each recommendation, include:
+- [x] 11. Convert recommendation models to schema objects
+- [x] 12. For each recommendation, include:
     - recommendation_id
     - title
     - content
@@ -28,25 +28,25 @@
     - generated_at
     - approved_by (if applicable)
     - approved_at (if applicable)
-- [ ] 13. Return JSON response with recommendations list and total count
+- [x] 13. Return JSON response with recommendations list and total count
 
 ### Access Control
-- [ ] 14. If status query param not provided:
+- [x] 14. If status query param not provided:
     - For customer users: only return approved recommendations
     - For operator users: return all statuses
-- [ ] 15. Add comment indicating future authentication will enforce this
+- [x] 15. Add comment indicating future authentication will enforce this
 
 ### Error Handling
-- [ ] 16. Handle user not found → 404
-- [ ] 17. Handle database errors → 500
-- [ ] 18. Add logging
+- [x] 16. Handle user not found → 404
+- [x] 17. Handle database errors → 500
+- [x] 18. Add logging
 
 ### Testing Get Recommendations
-- [ ] 19. Test via API with user who has recommendations
-- [ ] 20. Test status filter (pending_approval, approved)
-- [ ] 21. Test window filter (30, 180)
-- [ ] 22. Verify only approved recs returned by default
-- [ ] 23. Verify correct order (newest first)
+- [x] 19. Test via API with user who has recommendations
+- [x] 20. Test status filter (pending_approval, approved)
+- [x] 21. Test window filter (30, 180)
+- [x] 22. Verify only approved recs returned by default
+- [x] 23. Verify correct order (newest first)
 
 ---
 

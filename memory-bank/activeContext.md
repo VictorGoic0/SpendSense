@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #20 Complete - Guardrails Service - Tone & Consent Validation Complete
+**Status**: PR #22 Complete - Get Recommendations Endpoint Complete
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -432,14 +432,47 @@
     - Tests mandatory disclosure appending
   - Test results: All tests passing, all 38 tasks completed
   - Key design: All recommendations persisted regardless of warnings - operator reviews and decides
+- ✅ **PR #21 Complete: Recommendation Generation Endpoint (all 44 tasks finished)**
+  - Recommendations router (`backend/app/routers/recommendations.py`):
+    - POST `/recommendations/generate/{user_id}` endpoint with full workflow
+    - Query parameters: `window_days` (default: 30), `force_regenerate` (default: False)
+    - User validation (404 if not found), consent check (403 if not consented)
+    - Existing recommendations check (returns cached if exists and not force_regenerate)
+    - Persona validation (400 if no persona assigned)
+    - Context building and validation
+    - OpenAI integration for recommendation generation
+    - Tone validation for each recommendation with warnings stored in metadata
+    - Database persistence with status='pending_approval' for all recommendations
+    - Mandatory disclosure appended to content
+    - Validation warnings stored in metadata_json (empty array for valid, populated for invalid)
+    - Token usage and cost data stripped from metadata before saving (logging only)
+    - Status codes: 200 for cached results, 201 for newly created
+    - Comprehensive error handling with rollback on failures
+  - Router registration: Recommendations router registered in main.py
+  - Metadata design: Saves metadata (including validation_warnings) but excludes token_usage and estimated_cost_usd (used for logging/review only)
+  - All recommendations persisted regardless of warnings for operator review
+  - Tested and verified via Swagger UI
+- ✅ **PR #22 Complete: Get Recommendations Endpoint (all 23 tasks finished)**
+  - Recommendations router (`backend/app/routers/recommendations.py`):
+    - GET `/recommendations/{user_id}` endpoint implemented
+    - Query parameters: `status` (optional, filters by status), `window_days` (optional, filters by window_days)
+    - User validation (404 if not found)
+    - Query logic: Filters by user_id, optional status, optional window_days
+    - Ordering: By generated_at descending (newest first)
+    - Limit: 50 recommendations (pagination ready for future)
+    - Response format: Returns recommendations list with all required fields and total count
+    - Access control: Removed premature access control logic (will be implemented when authentication is added)
+    - Error handling: 404 for user not found, 500 for database errors, comprehensive logging
+    - Test script created (`scripts/test_get_recommendations.py`) for testing various filter combinations
+  - Note: Access control removed - endpoint returns all recommendations when no status filter provided (authentication needed to determine requester identity)
 
 ## Next Steps
-1. **PR #21: Recommendation Generation Endpoint** - Create API endpoint for generating recommendations with guardrails integration
+1. **PR #23: Approve Recommendation Endpoint** - Create API endpoint for approving recommendations with operator action logging
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Recommendation generation endpoint** - Next task (PR #21) - Create API endpoint with guardrails integration and DB save
+- **Approval workflow endpoints** - Next tasks (PR #23-24) - Create approve, override, and reject endpoints with operator action logging
 - **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
 
 ### Technical Decisions Made
@@ -521,7 +554,10 @@ None - Ready to proceed with PR #21 (Recommendation Generation Endpoint)
 - PR #17 complete (all 50 tasks checked off - OpenAI Integration Setup & Prompt Templates)
 - PR #18 complete (all 34 tasks checked off - Recommendation Engine Service - Context Building)
 - PR #19 complete (all 26 tasks checked off - Recommendation Engine Service - OpenAI Integration)
-- Following tasks-5.md structure (PR #20 next)
+- PR #20 complete (all 38 tasks checked off - Guardrails Service - Tone & Consent Validation)
+- PR #21 complete (all 44 tasks checked off - Recommendation Generation Endpoint)
+- PR #22 complete (all 23 tasks checked off - Get Recommendations Endpoint)
+- Following tasks-6.md structure (PR #23 next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility

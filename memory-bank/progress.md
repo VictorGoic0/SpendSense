@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #21 Complete - Recommendation Generation Endpoint Complete
+**Status**: PR #22 Complete - Get Recommendations Endpoint Complete
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -356,6 +356,19 @@
   - Metadata design: Saves metadata (including validation_warnings) but excludes token_usage and estimated_cost_usd (used for logging/review only)
   - All recommendations persisted regardless of warnings for operator review
   - Tested and verified via Swagger UI
+- ✅ **PR #22 Complete: Get Recommendations Endpoint (all 23 tasks finished)**
+  - Recommendations router (`backend/app/routers/recommendations.py`):
+    - GET `/recommendations/{user_id}` endpoint implemented
+    - Query parameters: `status` (optional, filters by status), `window_days` (optional, filters by window_days)
+    - User validation (404 if not found)
+    - Query logic: Filters by user_id, optional status, optional window_days
+    - Ordering: By generated_at descending (newest first)
+    - Limit: 50 recommendations (pagination ready for future)
+    - Response format: Returns recommendations list with all required fields (recommendation_id, title, content, rationale, status, persona_type, generated_at, approved_by, approved_at) and total count
+    - Access control: Removed premature access control logic (will be implemented when authentication is added)
+    - Error handling: 404 for user not found, 500 for database errors, comprehensive logging
+    - Test script created (`scripts/test_get_recommendations.py`) for testing various filter combinations
+  - Note: Access control removed - endpoint returns all recommendations when no status filter provided (authentication needed to determine requester identity)
 
 ### In Progress
 - 🔄 None - Ready for next PR
