@@ -426,7 +426,7 @@ def generate_recommendations_via_openai(persona_type: str, user_context: dict) -
                     {"role": "user", "content": user_context_json}
                 ],
                 response_format={"type": "json_object"},
-                temperature=0.7
+                temperature=0.75
             )
             
             # Record end time and calculate latency in milliseconds
