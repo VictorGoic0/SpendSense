@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #20 Complete - Guardrails Service - Tone & Consent Validation Complete
+**Status**: PR #21 Complete - Recommendation Generation Endpoint Complete
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -336,12 +336,31 @@
     - Tests mandatory disclosure appending
   - Test results: All tests passing, all 38 tasks completed
   - Key design: All recommendations persisted regardless of warnings - operator reviews and decides
+- ✅ **PR #21 Complete: Recommendation Generation Endpoint (all 44 tasks finished)**
+  - Recommendations router (`backend/app/routers/recommendations.py`):
+    - POST `/recommendations/generate/{user_id}` endpoint with full workflow
+    - Query parameters: `window_days` (default: 30), `force_regenerate` (default: False)
+    - User validation (404 if not found), consent check (403 if not consented)
+    - Existing recommendations check (returns cached if exists and not force_regenerate)
+    - Persona validation (400 if no persona assigned)
+    - Context building and validation
+    - OpenAI integration for recommendation generation
+    - Tone validation for each recommendation with warnings stored in metadata
+    - Database persistence with status='pending_approval' for all recommendations
+    - Mandatory disclosure appended to content
+    - Validation warnings stored in metadata_json (empty array for valid, populated for invalid)
+    - Token usage and cost data stripped from metadata before saving (logging only)
+    - Status codes: 200 for cached results, 201 for newly created
+    - Comprehensive error handling with rollback on failures
+  - Router registration: Recommendations router registered in main.py
+  - Metadata design: Saves metadata (including validation_warnings) but excludes token_usage and estimated_cost_usd (used for logging/review only)
+  - All recommendations persisted regardless of warnings for operator review
+  - Tested and verified via Swagger UI
 
 ### In Progress
-- 🔄 None - Ready for PR #21
+- 🔄 None - Ready for next PR
 
 ### Not Started
-- ⏳ Recommendation generation endpoint - **PR #21 Next**
 - ⏳ React UI components (approval queue, user dashboard)
 - ⏳ Evaluation system
 - ⏳ AWS deployment
@@ -454,8 +473,8 @@
 - **Next**: AI recommendation generation (PR #17+)
 
 ### AI Integration
-- **Status**: OpenAI SDK installed, prompt templates complete, context building complete, OpenAI API integration complete
-- **Completed**: OpenAI SDK (v2.7.1, upgraded from 1.3.5) installed, API key configured, 5 persona-specific prompts created with empowering language requirements, prompt loader utility with caching, recommendation engine service with context building and OpenAI API integration
+- **Status**: ✅ Complete - OpenAI SDK installed, prompt templates complete, context building complete, OpenAI API integration complete, recommendation generation endpoint complete
+- **Completed**: OpenAI SDK (v2.7.1, upgraded from 1.3.5) installed, API key configured, 5 persona-specific prompts created with empowering language requirements, prompt loader utility with caching, recommendation engine service with context building and OpenAI API integration, recommendation generation endpoint with full workflow
 - **Prompt Files**: `backend/app/prompts/` directory with 5 self-contained prompts (high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder)
   - All prompts include LANGUAGE STYLE section with explicit empowering language requirements
   - Temperature set to 0.75 for natural variation
@@ -465,16 +484,22 @@
   - `validate_context()` - Validates context structure
   - `generate_recommendations_via_openai()` - Generates recommendations via OpenAI API
   - Error handling with exponential backoff retry logic
-  - Token usage tracking (in metadata for review, NOT saved to DB)
+  - Token usage tracking (in metadata for review, stripped before DB save)
+- **Recommendation Endpoint**: `backend/app/routers/recommendations.py` with:
+  - POST `/recommendations/generate/{user_id}` - Full recommendation generation workflow
+  - User validation, consent checking, existing recommendations check
+  - Context building, OpenAI integration, tone validation
+  - Database persistence with metadata (validation_warnings included, token_usage/cost excluded)
+  - Status codes: 200 for cached, 201 for newly created
 - **Test Scripts**: 
   - `scripts/test_context_builder.py` - Context building tests, all passing
   - `scripts/test_openai_generation.py` - OpenAI integration tests, all quality checks passing
-- **Test Results**: All recommendations use empowering language, all quality checks passing
-- **Next**: Recommendation generation endpoint (PR #21)
-- **Priority**: Day 2 - after guardrails
+- **Test Results**: All recommendations use empowering language, all quality checks passing, endpoint tested and verified
+- **Metadata Design**: Saves metadata (including validation_warnings) but excludes token_usage and estimated_cost_usd (used for logging/review only)
+- **Next**: Approval workflow UI components
 
 ### Guardrails
-- **Status**: ✅ Complete - Guardrails service implemented and tested
+- **Status**: ✅ Complete - Guardrails service implemented and tested, integrated into recommendation endpoint
 - **Completed**: Guardrails service with tone validation, consent checking, eligibility validation, partner offer filtering, mandatory disclosure
 - **Service File**: `backend/app/services/guardrails.py`
 - **Functions**:
@@ -485,7 +510,7 @@
   - `append_disclosure()` - Appends mandatory disclosure
 - **Test Script**: `scripts/test_guardrails.py` - All tests passing
 - **Key Design**: All recommendations persisted regardless of warnings - operator reviews and decides
-- **Next**: Integration into recommendation generation endpoint (PR #21)
+- **Integration**: ✅ Integrated into recommendation generation endpoint (PR #21)
 
 ### Infrastructure
 - **Status**: Not deployed
@@ -503,5 +528,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #21 Completion**: Recommendation generation endpoint with guardrails integration - ready for approval workflow
+**Approval Workflow UI**: Operator approval queue and recommendation management interface
 

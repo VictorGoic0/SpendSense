@@ -332,39 +332,39 @@
 ## PR #21: Recommendation Generation Endpoint
 
 ### Recommendations Router
-- [ ] 1. Create `backend/app/routers/recommendations.py`
-- [ ] 2. Create APIRouter with prefix="/recommendations"
-- [ ] 3. Import recommendation engine and guardrails services
-- [ ] 4. Import database models and schemas
+- [x] 1. Create `backend/app/routers/recommendations.py`
+- [x] 2. Create APIRouter with prefix="/recommendations"
+- [x] 3. Import recommendation engine and guardrails services
+- [x] 4. Import database models and schemas
 
 ### Generate Recommendations Endpoint - Validation
-- [ ] 5. Create POST `/generate/{user_id}` endpoint:
-- [ ] 6. Accept user_id as path parameter
-- [ ] 7. Accept optional window_days query parameter (default: 30)
-- [ ] 8. Accept optional force_regenerate query parameter (default: False)
-- [ ] 9. Get database session
-- [ ] 10. Check if user exists → 404 if not
-- [ ] 11. Check consent using guardrails.check_consent() → 403 if not consented
+- [x] 5. Create POST `/generate/{user_id}` endpoint:
+- [x] 6. Accept user_id as path parameter
+- [x] 7. Accept optional window_days query parameter (default: 30)
+- [x] 8. Accept optional force_regenerate query parameter (default: False)
+- [x] 9. Get database session
+- [x] 10. Check if user exists → 404 if not
+- [x] 11. Check consent using guardrails.check_consent() → 403 if not consented
 
 ### Generate Recommendations Endpoint - Check Existing
-- [ ] 12. Query existing recommendations for user + window
-- [ ] 13. If recommendations exist and not force_regenerate:
+- [x] 12. Query existing recommendations for user + window
+- [x] 13. If recommendations exist and not force_regenerate:
     - Return existing recommendations
     - Skip generation (saves API costs)
 
 ### Generate Recommendations Endpoint - Get Context
-- [ ] 14. Get user persona for window
-- [ ] 15. If no persona assigned → 400 error with message to assign persona first
-- [ ] 16. Build user context using build_user_context()
-- [ ] 17. Validate context
+- [x] 14. Get user persona for window
+- [x] 15. If no persona assigned → 400 error with message to assign persona first
+- [x] 16. Build user context using build_user_context()
+- [x] 17. Validate context
 
 ### Generate Recommendations Endpoint - Call OpenAI
-- [ ] 18. Call generate_recommendations_via_openai() with persona and context
-- [ ] 19. Measure total generation time
-- [ ] 20. If OpenAI call fails → 500 error with message
+- [x] 18. Call generate_recommendations_via_openai() with persona and context
+- [x] 19. Measure total generation time
+- [x] 20. If OpenAI call fails → 500 error with message
 
 ### Generate Recommendations Endpoint - Validate Tone
-- [ ] 21. For each generated recommendation:
+- [x] 21. For each generated recommendation:
     - Extract content field
     - Call guardrails.validate_tone() → returns `{"is_valid": bool, "validation_warnings": [...]}`
     - Store validation_warnings in recommendation metadata:
@@ -375,7 +375,7 @@
     - **IMPORTANT**: Do NOT skip recommendations with warnings - persist all for operator review
 
 ### Generate Recommendations Endpoint - Save to Database
-- [ ] 23. For each recommendation (including those with warnings):
+- [x] 23. For each recommendation (including those with warnings):
     - Generate recommendation_id (rec_{uuid})
     - Create Recommendation model instance
     - Set fields: user_id, persona_type, window_days, content_type, title, content, rationale
@@ -384,40 +384,40 @@
     - Set generated_at timestamp
     - Append mandatory disclosure to content
     - Set metadata_json: Serialize metadata dict (includes validation_warnings) to JSON string
-- [ ] 24. Bulk insert recommendations
-- [ ] 25. Commit transaction
+- [x] 24. Bulk insert recommendations
+- [x] 25. Commit transaction
 
 ### Generate Recommendations Endpoint - Response
-- [ ] 26. Query newly created recommendations
-- [ ] 27. Convert to schema objects
-- [ ] 28. Return JSON response with:
+- [x] 26. Query newly created recommendations
+- [x] 27. Convert to schema objects
+- [x] 28. Return JSON response with:
     - user_id
     - persona
     - recommendations list
     - generation_time_ms (total)
-- [ ] 29. Return 201 status code
+- [x] 29. Return 201 status code
 
 ### Error Handling
-- [ ] 30. Wrap entire endpoint in try/except
-- [ ] 31. Rollback database transaction on error
-- [ ] 32. Return appropriate error responses:
+- [x] 30. Wrap entire endpoint in try/except
+- [x] 31. Rollback database transaction on error
+- [x] 32. Return appropriate error responses:
     - 403: No consent
     - 404: User not found
     - 400: No persona assigned or invalid request
     - 500: Server error (OpenAI failure, database error)
-- [ ] 33. Add detailed error messages and logging
+- [x] 33. Add detailed error messages and logging
 
 ### Testing Recommendation Generation
-- [ ] 34. Test via Swagger UI at http://localhost:8000/docs
-- [ ] 35. Test with consented user → should succeed
-- [ ] 36. Test with non-consented user → should return 403
-- [ ] 37. Test with user without persona → should return 400
-- [ ] 38. Verify recommendations saved in database (including those with warnings)
-- [ ] 39. Verify status='pending_approval' for all recommendations
-- [ ] 40. Verify content includes disclosure
-- [ ] 41. Verify rationales cite specific data
-- [ ] 42. Check generation_time_ms < 5000
-- [ ] 43. Verify validation_warnings stored in metadata_json:
+- [x] 34. Test via Swagger UI at http://localhost:8000/docs
+- [x] 35. Test with consented user → should succeed
+- [x] 36. Test with non-consented user → should return 403
+- [x] 37. Test with user without persona → should return 400
+- [x] 38. Verify recommendations saved in database (including those with warnings)
+- [x] 39. Verify status='pending_approval' for all recommendations
+- [x] 40. Verify content includes disclosure
+- [x] 41. Verify rationales cite specific data
+- [x] 42. Check generation_time_ms < 5000
+- [x] 43. Verify validation_warnings stored in metadata_json:
     - Empty array for valid recommendations
     - Populated array with severity/type/message for invalid recommendations
-- [ ] 44. Verify recommendations with warnings are still persisted (not skipped)
+- [x] 44. Verify recommendations with warnings are still persisted (not skipped)
