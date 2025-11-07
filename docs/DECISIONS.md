@@ -419,3 +419,59 @@ This document tracks key architectural and technical decisions made during the d
 - Frontend: `RecommendationCard.jsx` (updated to display both types)
 **Timeline**: 4-6 hours total across 8 PRs (PR #38-45), ~410 tasks in tasks-10.md
 
+### Article Recommendations via Vector Similarity Search
+**Decision**: Use Pinecone vector database with OpenAI embeddings for real-time article matching to educational recommendations, with LLM-generated articles for MVP speed
+**Rationale**:
+- **Perfect Use Case**: Semantic similarity matching is ideal for article recommendations
+- **Performance**: ~100-300ms for real-time matching vs. 5-17s for LLM-based matching
+- **Scalability**: Can handle 100s of articles with no performance degradation
+- **Cost-Effective**: Embeddings are cheap ($0.00002/1k tokens), vector queries are fast
+- **User Experience**: Each educational rec gets a relevant article link (if similarity >0.75)
+- **MVP Speed**: LLM-generated articles take 60-90 seconds vs. 1-2 hours manual curation
+**Approach**:
+- **Article Generation**: GPT-4o generates 50 realistic articles (10 per persona)
+  - Realistic titles, sources (NerdWallet, Investopedia, CFPB), summaries
+  - 300-500 word "full text" for embedding quality
+  - Placeholder URLs for MVP (example.com/articles/slug)
+  - Appropriate categories and persona targets
+- **Vector Embedding**: Use OpenAI text-embedding-3-small (1536 dimensions)
+  - Embed article title + summary + full_text (combined)
+  - Store embeddings in Pinecone with metadata (title, source, url, persona_targets, categories)
+  - One-time embedding cost: ~$0.30-0.50 for 50 articles
+- **Real-Time Matching**: Embed each generated recommendation, query Pinecone
+  - For each educational recommendation, embed title + content
+  - Query Pinecone for top 3 similar articles (cosine similarity)
+  - If top score >= 0.75: Attach article_id to recommendation
+  - If top score < 0.75: Leave article_id as NULL (no good match)
+  - Total latency: ~100ms embedding + ~50-100ms query = ~100-300ms per rec
+- **Frontend Display**: Show article with "Read Full Article" button
+  - Display article title, source, reading time
+  - Show 2-3 sentence summary
+  - Link to article URL (opens in new tab)
+  - Only shown for educational recs (not products)
+**Trade-offs**:
+- Articles are LLM-generated placeholders for MVP (not real content)
+- URLs are placeholder (example.com) - acceptable for demonstration
+- Article quality may vary (but realistic enough for MVP)
+- Need to replace with real articles for production (1-2 hours manual curation)
+**Future Enhancements**:
+- Replace with real curated articles from reputable sources
+- Expand catalog to 100+ articles
+- ML-based ranking (combine vector similarity + user engagement)
+- Multi-article recommendations (show top 3, not just 1)
+- Click tracking and article engagement analytics
+- Article summary generation (if full text not available)
+- A/B testing article relevance thresholds
+**Implementation**:
+- Script: `scripts/generate_article_catalog.py` (GPT-4o generation)
+- Script: `scripts/seed_article_catalog.py` (database seeding)
+- Script: `scripts/populate_article_vectors.py` (embedding generation + Pinecone upload)
+- Service: `backend/app/services/article_matcher.py` (vector similarity search)
+- Service: `backend/app/services/recommendation_engine.py` (integrate article matching into rec generation)
+- Database: `articles` table with 12 fields, article_id column added to recommendations
+- Pinecone: `spendsense-articles` index (1536 dimensions, cosine metric)
+- Frontend: `RecommendationCard.jsx` (display article section with link)
+**Timeline**: 2.5-3.5 hours total across 6 PRs (PR #46-51), ~275 tasks in tasks-12.md
+**Performance Impact**: +100-300ms to recommendation generation (acceptable, much better than LLM)
+**Note**: Articles are placeholders for MVP. Plan to replace with real articles when time permits (documented in code and README)
+

@@ -529,7 +529,15 @@
   - All 54 tasks completed
 
 ### In Progress
-- 🔄 **Product Catalog Feature (PR #38-45)** - Planning complete, ready for implementation
+- 🔄 **Article Catalog Feature (PR #46-51)** - Planning complete, ready for implementation
+  - Comprehensive 275+ task breakdown created in tasks-12.md
+  - 6 PRs planned: Database schema + article generation, article seeding + vector population, article matching service, hybrid engine integration, frontend display, unit tests & documentation
+  - Vector-based matching using Pinecone + OpenAI embeddings
+  - Real-time similarity search (<300ms for 2-3 recs)
+  - 50 LLM-generated articles for MVP (10 per persona) - will replace with real articles later
+  - Expected timeline: 2.5-3.5 hours total
+  - Expected cost: ~$0.30-0.50 for one-time LLM-generated article catalog
+- 🔄 **Product Catalog Feature (PR #38-45)** - Planning complete, implementation after article catalog
   - Comprehensive 410+ task breakdown created in tasks-10.md
   - 8 PRs planned: Database schema, product generation, matching service, eligibility filtering, hybrid recommendation engine, frontend display, optional product management API, unit tests & documentation
   - Expected timeline: 4-6 hours total

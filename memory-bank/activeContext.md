@@ -1,9 +1,20 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: Product Catalog Feature - Planning Phase Complete
+**Status**: Article Catalog Feature - Planning Phase Complete
 
 ## Recent Changes
+- ✅ **Article Catalog Feature Breakdown Complete (tasks-12.md)**
+  - Created comprehensive 275+ task breakdown across 6 PRs (PR #46-51)
+  - Vector-based article matching using Pinecone + OpenAI embeddings
+  - Real-time similarity search (<300ms for 2-3 recs)
+  - 50 LLM-generated articles (10 per persona) - **Fake articles for MVP**
+  - Note: Articles are placeholders, will replace with real content when time permits
+  - Similarity threshold: 0.75 (show article only if highly relevant)
+  - Frontend display: "Read Full Article" button with article metadata
+  - 15+ unit tests planned for matching and performance
+  - Expected timeline: 2.5-3.5 hours total implementation
+  - Expected cost: ~$0.30-0.50 for one-time LLM-generated article catalog
 - ✅ **Product Catalog Feature Breakdown Complete (tasks-10.md)**
   - Created comprehensive 410+ task breakdown across 8 PRs (PR #38-45)
   - Database schema designed for product_offers table with eligibility criteria
@@ -640,14 +651,22 @@
   - All 74 tasks completed
 
 ## Next Steps
-1. **Product Catalog Implementation** - PR #38-45: Add product recommendations alongside educational content
+1. **Article Catalog Implementation** - PR #46-51: Add educational article recommendations via vector similarity search
+   - Generate 50 LLM-generated articles (10 per persona) for MVP
+   - Implement vector-based article matching using Pinecone
+   - Real-time similarity search (<300ms for 2-3 recs)
+   - 0.75 similarity threshold (show only highly relevant articles)
+   - Frontend display with "Read Full Article" button
+   - Add 15+ unit tests for matching and performance
+   - **Note**: Articles are placeholders, will replace with real content later
+2. **Product Catalog Implementation** - PR #38-45: Add product recommendations alongside educational content
    - Generate 20-25 realistic financial products via GPT-4o
    - Implement product matching service (persona + signal based scoring)
    - Add eligibility filtering (income, utilization, existing accounts)
    - Update recommendation engine to hybrid model (education + products)
    - Update frontend to display product offers with benefits and partner links
    - Add 20+ unit tests for product matching and eligibility
-   - **PAUSED AWS tasks** - No AWS access currently, implementing product catalog instead
+   - **PAUSED AWS tasks** - No AWS access currently, implementing features instead
 2. **Parquet Export & S3 Integration** - PR #29: Export user features and evaluation results to Parquet, upload to S3 (PAUSED - no AWS access)
 3. **Evaluation API Endpoint** - PR #30: Create API endpoints for running evaluations and retrieving metrics
 4. **Redis Caching Layer** - PR #31: Implement multi-tier Redis caching for all DB queries and API responses
@@ -659,14 +678,22 @@
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
+- **Article Catalog Feature Implementation** (PR #46-51)
+  - **Current Focus**: Implementing educational article recommendations via vector similarity search
+  - **Why**: Enhances educational recommendations with external resources, perfect use case for vector DB
+  - **Impact**: Each educational rec gets linked article (if similarity >0.75), better user experience
+  - **Timeline**: 2.5-3.5 hours across 6 PRs (275+ tasks in tasks-12.md)
+  - **Approach**: LLM-generated articles (MVP), Pinecone vector similarity search, real-time matching
+  - **Performance**: +300ms to rec generation (acceptable), much better than LLM-based matching
+  - **Testing**: 15+ unit tests planned for matching and performance
+  - **Note**: Using fake articles for MVP (tight schedule), will replace with real articles when time permits
 - **Product Catalog Feature Implementation** (PR #38-45)
-  - **Current Focus**: Implementing product recommendations alongside educational content
-  - **Why**: Missing core feature from original PRD - discovered during implementation review
+  - **Status**: Planning complete, ready for implementation after article catalog
   - **Impact**: Enables hybrid recommendations (2-3 educational + 1-2 product offers per user)
   - **Timeline**: 4-6 hours across 8 PRs (410+ tasks in tasks-10.md)
   - **Approach**: LLM-generated product catalog (GPT-4o), rule-based matching + eligibility filtering
   - **Testing**: 20+ unit tests planned for product matching and eligibility logic
-- **AWS Tasks Paused**: No AWS access currently, product catalog takes priority
+- **AWS Tasks Paused**: No AWS access currently, implementing features instead
 - **Performance Optimization Decision Made**: Vector DB + Redis hybrid architecture (see `docs/DECISIONS.md`)
   - Based on comprehensive latency testing in `docs/OPENAI_LATENCY_TESTING.md`
   - **Problem**: 17s OpenAI latency with gpt-4o-mini (model choice is bottleneck)

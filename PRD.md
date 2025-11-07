@@ -3052,6 +3052,494 @@ Consult a licensed financial advisor for personalized guidance.
 
 ---
 
+## Feature Extension: Educational Article Recommendations
+
+### Overview
+
+SpendSense will link educational recommendations to relevant external articles using vector similarity search. This feature uses Pinecone vector database with OpenAI embeddings to match each generated educational recommendation to the most relevant article from a curated catalog in real-time.
+
+### Goals
+
+1. **Enhanced Educational Content**: Link each educational recommendation to a relevant external article (if similarity >0.75)
+2. **Real-Time Matching**: Use vector similarity search for fast matching (~100-300ms for 2-3 recs)
+3. **Quality Threshold**: Only show articles that are highly relevant (similarity score >= 0.75)
+4. **User Experience**: Provide "Read Full Article" button with article metadata (title, source, reading time, summary)
+5. **MVP Speed**: Use LLM-generated articles for MVP (60-90 seconds vs. 1-2 hours manual curation)
+
+### Why Vector DB is Ideal for This Use Case
+
+**Comparison to Previous Vector DB Proposal**:
+- **Previous Use Case**: Cache educational recommendations for similar users
+  - Problem: Required 500-1,000 users for meaningful similarity
+  - Problem: Cold start issue (new users have no cached recs)
+  - Problem: User context too complex for simple similarity
+- **Article Matching Use Case**: Semantic similarity between rec and article
+  - ✅ Works with 50-100 articles (no minimum user requirement)
+  - ✅ No cold start (articles are pre-embedded once)
+  - ✅ Pure semantic matching (perfect for vector DB)
+  - ✅ Much faster than LLM-based matching (300ms vs. 5-17s)
+
+### Article Catalog Design
+
+#### articles Table Schema
+```sql
+CREATE TABLE articles (
+    article_id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    source TEXT NOT NULL, -- 'NerdWallet', 'Investopedia', 'CFPB', etc.
+    url TEXT NOT NULL, -- Placeholder URLs for MVP
+    summary TEXT NOT NULL, -- 2-3 sentences for display
+    full_text TEXT NOT NULL, -- Full article content for embedding (300-500 words)
+    categories TEXT, -- JSON array: ["credit", "debt", "budgeting"]
+    persona_targets TEXT, -- JSON array: ["high_utilization", "savings_builder"]
+    reading_time_minutes INTEGER,
+    published_date DATE,
+    active BOOLEAN DEFAULT TRUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_articles_persona ON articles(persona_targets);
+CREATE INDEX idx_articles_active ON articles(active);
+CREATE INDEX idx_articles_categories ON articles(categories);
+```
+
+#### recommendations Table Extension
+```sql
+ALTER TABLE recommendations ADD COLUMN article_id TEXT;
+ALTER TABLE recommendations ADD FOREIGN KEY (article_id) REFERENCES articles(article_id);
+```
+
+### Article Generation (LLM-Based for MVP)
+
+#### Why LLM-Generated Articles for MVP
+- **Speed**: 60-90 seconds for 50 articles vs. 1-2 hours manual curation
+- **Consistency**: LLM generates structured data (title, summary, full_text, metadata)
+- **Good Enough**: Realistic-sounding articles sufficient for demonstrating vector matching
+- **Replaceable**: Easy to swap with real articles later (update URLs + full_text, regenerate embeddings)
+
+#### Generation Approach
+**Script**: `scripts/generate_article_catalog.py`  
+**Tool**: OpenAI GPT-4o  
+**Output**: `data/article_catalog.json`  
+**Cost**: ~$0.30-0.50 (one-time)
+
+**Prompt Structure**:
+- Generate 50 articles total (10 per persona)
+- Personas: high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder
+- Realistic titles (e.g., "How to Pay Down Credit Card Debt Fast")
+- Realistic sources (NerdWallet, Investopedia, CFPB, The Balance, Forbes)
+- 2-3 sentence summaries (for display in UI)
+- 300-500 word "full text" (simulated article content for quality embeddings)
+- Realistic reading times (5-10 minutes)
+- Appropriate categories (credit, debt, budgeting, savings, investing, etc.)
+- Persona targets (can be multiple)
+- Placeholder URLs (https://example.com/articles/article-slug)
+
+**Example Article**:
+```json
+{
+  "article_id": "art_001",
+  "title": "How to Lower Your Credit Utilization Fast",
+  "source": "NerdWallet",
+  "url": "https://example.com/articles/lower-credit-utilization",
+  "summary": "Learn proven strategies to reduce your credit card utilization and improve your credit score. We cover balance transfers, payment timing, and limit increases.",
+  "full_text": "[300-500 words of simulated article content for embedding...]",
+  "categories": ["credit", "debt", "high_utilization"],
+  "persona_targets": ["high_utilization"],
+  "reading_time_minutes": 7,
+  "published_date": "2024-09-15"
+}
+```
+
+**Article Topics by Persona**:
+- **High Utilization**: Debt paydown strategies, balance transfers, avalanche vs snowball, debt consolidation, credit utilization impact
+- **Variable Income**: Budgeting with irregular income, building cash flow buffers, income smoothing, emergency fund prioritization, percent-based budgeting
+- **Subscription Heavy**: Subscription audits, cancellation tactics, free alternatives, annual vs monthly comparison, subscription tracking tools
+- **Savings Builder**: Emergency fund guides, HYSA comparisons, savings goals, automatic savings, CD laddering
+- **Wealth Builder**: 401k optimization, asset allocation, tax-advantaged accounts, retirement planning, estate planning basics
+
+### Vector Embedding & Database Population
+
+#### Embedding Generation
+**Service**: `backend/app/services/embedding_service.py`  
+**Model**: OpenAI text-embedding-3-small (1536 dimensions)  
+**Input**: Article title + summary + full_text (combined)  
+**Output**: 1536-dimensional embedding vector
+
+**Process**:
+1. For each article, combine title + summary + full_text into single text
+2. Call OpenAI embeddings API: `text-embedding-3-small`
+3. Extract 1536-dimensional vector
+4. Store in Pinecone with metadata
+
+**Script**: `scripts/populate_article_vectors.py`
+- Batch process all 50 articles
+- Generate embeddings (batches of 100, ~10 API calls)
+- Upload to Pinecone with metadata
+- Total cost: ~$0.30-0.50 (one-time)
+
+#### Pinecone Index Configuration
+```
+Index Name: spendsense-articles
+Dimension: 1536
+Metric: cosine
+Cloud: AWS
+Region: us-east-1
+```
+
+**Vector Metadata** (stored with each embedding):
+- article_id (for database lookup)
+- title
+- source
+- url
+- summary
+- persona_targets (JSON string)
+- categories (JSON string)
+- reading_time_minutes
+- active (boolean)
+
+### Article Matching Logic
+
+#### Real-Time Vector Similarity Search
+
+**Service**: `backend/app/services/article_matcher.py`
+
+**Matching Flow**:
+```
+1. Generate educational recommendations (existing OpenAI logic)
+   ↓
+2. For each educational recommendation:
+   a. Combine title + content into single text
+   b. Generate embedding using text-embedding-3-small (~100ms)
+   c. Query Pinecone for top 3 similar articles (~50-100ms)
+   d. Extract top result (highest cosine similarity score)
+   e. If score >= 0.75:
+      - Attach article_id to recommendation
+      - Store similarity_score in metadata (for debugging)
+   f. Else:
+      - Leave article_id = NULL (no good match)
+   ↓
+3. Store recommendations with article_id populated (or NULL)
+   ↓
+4. Return recommendations to operator approval queue
+```
+
+**Performance**:
+- Embedding generation: ~100ms per rec
+- Vector search: ~50-100ms per rec
+- Total per rec: ~100-300ms
+- For 2-3 educational recs: ~200-600ms total added to rec generation
+
+**Similarity Threshold**:
+- Default: 0.75 (cosine similarity)
+- Rationale: Balance between showing relevant articles and avoiding poor matches
+- Expected match rate: 60-80% of educational recs get articles
+- Adjustable via environment variable if needed
+
+**No LLM Calls**: Unlike previous vector DB proposal (which still used LLM for final generation), this approach uses ONLY vector similarity - much faster and more predictable.
+
+### Integration into Recommendation Engine
+
+#### Updated Recommendation Generation Flow
+
+**Service**: `backend/app/services/recommendation_engine.py`
+
+**Updated `generate_combined_recommendations()` function**:
+
+```python
+def generate_combined_recommendations(db, user_id, persona_type, window_days):
+    # Step 1: Generate educational recommendations (existing)
+    educational_recs = generate_via_openai(persona_type, user_context)
+    for rec in educational_recs:
+        rec['content_type'] = 'education'
+    
+    # Step 1.5: Match articles to educational recs (NEW)
+    educational_recs_with_articles = match_articles_for_recommendations(
+        educational_recs, persona_type
+    )
+    # Adds article_id to each rec where similarity >= 0.75
+    
+    # Step 2: Generate product recommendations (existing)
+    product_recs = match_and_filter_products(db, user_id, persona_type)
+    for rec in product_recs:
+        rec['content_type'] = 'partner_offer'
+    
+    # Step 3: Combine and return
+    all_recs = educational_recs_with_articles + product_recs
+    return all_recs  # Total 3-5 recommendations
+```
+
+**No Breaking Changes**: Article matching is additive - if it fails, recommendations still work (article_id = NULL).
+
+### API Updates
+
+#### GET /recommendations/{user_id} Enhancement
+
+**Response Example**:
+```json
+{
+  "recommendations": [
+    {
+      "recommendation_id": "rec_123",
+      "content_type": "education",
+      "title": "Understanding Credit Utilization Impact",
+      "content": "Your credit utilization of 68% is impacting...",
+      "rationale": "With average utilization at 68%...",
+      "article_id": "art_001",
+      "article": {
+        "article_id": "art_001",
+        "title": "How to Lower Your Credit Utilization Fast",
+        "source": "NerdWallet",
+        "url": "https://example.com/articles/lower-credit-utilization",
+        "summary": "Learn proven strategies to reduce your credit card utilization...",
+        "reading_time_minutes": 7
+      }
+    },
+    {
+      "recommendation_id": "rec_124",
+      "content_type": "partner_offer",
+      "product_id": "prod_001",
+      "product_name": "Chase Slate Edge",
+      "article_id": null
+      // Products don't get articles
+    }
+  ]
+}
+```
+
+### Frontend Updates
+
+#### RecommendationCard Component Enhancement
+**File**: `frontend/src/components/RecommendationCard.jsx`
+
+**For Educational Recommendations with Articles**:
+
+```jsx
+{recommendation.content_type === 'education' && recommendation.article && (
+  <div className="article-section border-t pt-4 mt-4">
+    <div className="text-sm font-semibold text-gray-700">
+      📖 Related Article
+    </div>
+    <div className="mt-2">
+      <h4 className="font-medium">{recommendation.article.title}</h4>
+      <div className="text-xs text-gray-500 mt-1">
+        from {recommendation.article.source} • {recommendation.article.reading_time_minutes} min read
+      </div>
+      <p className="text-sm text-gray-600 mt-2">
+        {recommendation.article.summary}
+      </p>
+      <a
+        href={recommendation.article.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 mt-3"
+      >
+        Read Full Article ↗
+      </a>
+    </div>
+  </div>
+)}
+```
+
+**Example UI**:
+```
+┌─────────────────────────────────────────────┐
+│ 📚 Educational Recommendation               │
+│                                             │
+│ Understanding Credit Utilization            │
+│                                             │
+│ Your credit utilization of 68% is          │
+│ impacting your credit score...             │
+│ [content continues]                         │
+│                                             │
+│ Why: With average utilization at 68%...    │
+│                                             │
+│ ─────────────────────────────────────────  │
+│                                             │
+│ 📖 Related Article                          │
+│                                             │
+│ How to Lower Your Credit Utilization       │
+│ from NerdWallet • 7 min read              │
+│                                             │
+│ Learn proven strategies to reduce your     │
+│ credit card utilization and improve your   │
+│ credit score with these actionable tips.   │
+│                                             │
+│ [Read Full Article ↗]                      │
+└─────────────────────────────────────────────┘
+```
+
+### Performance Impact
+
+#### Latency Analysis
+
+**Current Recommendation Generation**:
+- OpenAI educational recs: ~17s (gpt-4o-mini)
+- Product matching: ~200ms
+- Total: ~17.2s
+
+**With Article Matching**:
+- OpenAI educational recs: ~17s (unchanged)
+- Product matching: ~200ms (unchanged)
+- Article matching: ~200-600ms (2-3 recs)
+- Total: ~17.4-17.8s
+
+**Impact**: +200-600ms (~3% increase) - acceptable for MVP
+
+**Much Better Than Alternatives**:
+- LLM-based article matching would add ~5-17s per rec (total: ~27-34s)
+- Vector similarity is 20-50x faster
+
+### Testing Strategy
+
+#### Unit Tests
+**File**: `backend/tests/test_article_matcher.py`
+- Test vector similarity search (returns top 3 articles)
+- Test similarity threshold logic (>0.75 → attach, <0.75 → NULL)
+- Test batch matching (3 recs, mix of matches and no-matches)
+- Test persona filtering (articles match persona of rec)
+
+#### Integration Tests
+**File**: `backend/tests/test_article_recommendations_integration.py`
+- Generate recommendations for each persona type
+- Verify article_ids attached appropriately (~60-80% of educational recs)
+- Verify article objects included in API response
+- Verify product recs don't have articles (as expected)
+
+#### Performance Tests
+**File**: `backend/tests/test_article_matching_performance.py`
+- Measure embedding generation latency (target: <100ms per rec)
+- Measure vector search latency (target: <100ms per search)
+- Measure end-to-end article matching (target: <300ms for 3 recs)
+
+### Replacing with Real Articles
+
+#### Process for Production
+
+When time permits, replace LLM-generated articles with real curated content:
+
+**Step 1: Curate Real Articles** (1-2 hours)
+- Manually find 30-50 high-quality articles from reputable sources
+- Sources: NerdWallet, Investopedia, CFPB, The Balance, Forbes
+- 10 articles per persona (credit/debt, budgeting, savings, investing, subscriptions)
+- Copy full article text (or representative excerpts if paywalled)
+
+**Step 2: Update Database**
+```sql
+UPDATE articles 
+SET url = 'https://www.nerdwallet.com/article/credit-cards/pay-off-credit-card-debt',
+    full_text = '[actual article text...]'
+WHERE article_id = 'art_001';
+```
+
+**Step 3: Regenerate Embeddings**
+```bash
+python scripts/populate_article_vectors.py
+```
+- Re-embeds all articles with updated full_text
+- Uploads new embeddings to Pinecone (replaces old)
+- Cost: ~$0.30-0.50 (same as initial)
+
+**Step 4: Test Matching Quality**
+- Generate recommendations for test users
+- Verify articles matched are still relevant
+- Adjust similarity threshold if needed
+
+**Expected Outcome**: Better matching quality (real articles are more coherent than LLM-generated)
+
+### Success Metrics
+
+**Match Rate**:
+- % of educational recs that get article matches (similarity >0.75)
+- Target: 60-80%
+
+**Relevance Quality**:
+- Operator approval rate for recs with articles
+- Target: >85% (high confidence in article relevance)
+
+**Performance**:
+- Average article matching latency per rec
+- Target: <150ms per rec
+
+**User Engagement** (future):
+- Click-through rate on "Read Full Article" button
+- Target: >30% of users click at least one article
+
+### Limitations
+
+**MVP Constraints**:
+- Articles are LLM-generated placeholders (not real content)
+- URLs are placeholder (example.com/articles/slug)
+- Article quality may vary (but realistic enough for demonstration)
+- No click tracking or engagement analytics
+
+**Impact**:
+- Users cannot actually read full articles (links don't work)
+- Article content may not be as comprehensive as real articles
+
+**Recommendation for Production**:
+- Curate 30-50 real articles from reputable sources (1-2 hours)
+- Update URLs to real article links
+- Regenerate embeddings with real full_text
+- Add click tracking for engagement analytics
+- Expand catalog to 100+ articles over time
+
+### Implementation Timeline
+
+**Total: 2.5-3.5 hours across 6 PRs**
+
+#### PR #46: Article Catalog Schema & LLM-Based Generation (1-1.5 hours)
+- Create articles table migration
+- Create article generation script with validation
+- Generate 50 articles via GPT-4o
+- Review and save to JSON
+
+#### PR #47: Article Seeding & Vector Database Population (30-45 min)
+- Implement seeding script
+- Generate embeddings for all articles
+- Create Pinecone index and upload vectors
+- Verify vector metadata
+
+#### PR #48: Article Matching Service (30-45 min)
+- Implement vector similarity search
+- Create article selection logic (threshold: 0.75)
+- Test with sample recommendations
+
+#### PR #49: Hybrid Recommendation Engine with Article Matching (30 min)
+- Integrate article matching into rec generation
+- Update schemas to include article data
+- Test end-to-end flow
+
+#### PR #50: Frontend - Article Display Integration (30 min)
+- Update RecommendationCard component
+- Add article section with "Read Full Article" button
+- Test with sample data
+
+#### PR #51: Unit Tests & Documentation (30-45 min)
+- Write 15+ unit tests
+- Update README with article generation instructions
+- Update DECISIONS.md and LIMITATIONS.md
+- Document real article replacement process
+
+### Future Enhancements
+
+#### Post-MVP Phase
+- Replace with real curated articles (1-2 hours)
+- Expand catalog to 100+ articles
+- Click tracking and engagement analytics
+- Multi-article recommendations (show top 3, not just 1)
+- User feedback on article relevance
+
+#### Production Phase
+- ML-based ranking (combine vector similarity + user engagement data)
+- Article summary generation (if full text not available)
+- A/B testing similarity thresholds
+- Personalized article ranking based on user behavior
+- Automatic article catalog updates (weekly refresh)
+
+---
+
 **Documentation:**
 - [ ] README with setup instructions + screenshots
 - [ ] Decision log explaining key choices (including UI-first approach)
