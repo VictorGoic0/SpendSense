@@ -125,9 +125,20 @@ User Dashboard (React UI)
 - Rationale transparency
 
 ### 8. Evaluation Harness (`eval/`)
-- Metrics computation script
-- SQLite table for dashboard display
-- Parquet export to S3 for deep analysis
+- ✅ Metrics computation script (PR #28 Complete)
+  - `scripts/evaluate.py`: Comprehensive evaluation script
+  - Coverage metrics: Percentage of users with personas assigned
+  - Explainability metrics: Percentage of recommendations with rationale
+  - Latency metrics: Average and p95 recommendation generation time
+  - Auditability metrics: Percentage of recommendations with decision traces (100%)
+  - Persona distribution: Groups personas by type for 30d and 180d windows
+  - Recommendation status breakdown: Groups recommendations by status
+  - Main function: `run_evaluation()` generates unique run_id, computes all metrics, prints formatted output
+  - Database persistence: `save_evaluation_metrics()` saves metrics to evaluation_metrics table
+  - Dependencies: pandas==2.1.4, numpy==1.26.2
+  - Output: Formatted console output with all metrics, distributions, and breakdowns
+- SQLite table for dashboard display (evaluation_metrics table)
+- Parquet export to S3 for deep analysis (PR #29 - Next)
 
 ## Database Schema (10 Tables)
 

@@ -1,9 +1,22 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #27 Complete - User Dashboard & Consent Management Complete
+**Status**: PR #28 Complete - Evaluation Script - Metrics Computation Complete
 
 ## Recent Changes
+- ✅ **PR #28 Complete: Evaluation Script - Metrics Computation (all 54 tasks finished)**
+  - Created `scripts/evaluate.py` evaluation script
+  - Coverage metrics: Computes percentage of users with personas assigned
+  - Explainability metrics: Computes percentage of recommendations with rationale
+  - Latency metrics: Calculates average and p95 recommendation generation time using numpy.percentile()
+  - Auditability metrics: Verifies all recommendations have decision traces (100% auditability)
+  - Persona distribution: Groups personas by type for 30d and 180d windows
+  - Recommendation status breakdown: Groups recommendations by status
+  - Main evaluation function: `run_evaluation()` generates unique run_id, calls all metric functions, combines results, prints formatted output
+  - Database persistence: `save_evaluation_metrics()` saves all metrics to evaluation_metrics table with JSON details
+  - Dependencies added: pandas==2.1.4, numpy==1.26.2 to requirements.txt
+  - Script tested: Successfully runs, computes metrics, saves to database
+  - Output: Formatted console output with all metrics, persona distributions, and status breakdowns
 - ✅ **PR #27 Complete: Frontend - User Dashboard & Consent (all 44 tasks finished)**
   - Backend consent endpoints created:
     - Created `backend/app/routers/consent.py` router with POST `/consent` and GET `/consent/{user_id}` endpoints
@@ -602,8 +615,9 @@
   - All 74 tasks completed
 
 ## Next Steps
-1. **Evaluation System** - Create evaluation metrics script and Parquet export to S3
-2. **AWS Deployment** - Deploy backend to Lambda and frontend to Vercel/Netlify
+1. **Parquet Export & S3 Integration** - PR #29: Export user features and evaluation results to Parquet, upload to S3
+2. **Evaluation API Endpoint** - PR #30: Create API endpoints for running evaluations and retrieving metrics
+3. **AWS Deployment** - Deploy backend to Lambda and frontend to Vercel/Netlify
 
 ## Active Decisions and Considerations
 
@@ -698,7 +712,9 @@ None - Ready to proceed with PR #21 (Recommendation Generation Endpoint)
 - PR #24 complete (all 39 tasks checked off - Override & Reject Endpoints)
 - PR #25 complete (all 21 tasks checked off - Bulk Approve Endpoint)
 - PR #26 complete (all 51 tasks checked off - Frontend Approval Queue Page)
-- Following tasks-6.md structure (PR #27 next - User Dashboard & Consent)
+- PR #27 complete (all 44 tasks checked off - User Dashboard & Consent)
+- PR #28 complete (all 54 tasks checked off - Evaluation Script - Metrics Computation)
+- Following tasks-7.md structure (PR #29 next - Parquet Export & S3 Integration)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility

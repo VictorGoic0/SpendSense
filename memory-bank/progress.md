@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #27 Complete - User Dashboard & Consent Management Complete
+**Status**: PR #28 Complete - Evaluation Script - Metrics Computation Complete
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -503,12 +503,27 @@
     - Error handling and loading states
     - Responsive layout
   - All 44 tasks completed (7 backend + 37 frontend)
+- ✅ **PR #28 Complete: Evaluation Script - Metrics Computation (all 54 tasks finished)**
+  - Created `scripts/evaluate.py` evaluation script
+  - Coverage metrics: `compute_coverage_metrics()` - Calculates percentage of users with personas assigned
+  - Explainability metrics: `compute_explainability_metrics()` - Calculates percentage of recommendations with rationale
+  - Latency metrics: `compute_latency_metrics()` - Calculates average and p95 latency using numpy.percentile()
+  - Auditability metrics: `compute_auditability_metrics()` - Verifies all recommendations have decision traces (100%)
+  - Persona distribution: `get_persona_distribution()` - Groups personas by type for 30d and 180d windows
+  - Recommendation status breakdown: `get_recommendation_status_breakdown()` - Groups recommendations by status
+  - Main evaluation function: `run_evaluation()` - Generates unique run_id, calls all metric functions, combines results, prints formatted output
+  - Database persistence: `save_evaluation_metrics()` - Saves all metrics to evaluation_metrics table with JSON details
+  - Dependencies added: pandas==2.1.4, numpy==1.26.2 to requirements.txt and installed in venv
+  - Script tested: Successfully runs, computes all metrics, saves to database, prints formatted output
+  - All 54 tasks completed
 
 ### In Progress
 - 🔄 None - Ready for next PR
 
 ### Not Started
-- ⏳ Evaluation system
+- ⏳ Parquet export & S3 integration (PR #29)
+- ⏳ Evaluation API endpoints (PR #30)
+- ⏳ Frontend metrics display (PR #31)
 - ⏳ AWS deployment
 
 ## What's Left to Build
@@ -546,8 +561,9 @@
 - [x] Approval workflow API endpoints - **PR #23 Complete (approve), PR #24 Complete (override & reject), PR #25 Complete (bulk approve)**
 - [x] Recommendations visible and testable in UI - **PR #26 Complete (approval queue page)**
 - [x] Approval workflow functional in UI (approve/reject/override) - **PR #26 Complete**
-- [ ] Evaluation script outputs metrics + Parquet to S3
-- [ ] Metrics displayed in operator dashboard
+- [x] Evaluation script outputs metrics - **PR #28 Complete**
+- [ ] Parquet export to S3 (PR #29)
+- [ ] Metrics displayed in operator dashboard (PR #31)
 
 ### Day 3+ (Stretch Goals)
 - [ ] FastAPI deployed to AWS Lambda
@@ -691,5 +707,5 @@
   - Verified and working in development
 
 ## Next Milestone
-**Evaluation System**: Create evaluation metrics script and Parquet export to S3
+**Parquet Export & S3 Integration**: Export user features and evaluation results to Parquet format, upload to S3 with pre-signed URLs
 

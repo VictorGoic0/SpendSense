@@ -3,81 +3,81 @@
 ## PR #28: Evaluation Script - Metrics Computation
 
 ### Evaluation Script Setup
-- [ ] 1. Create `scripts/evaluate.py`
-- [ ] 2. Import required libraries: pandas, numpy, datetime, json
-- [ ] 3. Import database session and models
-- [ ] 4. Import boto3 for S3 operations
+- [x] 1. Create `scripts/evaluate.py`
+- [x] 2. Import required libraries: pandas, numpy, datetime, json
+- [x] 3. Import database session and models
+- [x] 4. Import boto3 for S3 operations
 
 ### Coverage Metrics
-- [ ] 5. Create `compute_coverage_metrics(db) -> dict` function:
-- [ ] 6. Query total users with consent_status=True
-- [ ] 7. Query count of users with persona assigned (30d window)
-- [ ] 8. Query count of users with ≥3 detected behaviors:
+- [x] 5. Create `compute_coverage_metrics(db) -> dict` function:
+- [x] 6. Query total users with consent_status=True
+- [x] 7. Query count of users with persona assigned (30d window)
+- [x] 8. Query count of users with ≥3 detected behaviors:
    - recurring_merchants >= 3 OR
    - net_savings_inflow > 0 OR
    - avg_utilization > 0
-- [ ] 9. Calculate coverage_percentage = (users_with_persona / total_users) * 100
-- [ ] 10. Return dict with coverage metrics
+- [x] 9. Calculate coverage_percentage = (users_with_persona / total_users) * 100
+- [x] 10. Return dict with coverage metrics
 
 ### Explainability Metrics
-- [ ] 11. Create `compute_explainability_metrics(db) -> dict` function:
-- [ ] 12. Query total count of recommendations
-- [ ] 13. Query count of recommendations with rationale not null and not empty
-- [ ] 14. Calculate explainability_percentage = (with_rationale / total) * 100
-- [ ] 15. Return dict with explainability metrics
+- [x] 11. Create `compute_explainability_metrics(db) -> dict` function:
+- [x] 12. Query total count of recommendations
+- [x] 13. Query count of recommendations with rationale not null and not empty
+- [x] 14. Calculate explainability_percentage = (with_rationale / total) * 100
+- [x] 15. Return dict with explainability metrics
 
 ### Latency Metrics
-- [ ] 16. Create `compute_latency_metrics(db) -> dict` function:
-- [ ] 17. Query all recommendations with generation_time_ms not null
-- [ ] 18. Extract generation_time_ms values into list
-- [ ] 19. Calculate average latency
-- [ ] 20. Calculate p95 latency using numpy.percentile()
-- [ ] 21. Return dict with latency metrics
+- [x] 16. Create `compute_latency_metrics(db) -> dict` function:
+- [x] 17. Query all recommendations with generation_time_ms not null
+- [x] 18. Extract generation_time_ms values into list
+- [x] 19. Calculate average latency
+- [x] 20. Calculate p95 latency using numpy.percentile()
+- [x] 21. Return dict with latency metrics
 
 ### Auditability Metrics
-- [ ] 22. Create `compute_auditability_metrics(db) -> dict` function:
-- [ ] 23. Query total recommendations count
-- [ ] 24. All recommendations have decision traces (persona + features)
-- [ ] 25. Set auditability_percentage = 100.0
-- [ ] 26. Return dict with auditability metrics
+- [x] 22. Create `compute_auditability_metrics(db) -> dict` function:
+- [x] 23. Query total recommendations count
+- [x] 24. All recommendations have decision traces (persona + features)
+- [x] 25. Set auditability_percentage = 100.0
+- [x] 26. Return dict with auditability metrics
 
 ### Persona Distribution
-- [ ] 27. Create `get_persona_distribution(db, window_days: int) -> dict` function:
-- [ ] 28. Query personas table grouped by persona_type
-- [ ] 29. Count records per persona type
-- [ ] 30. Return dict with counts per persona
+- [x] 27. Create `get_persona_distribution(db, window_days: int) -> dict` function:
+- [x] 28. Query personas table grouped by persona_type
+- [x] 29. Count records per persona type
+- [x] 30. Return dict with counts per persona
 
 ### Recommendation Status Breakdown
-- [ ] 31. Create `get_recommendation_status_breakdown(db) -> dict` function:
-- [ ] 32. Query recommendations table grouped by status
-- [ ] 33. Count records per status
-- [ ] 34. Return dict with counts per status
+- [x] 31. Create `get_recommendation_status_breakdown(db) -> dict` function:
+- [x] 32. Query recommendations table grouped by status
+- [x] 33. Count records per status
+- [x] 34. Return dict with counts per status
 
 ### Main Evaluation Function
-- [ ] 35. Create `run_evaluation() -> tuple[str, dict]` function:
-- [ ] 36. Generate run_id with timestamp format: eval_YYYYMMDD_HHMMSS
-- [ ] 37. Call all metric computation functions
-- [ ] 38. Combine results into single metrics dict
-- [ ] 39. Calculate persona distribution
-- [ ] 40. Calculate recommendation status breakdown
-- [ ] 41. Print metrics to console (formatted)
-- [ ] 42. Return (run_id, metrics_dict)
+- [x] 35. Create `run_evaluation() -> tuple[str, dict]` function:
+- [x] 36. Generate run_id with timestamp format: eval_YYYYMMDD_HHMMSS
+- [x] 37. Call all metric computation functions
+- [x] 38. Combine results into single metrics dict
+- [x] 39. Calculate persona distribution
+- [x] 40. Calculate recommendation status breakdown
+- [x] 41. Print metrics to console (formatted)
+- [x] 42. Return (run_id, metrics_dict)
 
 ### Save to Database
-- [ ] 43. Create `save_evaluation_metrics(db, run_id: str, metrics: dict)` function:
-- [ ] 44. Create EvaluationMetric model instance
-- [ ] 45. Populate all fields from metrics dict
-- [ ] 46. Add details field with JSON of extra info
-- [ ] 47. Commit to database
-- [ ] 48. Return metric record
+- [x] 43. Create `save_evaluation_metrics(db, run_id: str, metrics: dict)` function:
+- [x] 44. Create EvaluationMetric model instance
+- [x] 45. Populate all fields from metrics dict
+- [x] 46. Add details field with JSON of extra info
+- [x] 47. Commit to database
+- [x] 48. Return metric record
 
 ### Testing Evaluation Script
-- [ ] 49. Add __main__ block to script
-- [ ] 50. Run evaluation: `python scripts/evaluate.py`
-- [ ] 51. Verify metrics printed to console
-- [ ] 52. Verify record created in evaluation_metrics table
-- [ ] 53. Check that all percentages = 100% (or close)
-- [ ] 54. Verify persona distribution shows all 5 types
+- [x] 49. Add __main__ block to script
+- [x] 50. Run evaluation: `python scripts/evaluate.py`
+- [x] 51. Verify metrics printed to console
+- [x] 52. Verify record created in evaluation_metrics table
+- [x] 53. Check that all percentages = 100% (or close)
+- [x] 54. Verify persona distribution shows all 5 types
 
 ---
 
