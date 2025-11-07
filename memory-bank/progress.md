@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #19 Complete - Recommendation Engine Service - OpenAI Integration Complete
+**Status**: PR #20 Complete - Guardrails Service - Tone & Consent Validation Complete
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -317,12 +317,30 @@
     - Validates response structure, quality, and tone
     - Saves output to JSON file for review
   - Test results: All 3 tested persona types passed, empowering language verified
+- ✅ **PR #20 Complete: Guardrails Service - Tone & Consent Validation (all 38 tasks finished)**
+  - Guardrails service (`backend/app/services/guardrails.py`):
+    - `validate_tone()` function: Returns structured dict with `is_valid` and `validation_warnings` array
+      - Critical warnings: Forbidden phrases (severity="critical", type="forbidden_phrase") → RED in operator UI
+      - Notable warnings: Lacks empowering language (severity="notable", type="lacks_empowering_language") → YELLOW in operator UI
+      - Empty array when valid, populated array with warnings when invalid
+    - `check_consent()` function: Checks user consent status with logging
+    - Eligibility functions: `check_income_eligibility()`, `check_credit_eligibility()`, `check_account_exists()`
+    - `filter_partner_offers()` function: Filters offers based on eligibility requirements
+    - `append_disclosure()` function: Appends mandatory disclosure to content
+    - `MANDATORY_DISCLOSURE` constant defined
+  - Test script (`scripts/test_guardrails.py`):
+    - Tests tone validation with valid content, forbidden phrases, lacks empowering language, both issues
+    - Tests consent checking with consented/non-consented/non-existent users
+    - Tests eligibility checks (income, credit, account existence)
+    - Tests partner offer filtering
+    - Tests mandatory disclosure appending
+  - Test results: All tests passing, all 38 tasks completed
+  - Key design: All recommendations persisted regardless of warnings - operator reviews and decides
 
 ### In Progress
-- 🔄 None - Ready for PR #20
+- 🔄 None - Ready for PR #21
 
 ### Not Started
-- ⏳ Guardrails module - **PR #20 Next**
 - ⏳ Recommendation generation endpoint - **PR #21 Next**
 - ⏳ React UI components (approval queue, user dashboard)
 - ⏳ Evaluation system
@@ -359,7 +377,7 @@
 ### Day 2 Deliverables (MVP)
 - [x] All 5 personas assigned with prioritization (PR #15, #16 complete)
 - [x] AI recommendation generation working (PR #19 complete - OpenAI integration functional)
-- [ ] Guardrails enforced (consent, tone, eligibility) - **PR #20 Next**
+- [x] Guardrails enforced (consent, tone, eligibility) - **PR #20 Complete**
 - [ ] Recommendations visible and testable in UI
 - [ ] Approval workflow functional in UI (approve/reject/override)
 - [ ] Evaluation script outputs metrics + Parquet to S3
@@ -452,8 +470,22 @@
   - `scripts/test_context_builder.py` - Context building tests, all passing
   - `scripts/test_openai_generation.py` - OpenAI integration tests, all quality checks passing
 - **Test Results**: All recommendations use empowering language, all quality checks passing
-- **Next**: Guardrails service for tone validation (PR #20)
-- **Priority**: Day 2 - after persona assignment
+- **Next**: Recommendation generation endpoint (PR #21)
+- **Priority**: Day 2 - after guardrails
+
+### Guardrails
+- **Status**: ✅ Complete - Guardrails service implemented and tested
+- **Completed**: Guardrails service with tone validation, consent checking, eligibility validation, partner offer filtering, mandatory disclosure
+- **Service File**: `backend/app/services/guardrails.py`
+- **Functions**:
+  - `validate_tone()` - Returns structured warnings (critical/notable) stored in metadata_json
+  - `check_consent()` - Checks user consent status
+  - `check_income_eligibility()`, `check_credit_eligibility()`, `check_account_exists()` - Eligibility checks
+  - `filter_partner_offers()` - Filters offers based on eligibility
+  - `append_disclosure()` - Appends mandatory disclosure
+- **Test Script**: `scripts/test_guardrails.py` - All tests passing
+- **Key Design**: All recommendations persisted regardless of warnings - operator reviews and decides
+- **Next**: Integration into recommendation generation endpoint (PR #21)
 
 ### Infrastructure
 - **Status**: Not deployed
@@ -471,5 +503,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #18-21 Completion**: Recommendation engine service (context building, OpenAI integration), guardrails, and generation endpoint - ready for approval workflow
+**PR #21 Completion**: Recommendation generation endpoint with guardrails integration - ready for approval workflow
 

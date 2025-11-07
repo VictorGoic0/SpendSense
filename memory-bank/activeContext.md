@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #19 Complete - Recommendation Engine Service - OpenAI Integration Complete
+**Status**: PR #20 Complete - Guardrails Service - Tone & Consent Validation Complete
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -413,16 +413,33 @@
     - Saves complete output to `openai_test_output.json` with token usage, costs, and recommendations
   - Test results: All 3 tested persona types passed quality checks, all recommendations use empowering language
   - OpenAI SDK upgraded from 1.3.5 to 2.7.1 for compatibility
+- ✅ **PR #20 Complete: Guardrails Service - Tone & Consent Validation (all 38 tasks finished)**
+  - Guardrails service (`backend/app/services/guardrails.py`):
+    - `validate_tone()` function: Returns structured dict with `is_valid` and `validation_warnings` array
+      - Critical warnings: Forbidden phrases (severity="critical", type="forbidden_phrase") → RED in operator UI
+      - Notable warnings: Lacks empowering language (severity="notable", type="lacks_empowering_language") → YELLOW in operator UI
+      - Empty array when valid, populated array with warnings when invalid
+    - `check_consent()` function: Checks user consent status with logging
+    - Eligibility functions: `check_income_eligibility()`, `check_credit_eligibility()`, `check_account_exists()`
+    - `filter_partner_offers()` function: Filters offers based on eligibility requirements
+    - `append_disclosure()` function: Appends mandatory disclosure to content
+    - `MANDATORY_DISCLOSURE` constant defined
+  - Test script (`scripts/test_guardrails.py`):
+    - Tests tone validation with valid content, forbidden phrases, lacks empowering language, both issues
+    - Tests consent checking with consented/non-consented/non-existent users
+    - Tests eligibility checks (income, credit, account existence)
+    - Tests partner offer filtering
+    - Tests mandatory disclosure appending
+  - Test results: All tests passing, all 38 tasks completed
+  - Key design: All recommendations persisted regardless of warnings - operator reviews and decides
 
 ## Next Steps
-1. **PR #20: Guardrails Service** - Implement tone validation and consent checks
-2. **PR #21: Recommendation Generation Endpoint** - Create API endpoint for generating recommendations
+1. **PR #21: Recommendation Generation Endpoint** - Create API endpoint for generating recommendations with guardrails integration
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Guardrails service** - Next task (PR #20) - Implement tone validation and consent checks
-- **Recommendation generation endpoint** - After guardrails (PR #21) - Create API endpoint with DB save
+- **Recommendation generation endpoint** - Next task (PR #21) - Create API endpoint with guardrails integration and DB save
 - **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
 
 ### Technical Decisions Made
@@ -457,7 +474,13 @@
 - **Backend Operator Endpoints** - GET /operator/dashboard with metrics and statistics; GET /operator/users/{user_id}/signals for detailed signals
 - **OpenAI Integration** - OpenAI SDK installed (v2.7.1, upgraded from 1.3.5), API key configured, prompt templates created
 - **Prompt System** - Self-contained persona-specific prompts following "just right" calibration guide, prompt loader utility with caching
-- **Guardrails Validation Flow** - Tone validation returns structured warnings (critical/notable) stored in metadata_json; ALL recommendations persisted regardless of warnings for operator review; operator UI displays RED (critical) and YELLOW (notable) warnings; operator can approve/decline regardless of warnings
+- **Guardrails Service** - Complete guardrails service implemented (PR #20):
+  - Tone validation with structured warnings (critical/notable) stored in metadata_json
+  - Consent checking, eligibility validation (income, credit, accounts)
+  - Partner offer filtering, mandatory disclosure appending
+  - ALL recommendations persisted regardless of warnings for operator review
+  - Operator UI will display RED (critical) and YELLOW (notable) warnings
+  - Operator can approve/decline regardless of warnings
 
 ### Integration Points
 - Frontend ↔ Backend: CORS configured, API client setup complete (`frontend/src/lib/api.js`), API service functions ready (`frontend/src/lib/apiService.js`), routing structure in place
@@ -469,7 +492,7 @@
 - Data Generation ↔ Database: ✅ Complete - All synthetic data ingested successfully
 
 ## Current Blockers
-None - Ready to proceed with PR #20 (Guardrails Service - Tone & Consent Validation)
+None - Ready to proceed with PR #21 (Recommendation Generation Endpoint)
 
 ## Active Questions
 1. ✅ Python venv upgraded to 3.11.9 - Complete

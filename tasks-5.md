@@ -242,14 +242,14 @@
 ## PR #20: Guardrails Service - Tone & Consent Validation
 
 ### Guardrails Service File
-- [ ] 1. Create `backend/app/services/guardrails.py`
-- [ ] 2. Import database models
+- [x] 1. Create `backend/app/services/guardrails.py`
+- [x] 2. Import database models
 
 ### Tone Validation - Forbidden Phrases
-- [ ] 3. Create `validate_tone(content: str) -> Dict[str, Any]`:
+- [x] 3. Create `validate_tone(content: str) -> Dict[str, Any]`:
    - Returns structured dict with `is_valid` (bool) and `validation_warnings` (array)
    - Format: `{"is_valid": bool, "validation_warnings": [{"severity": "critical"|"notable", "type": str, "message": str}]}`
-- [ ] 4. Define list of forbidden shaming phrases:
+- [x] 4. Define list of forbidden shaming phrases:
    - "you're overspending"
    - "bad habit"
    - "poor financial decision"
@@ -257,15 +257,15 @@
    - "wasteful spending"
    - "you should stop"
    - "you need to"
-- [ ] 5. Convert content to lowercase for checking
-- [ ] 6. Loop through forbidden phrases
-- [ ] 7. If any phrase found, add to warnings array:
+- [x] 5. Convert content to lowercase for checking
+- [x] 6. Loop through forbidden phrases
+- [x] 7. If any phrase found, add to warnings array:
    - severity: "critical"
    - type: "forbidden_phrase"
    - message: f"Contains shaming language: '{phrase}'"
 
 ### Tone Validation - Empowering Language
-- [ ] 8. Define list of empowering keywords that should be present:
+- [x] 8. Define list of empowering keywords that should be present:
    - "you can"
    - "let's"
    - "many people"
@@ -273,59 +273,59 @@
    - "opportunity"
    - "consider"
    - "explore"
-- [ ] 9. Check if at least one empowering keyword present
-- [ ] 10. If none found, add to warnings array:
+- [x] 9. Check if at least one empowering keyword present
+- [x] 10. If none found, add to warnings array:
    - severity: "notable"
    - type: "lacks_empowering_language"
    - message: "Content lacks empowering tone - no empowering keywords found"
-- [ ] 11. Return result dict:
+- [x] 11. Return result dict:
    - If warnings exist: `{"is_valid": False, "validation_warnings": [...]}`
    - If all checks pass: `{"is_valid": True, "validation_warnings": []}`
 
 ### Consent Validation
-- [ ] 12. Create `check_consent(db, user_id: str) -> bool`:
-- [ ] 13. Query User record
-- [ ] 14. Check consent_status field
-- [ ] 15. Return True if consent_status == True, False otherwise
-- [ ] 16. Add logging for consent checks
+- [x] 12. Create `check_consent(db, user_id: str) -> bool`:
+- [x] 13. Query User record
+- [x] 14. Check consent_status field
+- [x] 15. Return True if consent_status == True, False otherwise
+- [x] 16. Add logging for consent checks
 
 ### Eligibility Validation - Income Requirements
-- [ ] 17. Create `check_income_eligibility(db, user_id: str, min_income: float) -> bool`:
-- [ ] 18. Query UserFeature for user (30d window)
-- [ ] 19. Check if avg_monthly_income >= min_income
-- [ ] 20. Return True if eligible, False otherwise
+- [x] 17. Create `check_income_eligibility(db, user_id: str, min_income: float) -> bool`:
+- [x] 18. Query UserFeature for user (30d window)
+- [x] 19. Check if avg_monthly_income >= min_income
+- [x] 20. Return True if eligible, False otherwise
 
 ### Eligibility Validation - Credit Requirements
-- [ ] 21. Create `check_credit_eligibility(db, user_id: str, max_utilization: float) -> bool`:
-- [ ] 22. Query UserFeature for user
-- [ ] 23. Check if max_utilization <= max_utilization threshold
-- [ ] 24. Return True if eligible, False otherwise
+- [x] 21. Create `check_credit_eligibility(db, user_id: str, max_utilization: float) -> bool`:
+- [x] 22. Query UserFeature for user
+- [x] 23. Check if max_utilization <= max_utilization threshold
+- [x] 24. Return True if eligible, False otherwise
 
 ### Eligibility Validation - Account Existence
-- [ ] 25. Create `check_account_exists(db, user_id: str, account_type: str) -> bool`:
-- [ ] 26. Query Account records for user
-- [ ] 27. Filter by account_type
-- [ ] 28. Return True if at least one account found, False otherwise
+- [x] 25. Create `check_account_exists(db, user_id: str, account_type: str) -> bool`:
+- [x] 26. Query Account records for user
+- [x] 27. Filter by account_type
+- [x] 28. Return True if at least one account found, False otherwise
 
 ### Partner Offer Filtering
-- [ ] 29. Create `filter_partner_offers(db, user_id: str, offers: list) -> list`:
-- [ ] 30. For each offer:
+- [x] 29. Create `filter_partner_offers(db, user_id: str, offers: list) -> list`:
+- [x] 30. For each offer:
     - Check eligibility requirements (income, credit, existing accounts)
     - Remove offer if user not eligible
-- [ ] 31. Return filtered list of offers
+- [x] 31. Return filtered list of offers
 
 ### Mandatory Disclosure
-- [ ] 32. Create constant `MANDATORY_DISCLOSURE = "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance."`
-- [ ] 33. Create `append_disclosure(content: str) -> str`:
+- [x] 32. Create constant `MANDATORY_DISCLOSURE = "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance."`
+- [x] 33. Create `append_disclosure(content: str) -> str`:
     - Add disclosure to end of content
     - Return updated content
 
 ### Testing Guardrails
-- [ ] 34. Create test script `scripts/test_guardrails.py`
-- [ ] 35. Test tone validation with good and bad examples
-- [ ] 36. Test consent checking with consented/non-consented users
-- [ ] 37. Test eligibility checks with various user scenarios
-- [ ] 38. Verify all functions work as expected
+- [x] 34. Create test script `scripts/test_guardrails.py`
+- [x] 35. Test tone validation with good and bad examples
+- [x] 36. Test consent checking with consented/non-consented users
+- [x] 37. Test eligibility checks with various user scenarios
+- [x] 38. Verify all functions work as expected
 
 ---
 
