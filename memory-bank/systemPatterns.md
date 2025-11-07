@@ -39,9 +39,21 @@ User Dashboard (React UI)
 - **Computation**: Combined feature computation function, API endpoints, batch processing (✅ Complete)
 
 ### 3. Persona Assignment Engine (`personas/`)
-- Rules-based logic (deterministic, fast)
-- Prioritization when multiple personas match
-- Stores assignment with confidence scores
+- ✅ Rules-based logic (deterministic, fast) - **PR #15 Complete**
+- ✅ Prioritization when multiple personas match - **PR #15 Complete**
+- ✅ Stores assignment with confidence scores - **PR #15 Complete**
+- ✅ API endpoints for assignment and retrieval - **PR #16 Complete**
+- ✅ Batch assignment script for all users - **PR #16 Complete**
+- **Service File**: `backend/app/services/persona_assignment.py`
+- **Router File**: `backend/app/routers/personas.py`
+- **Check Functions**: high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder
+- **Priority Order**: wealth_builder (1.0) → high_utilization (0.95/0.8) → savings_builder (0.7) → variable_income (0.6) → subscription_heavy (0.5)
+- **Reasoning**: JSON-serialized dict with matched_criteria, feature_values, timestamp, priority
+- **API Endpoints**: POST /personas/{user_id}/assign, GET /personas/{user_id}
+- **Batch Script**: `scripts/assign_all_personas.py`
+- **Test Script**: `scripts/test_persona_assignment.py`
+- **Personas Assigned**: 142 records (71 users × 2 windows)
+- **Note**: Synthetic data variance enhancement needed - wealth_builder and variable_income personas not well represented in current test data
 
 ### 4. Recommendation Engine (`recommend/`)
 - 5 separate OpenAI endpoints (one per persona)
@@ -104,9 +116,13 @@ User Dashboard (React UI)
 ## Design Patterns
 
 ### Persona Assignment Pattern
-- **Rules-based, not ML**: Deterministic logic for fast, explainable assignments
-- **Prioritization**: When multiple personas match, highest priority wins
-- **Confidence Scores**: Stored for transparency (though rules-based, not probabilistic)
+- **Rules-based, not ML**: Deterministic logic for fast, explainable assignments ✅ Implemented
+- **Prioritization**: When multiple personas match, highest priority wins ✅ Implemented
+- **Confidence Scores**: Stored for transparency (though rules-based, not probabilistic) ✅ Implemented
+- **Implementation**: `backend/app/services/persona_assignment.py`
+- **Check Functions**: Each persona has dedicated check function with specific criteria
+- **Helper Functions**: get_total_savings_balance(), has_overdraft_or_late_fees() for wealth_builder checks
+- **Reasoning Storage**: JSON-serialized reasoning dict stored in Persona.reasoning field
 
 ### AI Integration Pattern
 - **Separate Endpoints Per Persona**: 5 distinct system prompts for better context management
@@ -174,6 +190,8 @@ User Dashboard (React UI)
   - GET /operator/users/{user_id}/signals - Detailed signals for operator view (30d and 180d)
   - GET /profile/{user_id} - User profile with features and personas
   - POST /features/compute/{user_id} - Compute features for user
+  - POST /personas/{user_id}/assign - Assign persona for user (with optional window_days parameter)
+  - GET /personas/{user_id} - Get personas for user (with optional window filter)
   - POST /ingest - Bulk data ingestion
 
 ### Frontend Constants & Enums Pattern

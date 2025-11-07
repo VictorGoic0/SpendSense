@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import init_db, Base
 from app import models  # Import models to register them with Base
-from app.routers import ingest, features, profile, users, operator
+from app.routers import ingest, features, profile, users, operator, personas
 
 app = FastAPI(
     title="SpendSense API",
@@ -32,6 +32,7 @@ app.include_router(features.router)
 app.include_router(profile.router)
 app.include_router(users.router)
 app.include_router(operator.router)
+app.include_router(personas.router)
 
 
 @app.get("/")

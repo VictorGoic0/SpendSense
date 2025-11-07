@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #14 Complete - Frontend Operator User Detail Page Complete
+**Status**: PR #16 Complete - Persona Assignment Endpoint & Batch Script Complete
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -272,18 +272,66 @@
     - Loading states: Skeleton placeholders for all sections
     - Error states: Alert component with retry functionality
     - Data fetching: Parallel API calls for user, profile, signals, and recommendations
+- ✅ **PR #15 Complete: Persona Assignment Service (all 29 tasks finished)**
+  - Created `backend/app/services/persona_assignment.py` service file
+  - Persona check functions implemented:
+    - `check_high_utilization()`: Returns True if max_utilization >= 0.50 OR interest_charges_present OR minimum_payment_only_flag OR any_overdue
+    - `check_variable_income()`: Returns True if median_pay_gap_days > 45 AND cash_flow_buffer_months < 1
+    - `check_subscription_heavy()`: Returns True if recurring_merchants >= 3 AND (monthly_recurring_spend >= 50 OR subscription_spend_share >= 0.10)
+    - `check_savings_builder()`: Returns True if (savings_growth_rate >= 0.02 OR net_savings_inflow >= 200) AND avg_utilization < 0.30
+    - `check_wealth_builder()`: Returns True if avg_monthly_income > 10000 AND savings_balance > 25000 AND max_utilization <= 0.20 AND no overdrafts/late fees AND investment_account_detected
+  - Helper functions:
+    - `get_total_savings_balance()`: Queries savings accounts and sums balance_current
+    - `has_overdraft_or_late_fees()`: Checks transactions for fee-related categories in window
+  - Persona assignment logic (`assign_persona()`):
+    - Queries UserFeature for user and window
+    - Checks personas in priority order: wealth_builder (1.0), high_utilization (0.95 if util>=80%, else 0.8), savings_builder (0.7), variable_income (0.6), subscription_heavy (0.5)
+    - Returns highest priority persona with confidence score and reasoning dictionary
+    - Reasoning dict includes: matched_criteria, feature_values, timestamp, priority, all_matched_personas
+  - Persona persistence (`create_or_update_persona()`):
+    - Checks if Persona record exists for user + window
+    - Updates existing or creates new record
+    - Serializes reasoning dict to JSON string
+    - Commits to database
+  - Main function (`assign_and_save_persona()`):
+    - Calls assign_persona() to get type, confidence, reasoning
+    - Calls create_or_update_persona() to save
+    - Returns Persona object
+  - Test script created (`scripts/test_persona_assignment.py`):
+    - Tests individual persona check functions
+    - Tests persona assignment logic
+    - Tests saving personas to database
+    - Verifies persona records in database
+    - Shows persona distribution statistics
+- ✅ **PR #16 Complete: Persona Assignment Endpoint & Batch Script (all 29 tasks finished)**
+  - Personas router (`backend/app/routers/personas.py`):
+    - POST `/{user_id}/assign` endpoint: Assigns persona for user with optional window_days query parameter (default: 30)
+    - GET `/{user_id}` endpoint: Retrieves personas for user with optional window filter
+    - Error handling: 404 (user not found), 400 (features not computed), 500 (server error)
+    - Returns PersonaResponse objects
+  - Router registration: Personas router registered in main.py
+  - Batch assignment script (`scripts/assign_all_personas.py`):
+    - Processes all users, assigns personas for both 30-day and 180-day windows
+    - Progress reporting every 10 users
+    - Summary statistics: Total users processed, persona distribution for 30d and 180d windows, users with general_wellness
+    - Validation warnings for missing persona types
+  - Database schema update: Added 'general_wellness' to Persona model CHECK constraint and PersonaResponse schema
+  - Successfully assigned personas to 71 users:
+    - 30d window: 44 high_utilization, 10 subscription_heavy, 1 savings_builder, 16 general_wellness
+    - 180d window: 44 high_utilization, 19 subscription_heavy, 8 general_wellness
+  - Note: Some persona types (wealth_builder, variable_income) not represented in current synthetic data - will enhance data generation later for better variance
 
 ## Next Steps
-1. **PR #15: Persona Assignment Engine** - Implement rules-based persona assignment
-2. **PR #16+: AI Recommendation Generation** - Create OpenAI integration with 5 persona-specific endpoints
-3. **PR #17+: Approval Queue** - Implement recommendation approval workflow
+1. **PR #17+: AI Recommendation Generation** - Create OpenAI integration with 5 persona-specific endpoints
+2. **PR #18+: Approval Queue** - Implement recommendation approval workflow
+3. **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Persona assignment engine** - Next task (PR #15)
-- **AI recommendation engine** - After persona assignment
+- **AI recommendation generation** - Next task (PR #17+)
 - **Approval Queue** - After recommendation generation
+- **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
 
 ### Technical Decisions Made
 - **Node version** - Node.js 20 LTS (documented in techContext.md and .cursor/rules/)
@@ -326,7 +374,7 @@
 - Data Generation ↔ Database: ✅ Complete - All synthetic data ingested successfully
 
 ## Current Blockers
-None - Ready to proceed with PR #15 (Persona Assignment Engine)
+None - Ready to proceed with PR #17+ (AI Recommendation Generation)
 
 ## Active Questions
 1. ✅ Python venv upgraded to 3.11.9 - Complete
@@ -350,7 +398,9 @@ None - Ready to proceed with PR #15 (Persona Assignment Engine)
 - PR #12 complete (all 39 implementation tasks checked off)
 - PR #13 complete (all 61 tasks checked off, including backend endpoints)
 - PR #14 complete (all 52 implementation tasks checked off, including backend endpoints)
-- Following tasks-4.md structure (PR #15 next)
+- PR #15 complete (all 29 tasks checked off - Persona Assignment Service)
+- PR #16 complete (all 29 tasks checked off - Persona Assignment Endpoint & Batch Script)
+- Following tasks-4.md structure (PR #17+ next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility

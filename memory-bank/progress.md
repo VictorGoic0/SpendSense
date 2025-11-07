@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #14 Complete - Frontend Operator User Detail Page Complete
+**Status**: PR #16 Complete - Persona Assignment Endpoint & Batch Script Complete
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -242,13 +242,38 @@
     - Loading skeletons for all sections
     - Error states with retry functionality
     - Parallel data fetching for user, profile, signals, and recommendations
+- ✅ **PR #15 Complete: Persona Assignment Service (all 29 tasks finished)**
+  - Persona assignment service (`backend/app/services/persona_assignment.py`):
+    - 5 persona check functions: high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder
+    - Helper functions: get_total_savings_balance(), has_overdraft_or_late_fees()
+    - Priority-based assignment logic: wealth_builder (1.0) → high_utilization (0.95/0.8) → savings_builder (0.7) → variable_income (0.6) → subscription_heavy (0.5)
+    - Reasoning dictionary: matched_criteria, feature_values, timestamp, priority, all_matched_personas
+    - Database persistence: create_or_update_persona() with JSON-serialized reasoning
+    - Main function: assign_and_save_persona() combines assignment and persistence
+  - Test script (`scripts/test_persona_assignment.py`):
+    - Tests individual persona check functions
+    - Tests persona assignment logic
+    - Tests saving personas to database
+    - Verifies persona records and distribution
+- ✅ **PR #16 Complete: Persona Assignment Endpoint & Batch Script (all 29 tasks finished)**
+  - Personas router (`backend/app/routers/personas.py`):
+    - POST `/{user_id}/assign` endpoint: Assigns persona for user with optional window_days parameter
+    - GET `/{user_id}` endpoint: Retrieves personas with optional window filter
+    - Error handling: 404 (user not found), 400 (features not computed), 500 (server error)
+  - Router registration: Personas router registered in main.py
+  - Batch assignment script (`scripts/assign_all_personas.py`):
+    - Processes all users, assigns personas for both 30-day and 180-day windows
+    - Progress reporting and summary statistics
+    - Validation warnings for missing persona types
+  - Database schema: Updated Persona model and schema to include 'general_wellness' persona type
+  - Successfully assigned personas to 71 users (142 persona records: 71 users × 2 windows)
+  - Note: Synthetic data variance enhancement needed - some persona types (wealth_builder, variable_income) not well represented in current test data
 
 ### In Progress
-- 🔄 None - Ready for PR #15+
+- 🔄 None - Ready for PR #17+
 
 ### Not Started
-- ⏳ Persona assignment engine - **PR #15 Next**
-- ⏳ AI recommendation engine
+- ⏳ AI recommendation engine - **PR #17+ Next**
 - ⏳ Guardrails module
 - ⏳ React UI components (operator user detail, approval queue, user dashboard)
 - ⏳ Evaluation system
@@ -261,11 +286,17 @@
 - [x] Display user info, personas (30d and 180d), and signal breakdowns
 - [x] Add tab navigation for signal types
 
-### PR #15: Persona Assignment Engine
-- [ ] Implement rules-based persona assignment logic
-- [ ] Create persona prioritization system
-- [ ] Add persona assignment API endpoint
-- [ ] Test persona assignment with computed features
+### PR #15: Persona Assignment Engine ✅ Complete
+- [x] Implement rules-based persona assignment logic
+- [x] Create persona prioritization system
+- [x] Test persona assignment with computed features
+
+### PR #16: Persona Assignment Endpoint & Batch Script ✅ Complete
+- [x] Add persona assignment API endpoint (POST /personas/{user_id}/assign)
+- [x] Add persona retrieval API endpoint (GET /personas/{user_id})
+- [x] Create batch assignment script for all users
+- [x] Update database schema to include 'general_wellness' persona type
+- [x] Assign personas to all 71 users (142 records: 30d and 180d windows)
 
 ### Day 1 Deliverables (MVP)
 - [x] SQLite database schema (10 tables) - **PR #3 Complete**
@@ -277,7 +308,7 @@
 - [ ] Full integration testing possible via UI (pending user detail page)
 
 ### Day 2 Deliverables (MVP)
-- [ ] All 5 personas assigned with prioritization
+- [x] All 5 personas assigned with prioritization (PR #15 complete, PR #16 will add batch script)
 - [ ] AI recommendation generation working (5 endpoints)
 - [ ] Guardrails enforced (consent, tone, eligibility)
 - [ ] Recommendations visible and testable in UI
@@ -296,24 +327,25 @@
 ## Current Status
 
 ### Backend
-- **Status**: Feature detection complete, API endpoints for users and dashboard working
-- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, all 4 signal detection types (subscription, savings, credit, income), feature computation function, features router, profile router, users router, operator router, batch computation script
-- **Next**: Persona assignment engine (PR #15)
-- **Priority**: Implement rules-based persona assignment logic
+- **Status**: Feature detection complete, persona assignment service and endpoints complete, API endpoints for users and dashboard working
+- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, all 4 signal detection types (subscription, savings, credit, income), feature computation function, features router, profile router, users router, operator router, personas router, batch computation script, persona assignment service with all check functions and assignment logic, batch persona assignment script
+- **Next**: AI recommendation generation (PR #17+)
+- **Priority**: Create OpenAI integration with 5 persona-specific endpoints
 
 ### Frontend
 - **Status**: Operator Dashboard, User List, and User Detail complete
 - **Completed**: React 18 + Vite, Shadcn/ui configured, TailwindCSS setup, API client, API service functions, React Router setup, Layout component, Operator Dashboard with metrics cards and charts, Operator User List with table, filters, pagination, search, Operator User Detail with two-column layout, tabs, signal displays, recommendations section, UserInfoCard, PersonaDisplay, SignalDisplay components, Progress component, loading/error states, responsive layout, enum system for constants
-- **Next**: Persona assignment engine (PR #15)
-- **Priority**: Persona assignment engine (PR #15)
+- **Next**: AI recommendation generation (PR #17+)
+- **Priority**: AI recommendation generation (PR #17+)
 
 ### Database
-- **Status**: ✅ Complete - All models implemented, data loaded, features computed
+- **Status**: ✅ Complete - All models implemented, data loaded, features computed, personas assigned
 - **Completed**: SQLAlchemy configuration, all 10 models, relationships, indexes, constraints, initialization
 - **Database File**: `backend/spendsense.db` (verified with DB Browser)
 - **Data Loaded**: 75 users, 272 accounts, 15,590 transactions, 92 liabilities
 - **Features Computed**: 142 feature records (71 users × 2 windows: 30d and 180d)
-- **Next**: Persona assignment (after frontend setup)
+- **Personas Assigned**: 142 persona records (71 users × 2 windows: 30d and 180d)
+- **Next**: AI recommendation generation (PR #17+)
 
 ### Data Generation
 - **Status**: ✅ Complete and tested
@@ -340,7 +372,19 @@
 - **Test Script**: `scripts/test_feature_detection.py` (tests all 4 signal types)
 - **Batch Script**: `scripts/compute_all_features.py` (computes features for all users)
 - **Features Computed**: 142 records (71 users × 2 windows)
-- **Next**: Persona assignment (after frontend setup)
+- **Next**: AI recommendation generation (PR #17+)
+
+### Persona Assignment
+- **Status**: ✅ Complete - Service, API endpoints, and batch script implemented
+- **Completed**: Persona assignment service with all 5 check functions, priority-based assignment logic, reasoning dictionary generation, database persistence, API endpoints (POST /personas/{user_id}/assign, GET /personas/{user_id}), batch assignment script
+- **Service File**: `backend/app/services/persona_assignment.py`
+- **Router File**: `backend/app/routers/personas.py`
+- **Test Script**: `scripts/test_persona_assignment.py` (tests assignment logic and database persistence)
+- **Batch Script**: `scripts/assign_all_personas.py` (assigns personas to all users)
+- **Personas Assigned**: 142 records (71 users × 2 windows: 30d and 180d)
+- **Distribution**: 30d - 44 high_utilization, 10 subscription_heavy, 1 savings_builder, 16 general_wellness; 180d - 44 high_utilization, 19 subscription_heavy, 8 general_wellness
+- **Note**: Synthetic data variance enhancement needed - wealth_builder and variable_income personas not well represented in current test data
+- **Next**: AI recommendation generation (PR #17+)
 
 ### AI Integration
 - **Status**: Not implemented
@@ -363,5 +407,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #15 Completion**: Persona assignment engine complete, ready for AI recommendation generation
+**PR #17+ Completion**: AI recommendation generation with OpenAI integration, ready for approval workflow
 

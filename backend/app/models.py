@@ -172,7 +172,7 @@ class Persona(Base):
     persona_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(String, ForeignKey("users.user_id"), nullable=False)
     window_days = Column(Integer, nullable=False)
-    persona_type = Column(String, CheckConstraint("persona_type IN ('high_utilization', 'variable_income', 'subscription_heavy', 'savings_builder', 'wealth_builder')"), nullable=False)
+    persona_type = Column(String, CheckConstraint("persona_type IN ('high_utilization', 'variable_income', 'subscription_heavy', 'savings_builder', 'wealth_builder', 'general_wellness')"), nullable=False)
     confidence_score = Column(Float, default=1.0)
     assigned_at = Column(DateTime, default=func.now())
     reasoning = Column(Text, nullable=True)  # JSON with matched criteria

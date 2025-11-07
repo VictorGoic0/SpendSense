@@ -220,7 +220,7 @@ class PersonaResponse(BaseModel):
     persona_id: int
     user_id: str
     window_days: int
-    persona_type: Literal["high_utilization", "variable_income", "subscription_heavy", "savings_builder", "wealth_builder"]
+    persona_type: Literal["high_utilization", "variable_income", "subscription_heavy", "savings_builder", "wealth_builder", "general_wellness"]
     confidence_score: float = 1.0
     assigned_at: datetime
     reasoning: Optional[str] = None
