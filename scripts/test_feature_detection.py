@@ -23,6 +23,8 @@ from app.services.feature_detection import (
     compute_subscription_signals,
     compute_savings_signals,
     compute_credit_signals,
+    compute_income_signals,
+    detect_investment_accounts,
     get_accounts_by_type,
     get_transactions_in_window
 )
@@ -215,6 +217,66 @@ def test_credit_detection(db, users, window_days):
     print(f"  Users with overdue accounts: {overdue_count}")
 
 
+def test_income_detection(db, users, window_days):
+    """Test income detection with users from database"""
+    print(f"\n{'='*60}")
+    print(f"Income Signals - Window: {window_days} days")
+    print(f"{'='*60}")
+    print()
+    
+    users_with_payroll = 0
+    users_without_payroll = 0
+    regular_income_count = 0
+    irregular_income_count = 0
+    high_variability_count = 0
+    low_buffer_count = 0
+    
+    for user in users:
+        # Compute income signals
+        signals = compute_income_signals(db, user.user_id, window_days)
+        
+        # Detect investment accounts
+        has_investments = detect_investment_accounts(db, user.user_id)
+        
+        # Display results
+        print(f"User: {user.full_name} ({user.user_id[:20]}...)")
+        print(f"  Payroll detected: {signals['payroll_detected']}")
+        
+        if signals['payroll_detected']:
+            users_with_payroll += 1
+            print(f"  Median pay gap: {signals['median_pay_gap_days']} days")
+            print(f"  Income variability: {signals['income_variability']:.3f}")
+            print(f"  Average monthly income: ${signals['avg_monthly_income']:,.2f}")
+            print(f"  Cash flow buffer: {signals['cash_flow_buffer_months']:.2f} months")
+            
+            # Track statistics
+            if signals['median_pay_gap_days']:
+                if 13 <= signals['median_pay_gap_days'] <= 15:
+                    regular_income_count += 1  # Biweekly (~14 days)
+                elif signals['median_pay_gap_days'] > 20 or signals['median_pay_gap_days'] < 10:
+                    irregular_income_count += 1
+            
+            if signals['income_variability'] > 0.2:
+                high_variability_count += 1
+            
+            if signals['cash_flow_buffer_months'] < 1.0:
+                low_buffer_count += 1
+        else:
+            users_without_payroll += 1
+            print(f"  No payroll detected (<2 payroll transactions)")
+        
+        print(f"  Investment accounts: {'Yes' if has_investments else 'No'}")
+        print()
+    
+    print(f"Summary:")
+    print(f"  Users with payroll detected: {users_with_payroll}")
+    print(f"  Users without payroll: {users_without_payroll}")
+    print(f"  Users with regular biweekly income: {regular_income_count}")
+    print(f"  Users with irregular income: {irregular_income_count}")
+    print(f"  Users with high income variability (>0.2): {high_variability_count}")
+    print(f"  Users with low cash flow buffer (<1 month): {low_buffer_count}")
+
+
 def main():
     """Main test function"""
     # Create database session
@@ -224,7 +286,7 @@ def main():
     
     try:
         print("=" * 60)
-        print("Feature Detection Test - Subscription, Savings & Credit Signals")
+        print("Feature Detection Test - Subscription, Savings, Credit & Income Signals")
         print("=" * 60)
         print()
         
@@ -253,6 +315,9 @@ def main():
             
             # Test credit detection
             test_credit_detection(db, users, window_days)
+            
+            # Test income detection
+            test_income_detection(db, users, window_days)
         
         print("\n" + "=" * 60)
         print("✅ All tests completed!")

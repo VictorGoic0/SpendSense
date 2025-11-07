@@ -63,134 +63,134 @@
 ## PR #9: Feature Detection Service - Income Signals
 
 ### Income Detection - Payroll Identification
-1. Add `compute_income_signals(db, user_id, window_days)` function to feature_detection.py
-2. Get all transactions for user in window
-3. Filter for potential payroll deposits:
+- [x] 1. Add `compute_income_signals(db, user_id, window_days)` function to feature_detection.py
+- [x] 2. Get all transactions for user in window
+- [x] 3. Filter for potential payroll deposits:
    - payment_channel = 'ACH'
    - amount > 0 (positive/deposit)
    - category_primary in ['income', 'payroll', 'salary']
    - OR merchant_name contains 'PAYROLL' or 'SALARY'
-4. Sort payroll transactions by date ascending
+- [x] 4. Sort payroll transactions by date ascending
 
 ### Income Pattern Analysis
-5. Set payroll_detected = True if ≥2 payroll transactions found
-6. If no payroll detected, return default values
-7. Calculate gaps between consecutive payroll deposits:
+- [x] 5. Set payroll_detected = True if ≥2 payroll transactions found
+- [x] 6. If no payroll detected, return default values
+- [x] 7. Calculate gaps between consecutive payroll deposits:
    - Get list of dates
    - Calculate day differences between consecutive dates
    - Store list of gaps
-8. Calculate median_pay_gap_days from gaps list
+- [x] 8. Calculate median_pay_gap_days from gaps list
 
 ### Income Variability Calculation
-9. Extract payroll amounts from transactions
-10. Calculate mean of payroll amounts
-11. Calculate standard deviation of payroll amounts
-12. Calculate income_variability = std_dev / mean (coefficient of variation)
-13. Handle edge case: if mean = 0 or only 1 payment, set variability = 0
+- [x] 9. Extract payroll amounts from transactions
+- [x] 10. Calculate mean of payroll amounts
+- [x] 11. Calculate standard deviation of payroll amounts
+- [x] 12. Calculate income_variability = std_dev / mean (coefficient of variation)
+- [x] 13. Handle edge case: if mean = 0 or only 1 payment, set variability = 0
 
 ### Cash Flow Buffer Calculation
-14. Get checking account(s) for user
-15. Calculate current checking balance (sum of balance_current)
-16. Estimate monthly expenses:
+- [x] 14. Get checking account(s) for user
+- [x] 15. Calculate current checking balance (sum of balance_current)
+- [x] 16. Estimate monthly expenses:
     - Get expense transactions (amount < 0) from checking
     - Sum absolute values
     - Divide by number of months in window
-17. Calculate cash_flow_buffer_months = checking_balance / avg_monthly_expenses
-18. Handle edge case: if expenses = 0, set buffer = 0
+- [x] 17. Calculate cash_flow_buffer_months = checking_balance / avg_monthly_expenses
+- [x] 18. Handle edge case: if expenses = 0, set buffer = 0
 
 ### Average Monthly Income
-19. Calculate avg_monthly_income:
+- [x] 19. Calculate avg_monthly_income:
     - Sum all payroll amounts in window
     - Divide by number of months in window
-20. Round to 2 decimal places
+- [x] 20. Round to 2 decimal places
 
 ### Income Detection - Response
-21. Return dict with:
+- [x] 21. Return dict with:
     - payroll_detected (bool)
     - median_pay_gap_days (int)
     - income_variability (float)
     - cash_flow_buffer_months (float)
     - avg_monthly_income (float)
-22. Add error handling for edge cases
-23. Add logging for debugging
+- [x] 22. Add error handling for edge cases
+- [x] 23. Add logging for debugging
 
 ### Investment Account Detection
-24. Add `detect_investment_accounts(db, user_id)` function
-25. Query accounts for user with types:
+- [x] 24. Add `detect_investment_accounts(db, user_id)` function
+- [x] 25. Query accounts for user with types:
     - brokerage, 401k, ira, roth_ira, investment, pension
-26. Return True if any investment accounts exist, False otherwise
+- [x] 26. Return True if any investment accounts exist, False otherwise
 
 ### Testing Income Detection
-27. Test with users having regular biweekly payroll
-28. Test with users having irregular income (freelancers)
-29. Test with users having high income variability
-30. Test with users having low cash flow buffer
-31. Verify median pay gap calculations
-32. Verify income variability calculations
-33. Log results for validation
+- [x] 27. Test with users having regular biweekly payroll
+- [x] 28. Test with users having irregular income (freelancers)
+- [x] 29. Test with users having high income variability
+- [x] 30. Test with users having low cash flow buffer
+- [x] 31. Verify median pay gap calculations
+- [x] 32. Verify income variability calculations
+- [x] 33. Log results for validation
 
 ---
 
 ## PR #10: Feature Computation Endpoint & Batch Script
 
 ### Feature Computation Function
-1. Create `compute_all_features(db, user_id, window_days)` function in feature_detection.py
-2. Call all 4 signal detection functions:
+- [x] 1. Create `compute_all_features(db, user_id, window_days)` function in feature_detection.py
+- [x] 2. Call all 4 signal detection functions:
    - compute_subscription_signals()
    - compute_savings_signals()
    - compute_credit_signals()
    - compute_income_signals()
-3. Call detect_investment_accounts()
-4. Combine all results into single dict
-5. Create or update UserFeature record in database
-6. Return computed features
+- [x] 3. Call detect_investment_accounts()
+- [x] 4. Combine all results into single dict
+- [x] 5. Create or update UserFeature record in database
+- [x] 6. Return computed features
 
 ### Features Router Creation
-7. Create `backend/app/routers/features.py`
-8. Create APIRouter with prefix="/features"
-9. Create POST `/compute/{user_id}` endpoint:
+- [x] 7. Create `backend/app/routers/features.py`
+- [x] 8. Create APIRouter with prefix="/features"
+- [x] 9. Create POST `/compute/{user_id}` endpoint:
    - Accept user_id as path parameter
    - Accept window_days as query parameter (default: 30)
    - Call compute_all_features()
    - Return computed features as JSON
-10. Add error handling for user not found
+- [x] 10. Add error handling for user not found
 
 ### Profile Endpoint
-11. Create `backend/app/routers/profile.py`
-12. Create APIRouter with prefix="/profile"
-13. Create GET `/{user_id}` endpoint:
+- [x] 11. Create `backend/app/routers/profile.py`
+- [x] 12. Create APIRouter with prefix="/profile"
+- [x] 13. Create GET `/{user_id}` endpoint:
     - Accept user_id as path parameter
     - Accept optional window query param
     - Query UserFeature records for user (30d and 180d)
     - Query Persona records for user
     - Return combined profile with features and personas
-14. Add error handling for user not found
+- [x] 14. Add error handling for user not found
 
 ### Router Registration
-15. Import features and profile routers in main.py
-16. Include both routers in FastAPI app
+- [x] 15. Import features and profile routers in main.py
+- [x] 16. Include both routers in FastAPI app
 
 ### Batch Computation Script
-17. Create `scripts/compute_all_features.py`
-18. Import database session and models
-19. Query all users from database
-20. For each user:
+- [x] 17. Create `scripts/compute_all_features.py`
+- [x] 18. Import database session and models
+- [x] 19. Query all users from database
+- [x] 20. For each user:
     - Compute features for 30-day window
     - Compute features for 180-day window
     - Print progress (every 10 users)
-21. Print summary statistics:
+- [x] 21. Print summary statistics:
     - Total users processed
     - Average computation time per user
     - Total duration
-22. Add __main__ block to run script
+- [x] 22. Add __main__ block to run script
 
 ### Testing Feature Computation
-23. Run batch script: `python scripts/compute_all_features.py`
-24. Verify user_features table populated for all users
-25. Verify both 30d and 180d records exist per user
-26. Spot-check feature values for accuracy
-27. Test API endpoint via Swagger UI or curl
-28. Verify profile endpoint returns combined data
+- [x] 23. Run batch script: `python scripts/compute_all_features.py`
+- [x] 24. Verify user_features table populated for all users
+- [x] 25. Verify both 30d and 180d records exist per user
+- [x] 26. Spot-check feature values for accuracy
+- [x] 27. Test API endpoint via Swagger UI or curl
+- [x] 28. Verify profile endpoint returns combined data
 
 ---
 

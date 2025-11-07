@@ -32,10 +32,10 @@ User Dashboard (React UI)
 
 ### 2. Feature Engineering Pipeline (`features/`)
 - Computes 30-day and 180-day behavioral signals
-- **Subscriptions**: recurring merchant detection, spend share
-- **Savings**: net inflow, growth rate, emergency fund coverage
-- **Credit**: utilization %, minimum-payment detection, interest charges
-- **Income**: payroll ACH detection, frequency, cash-flow buffer
+- **Subscriptions**: recurring merchant detection, spend share (✅ Complete)
+- **Savings**: net inflow, growth rate, emergency fund coverage (✅ Complete)
+- **Credit**: utilization %, minimum-payment detection, interest charges, overdue status (✅ Complete)
+- **Income**: payroll ACH detection, frequency, cash-flow buffer (⏳ Next)
 
 ### 3. Persona Assignment Engine (`personas/`)
 - Rules-based logic (deterministic, fast)

@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #7 Complete - Feature Detection Service - Savings Signals Working
+**Status**: PR #8 Complete - Feature Detection Service - Credit Signals Working
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -138,13 +138,38 @@
   - Error handling: Division by zero protection, logging infrastructure
   - Test script updated to test savings detection for users with and without savings accounts
   - Validates growth rate and emergency fund calculations
+- ✅ **PR #8: Feature Detection Service - Credit Signals Complete**
+  - Added `compute_credit_signals()` function to feature_detection.py
+  - Credit card account querying:
+    - Queries credit card accounts using `get_accounts_by_type()` helper
+    - Joins with liabilities table via account_id
+    - Returns zero/false values if no credit cards found
+  - Utilization calculation:
+    - Calculates utilization per card: balance_current / balance_limit
+    - Computes average utilization across all cards
+    - Tracks max utilization (highest single card)
+    - Sets utilization flags: ≥30%, ≥50%, ≥80% thresholds
+  - Minimum payment detection:
+    - Checks if last_payment <= minimum_payment (with $5 tolerance)
+    - Sets `minimum_payment_only_flag` if any card matches pattern
+  - Interest & overdue detection:
+    - Queries transactions for interest charges using `category_detailed` filter
+    - Checks `is_overdue` field on liabilities
+    - Sets `interest_charges_present` and `any_overdue` flags
+  - Returns dict with all 8 credit signals
+  - Error handling: Division by zero protection, debug logging
+  - Test script updated with comprehensive credit detection tests
+  - Tests cover: high/low utilization, minimum payments, overdue accounts
+  - Database path fix: Test script uses absolute path to `backend/spendsense.db`
+- ✅ **Python Environment Upgrade**: Venv recreated with Python 3.11.9
+  - All dependencies reinstalled
+  - VS Code settings updated for better import resolution
 
 ### In Progress
-- 🔄 None - Ready for PR #8
+- 🔄 None - Ready for PR #9
 
 ### Not Started
-- ⏳ Credit signals detection - **PR #8 Next**
-- ⏳ Income signals detection
+- ⏳ Income signals detection - **PR #9 Next**
 - ⏳ Persona assignment engine
 - ⏳ AI recommendation engine
 - ⏳ Guardrails module
@@ -154,20 +179,20 @@
 
 ## What's Left to Build
 
-### PR #8: Feature Detection Service - Credit Signals (Next)
-- [ ] Add `compute_credit_signals()` function to feature_detection.py
-- [ ] Query credit card liabilities for user
-- [ ] Calculate average and max utilization
-- [ ] Detect utilization flags (30%, 50%, 80% thresholds)
-- [ ] Detect minimum payment only pattern
-- [ ] Detect interest charges
-- [ ] Detect overdue status
-- [ ] Test with users who have credit card accounts
+### PR #9: Feature Detection Service - Income Signals (Next)
+- [ ] Add `compute_income_signals()` function to feature_detection.py
+- [ ] Detect payroll deposits (ACH, positive amounts, income categories)
+- [ ] Calculate median pay gap days
+- [ ] Calculate income variability (coefficient of variation)
+- [ ] Calculate cash flow buffer months
+- [ ] Calculate average monthly income
+- [ ] Detect investment accounts
+- [ ] Test with users having regular/irregular income patterns
 
 ### Day 1 Deliverables (MVP)
 - [x] SQLite database schema (10 tables) - **PR #3 Complete**
 - [x] POST `/ingest` endpoint working - **PR #5 Complete**
-- [ ] All behavioral signals computed (30d and 180d windows) - **In Progress (PR #6, #7 complete, PR #8, #9 next)**
+- [ ] All behavioral signals computed (30d and 180d windows) - **In Progress (PR #6, #7, #8 complete, PR #9 next)**
 - [ ] React UI components built (operator dashboard, user dashboard)
 - [ ] Full integration testing possible via UI
 
@@ -191,10 +216,10 @@
 ## Current Status
 
 ### Backend
-- **Status**: Subscription and savings signals detection complete, ready for credit signals
-- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, subscription detection, savings detection
-- **Next**: PR #8 (feature detection service - credit signals)
-- **Priority**: Implement credit pattern detection
+- **Status**: Subscription, savings, and credit signals detection complete, ready for income signals
+- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, subscription detection, savings detection, credit detection
+- **Next**: PR #9 (feature detection service - income signals)
+- **Priority**: Implement income pattern detection
 
 ### Frontend
 - **Status**: Structure initialized, ready for component development
@@ -227,11 +252,11 @@
 - **Usage**: ✅ Data ready for feature detection
 
 ### Feature Detection
-- **Status**: ✅ Subscription & Savings Signals Complete - Service module created
-- **Completed**: Helper functions, subscription detection logic, pattern recognition, spend calculations, savings detection (net inflow, growth rate, emergency fund)
+- **Status**: ✅ Subscription, Savings & Credit Signals Complete - Service module created
+- **Completed**: Helper functions, subscription detection logic, pattern recognition, spend calculations, savings detection (net inflow, growth rate, emergency fund), credit detection (utilization, payment patterns, overdue status)
 - **Service File**: `backend/app/services/feature_detection.py`
-- **Test Script**: `scripts/test_feature_detection.py` (tests both subscription and savings signals)
-- **Next**: Implement credit signals (PR #8)
+- **Test Script**: `scripts/test_feature_detection.py` (tests subscription, savings, and credit signals)
+- **Next**: Implement income signals (PR #9)
 
 ### AI Integration
 - **Status**: Not implemented
@@ -244,7 +269,7 @@
 - **Priority**: Day 3 - after MVP features complete
 
 ## Known Issues
-- Python version is 3.9.6, should upgrade to 3.11+ for full compatibility
+- ✅ Python version upgraded to 3.11.9 - Resolved
 - Frontend lib/ folder gitignore conflict resolved (using backend/lib/ pattern)
 
 ## Success Metrics Tracking
@@ -254,5 +279,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #8 Completion**: Credit signals detection implemented, ready for income signals and persona assignment
+**PR #9 Completion**: Income signals detection implemented, ready for feature computation endpoint and persona assignment
 

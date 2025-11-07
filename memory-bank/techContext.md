@@ -12,7 +12,7 @@
 - **Recharts** - Charting library for metrics visualization
 
 ### Backend
-- **FastAPI** (Python 3.11+) - Web framework
+- **FastAPI** (Python 3.11.9) - Web framework
 - **SQLAlchemy** - ORM for database operations
 - **Pydantic** - Data validation
 - **SQLite** - Database (MVP), PostgreSQL (stretch goal)
@@ -45,11 +45,14 @@
 ### Backend Setup
 ```bash
 cd backend
-python -m venv venv
+python3 -m venv venv  # Uses Python 3.11.9 (via pyenv)
 source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+pip install --upgrade pip
 pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+**Note**: Ensure Python 3.11+ is active (check with `python --version`). If using pyenv, set global version: `pyenv global 3.11.9`
 
 ### Frontend Setup
 ```bash
@@ -110,9 +113,11 @@ mangum==0.17.0
 - **Installation**: Use `nvm install 20` or download from nodejs.org
 
 ### Python Version
-- **Python 3.11+** required
+- **Python 3.11.9** (currently in use)
 - FastAPI and SQLAlchemy 2.0 require Python 3.8+
 - Python 3.11 recommended for performance
+- Venv recreated with Python 3.11.9 (upgraded from 3.9.6)
+- Managed via pyenv: `pyenv global 3.11.9`
 
 ### Package Compatibility
 - **Node 20 LTS**: All frontend packages must be compatible

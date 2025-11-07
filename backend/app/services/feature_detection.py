@@ -10,12 +10,14 @@ Detects behavioral patterns from transaction data:
 
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
+from sqlalchemy.sql import func as sql_func
 from datetime import datetime, timedelta, date
 from collections import Counter
 from typing import List, Dict, Optional, Any
 import logging
+import statistics
 
-from app.models import Transaction, Account, Liability
+from app.models import Transaction, Account, Liability, UserFeature
 
 logger = logging.getLogger(__name__)
 
@@ -458,4 +460,255 @@ def compute_credit_signals(db: Session, user_id: str, window_days: int) -> Dict[
         "interest_charges_present": interest_charges_present,
         "any_overdue": any_overdue
     }
+
+
+# ============================================================================
+# Income Detection
+# ============================================================================
+
+def compute_income_signals(db: Session, user_id: str, window_days: int) -> Dict[str, Any]:
+    """
+    Compute income-related behavioral signals for a user.
+    
+    Detects:
+    - Payroll deposits (ACH transactions, income categories, or payroll merchant names)
+    - Pay frequency (median gap between paydays)
+    - Income variability (coefficient of variation)
+    - Cash flow buffer (checking balance / monthly expenses)
+    - Average monthly income
+    
+    Args:
+        db: Database session
+        user_id: User ID to analyze
+        window_days: Time window in days (30 or 180)
+    
+    Returns:
+        Dictionary with:
+        - payroll_detected: bool (≥2 payroll transactions found)
+        - median_pay_gap_days: int (median days between paydays, None if <2 payments)
+        - income_variability: float (coefficient of variation, 0 if <2 payments)
+        - cash_flow_buffer_months: float (months of expenses covered by checking balance)
+        - avg_monthly_income: float (average monthly income in window)
+    """
+    # Get all transactions for user in window
+    transactions = get_transactions_in_window(db, user_id, window_days)
+    
+    # Filter for potential payroll deposits
+    payroll_transactions = []
+    for txn in transactions:
+        # Check payment channel
+        is_ach = txn.payment_channel and txn.payment_channel.upper() == 'ACH'
+        
+        # Check amount (must be positive/deposit)
+        is_deposit = txn.amount > 0
+        
+        # Check category
+        is_income_category = (
+            txn.category_primary and 
+            txn.category_primary.lower() in ['income', 'payroll', 'salary']
+        )
+        
+        # Check merchant name for payroll keywords
+        is_payroll_merchant = (
+            txn.merchant_name and 
+            ('PAYROLL' in txn.merchant_name.upper() or 'SALARY' in txn.merchant_name.upper())
+        )
+        
+        # Include if matches criteria
+        if is_deposit and (is_ach or is_income_category or is_payroll_merchant):
+            payroll_transactions.append(txn)
+    
+    # Sort payroll transactions by date ascending
+    payroll_transactions.sort(key=lambda t: t.date)
+    
+    # Set payroll_detected = True if ≥2 payroll transactions found
+    payroll_detected = len(payroll_transactions) >= 2
+    
+    # If no payroll detected, return default values
+    if not payroll_detected:
+        logger.debug(f"No payroll detected for user {user_id} (<2 payroll transactions)")
+        return {
+            "payroll_detected": False,
+            "median_pay_gap_days": None,
+            "income_variability": 0.0,
+            "cash_flow_buffer_months": 0.0,
+            "avg_monthly_income": 0.0
+        }
+    
+    # Calculate gaps between consecutive payroll deposits
+    dates = [txn.date for txn in payroll_transactions]
+    gaps = []
+    for i in range(len(dates) - 1):
+        gap_days = (dates[i + 1] - dates[i]).days
+        gaps.append(gap_days)
+    
+    # Calculate median_pay_gap_days from gaps list
+    median_pay_gap_days = int(statistics.median(gaps)) if gaps else None
+    
+    # Extract payroll amounts from transactions
+    payroll_amounts = [txn.amount for txn in payroll_transactions]
+    
+    # Calculate mean of payroll amounts
+    mean_amount = statistics.mean(payroll_amounts) if payroll_amounts else 0.0
+    
+    # Calculate standard deviation of payroll amounts
+    if len(payroll_amounts) > 1:
+        std_dev = statistics.stdev(payroll_amounts)
+    else:
+        std_dev = 0.0
+    
+    # Calculate income_variability = std_dev / mean (coefficient of variation)
+    # Handle edge case: if mean = 0 or only 1 payment, set variability = 0
+    if mean_amount > 0 and len(payroll_amounts) > 1:
+        income_variability = std_dev / mean_amount
+    else:
+        income_variability = 0.0
+    
+    # Calculate average monthly income
+    months_in_window = window_days / 30.0
+    total_payroll = sum(payroll_amounts)
+    avg_monthly_income = round(total_payroll / months_in_window, 2) if months_in_window > 0 else 0.0
+    
+    # Get checking account(s) for user
+    checking_accounts = get_accounts_by_type(db, user_id, ['checking'])
+    
+    # Calculate current checking balance (sum of balance_current)
+    current_checking_balance = sum(acc.balance_current or 0.0 for acc in checking_accounts)
+    
+    # Estimate monthly expenses
+    avg_monthly_expenses = 0.0
+    if checking_accounts:
+        # Get expense transactions (amount < 0) from checking accounts
+        checking_account_ids = [acc.account_id for acc in checking_accounts]
+        cutoff_date = date.today() - timedelta(days=window_days)
+        
+        expense_transactions = db.query(Transaction).filter(
+            and_(
+                Transaction.user_id == user_id,
+                Transaction.account_id.in_(checking_account_ids),
+                Transaction.date >= cutoff_date,
+                Transaction.amount < 0
+            )
+        ).all()
+        
+        # Sum absolute values
+        total_expenses = sum(abs(txn.amount) for txn in expense_transactions)
+        
+        # Divide by number of months in window
+        if months_in_window > 0:
+            avg_monthly_expenses = total_expenses / months_in_window
+    
+    # Calculate cash_flow_buffer_months = checking_balance / avg_monthly_expenses
+    # Handle edge case: if expenses = 0, set buffer = 0
+    if avg_monthly_expenses > 0:
+        cash_flow_buffer_months = current_checking_balance / avg_monthly_expenses
+    else:
+        cash_flow_buffer_months = 0.0
+    
+    logger.debug(
+        f"Income signals for user {user_id}: "
+        f"payroll_detected={payroll_detected}, median_gap={median_pay_gap_days}, "
+        f"variability={income_variability:.3f}, buffer={cash_flow_buffer_months:.2f} months, "
+        f"avg_income=${avg_monthly_income:.2f}"
+    )
+    
+    return {
+        "payroll_detected": payroll_detected,
+        "median_pay_gap_days": median_pay_gap_days,
+        "income_variability": income_variability,
+        "cash_flow_buffer_months": cash_flow_buffer_months,
+        "avg_monthly_income": avg_monthly_income
+    }
+
+
+def detect_investment_accounts(db: Session, user_id: str) -> bool:
+    """
+    Detect if user has any investment accounts.
+    
+    Args:
+        db: Database session
+        user_id: User ID to check
+    
+    Returns:
+        True if any investment accounts exist, False otherwise
+    """
+    investment_account_types = ['brokerage', '401k', 'ira', 'roth_ira', 'investment', 'pension']
+    investment_accounts = get_accounts_by_type(db, user_id, investment_account_types)
+    
+    return len(investment_accounts) > 0
+
+
+# ============================================================================
+# Feature Computation (All Signals Combined)
+# ============================================================================
+
+def compute_all_features(db: Session, user_id: str, window_days: int) -> Dict[str, Any]:
+    """
+    Compute all behavioral features for a user and save to database.
+    
+    Combines all signal detection functions:
+    - Subscription signals
+    - Savings signals
+    - Credit signals
+    - Income signals
+    - Investment account detection
+    
+    Creates or updates UserFeature record in database.
+    
+    Args:
+        db: Database session
+        user_id: User ID to analyze
+        window_days: Time window in days (30 or 180)
+    
+    Returns:
+        Dictionary with all computed features
+    """
+    # Call all 4 signal detection functions
+    subscription_signals = compute_subscription_signals(db, user_id, window_days)
+    savings_signals = compute_savings_signals(db, user_id, window_days)
+    credit_signals = compute_credit_signals(db, user_id, window_days)
+    income_signals = compute_income_signals(db, user_id, window_days)
+    
+    # Call detect_investment_accounts()
+    investment_detected = detect_investment_accounts(db, user_id)
+    
+    # Combine all results into single dict
+    all_features = {
+        **subscription_signals,
+        **savings_signals,
+        **credit_signals,
+        **income_signals,
+        "investment_account_detected": investment_detected
+    }
+    
+    # Create or update UserFeature record in database
+    # Check if record exists
+    existing_feature = db.query(UserFeature).filter(
+        and_(
+            UserFeature.user_id == user_id,
+            UserFeature.window_days == window_days
+        )
+    ).first()
+    
+    if existing_feature:
+        # Update existing record
+        for key, value in all_features.items():
+            setattr(existing_feature, key, value)
+        existing_feature.computed_at = datetime.now()
+    else:
+        # Create new record
+        new_feature = UserFeature(
+            user_id=user_id,
+            window_days=window_days,
+            **all_features
+        )
+        db.add(new_feature)
+    
+    # Commit changes
+    db.commit()
+    
+    logger.info(f"Computed and saved features for user {user_id}, window {window_days}d")
+    
+    # Return computed features
+    return all_features
 
