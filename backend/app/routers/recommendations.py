@@ -15,7 +15,7 @@ import logging
 
 from app.database import get_db
 from app.models import User, Persona, Recommendation, OperatorAction
-from app.schemas import RecommendationApprove
+from app.schemas import RecommendationApprove, RecommendationOverride, RecommendationReject
 from app.services.recommendation_engine import (
     build_user_context,
     validate_context,
@@ -24,7 +24,8 @@ from app.services.recommendation_engine import (
 from app.services.guardrails import (
     check_consent,
     validate_tone,
-    append_disclosure
+    append_disclosure,
+    MANDATORY_DISCLOSURE
 )
 from datetime import datetime
 
@@ -616,6 +617,349 @@ async def approve_recommendation(
         db.rollback()
         logger.error(
             f"Error approving recommendation {recommendation_id}: {str(e)}",
+            exc_info=True
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=f"Server error: {str(e)}"
+        )
+
+
+@router.post("/{recommendation_id}/override")
+async def override_recommendation(
+    recommendation_id: str,
+    request: RecommendationOverride,
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    Override a recommendation with new content.
+    
+    This endpoint:
+    1. Validates recommendation exists
+    2. Validates at least one of new_title or new_content provided
+    3. Stores original content in original_content field
+    4. Updates recommendation with new content
+    5. Validates tone of new content
+    6. Creates OperatorAction record for audit trail
+    7. Returns updated recommendation
+    
+    Args:
+        recommendation_id: Recommendation ID to override
+        request: OverrideRequest with operator_id, optional new_title, optional new_content, required reason
+        db: Database session
+    
+    Returns:
+        Dictionary with updated recommendation object
+    
+    Raises:
+        404: Recommendation not found
+        400: Neither new_title nor new_content provided, or tone validation fails
+        500: Server error (database error)
+    """
+    try:
+        # ========================================================================
+        # Validation
+        # ========================================================================
+        
+        # Query Recommendation by ID
+        recommendation = db.query(Recommendation).filter(
+            Recommendation.recommendation_id == recommendation_id
+        ).first()
+        
+        if not recommendation:
+            logger.warning(f"Recommendation not found: {recommendation_id}")
+            raise HTTPException(
+                status_code=404,
+                detail=f"Recommendation with ID '{recommendation_id}' not found"
+            )
+        
+        # Validate at least one of new_title or new_content provided → 400 if neither
+        if not request.new_title and not request.new_content:
+            logger.warning(
+                f"Override request for {recommendation_id} provided neither new_title nor new_content"
+            )
+            raise HTTPException(
+                status_code=400,
+                detail="At least one of 'new_title' or 'new_content' must be provided"
+            )
+        
+        # ========================================================================
+        # Store Original Content
+        # ========================================================================
+        
+        # Create original_content dict with:
+        # - original_title
+        # - original_content
+        # - overridden_at timestamp
+        original_content_dict = {
+            "original_title": recommendation.title,
+            "original_content": recommendation.content,
+            "overridden_at": datetime.utcnow().isoformat()
+        }
+        
+        # Convert to JSON string
+        original_content_json = json.dumps(original_content_dict)
+        
+        # Store in recommendation.original_content field
+        recommendation.original_content = original_content_json
+        
+        # ========================================================================
+        # Update Recommendation
+        # ========================================================================
+        
+        # Update recommendation:
+        # - Set status='overridden'
+        # - Update title if new_title provided
+        # - Update content if new_content provided
+        # - Append disclosure to new content if modified
+        # - Set override_reason=reason
+        # - Validate new content tone if modified
+        recommendation.status = 'overridden'
+        recommendation.override_reason = request.reason
+        
+        if request.new_title:
+            recommendation.title = request.new_title
+        
+        if request.new_content:
+            # Validate new content tone if modified
+            tone_result = validate_tone(request.new_content)
+            
+            # If tone validation fails → 400 error
+            if not tone_result.get("is_valid", False):
+                validation_warnings = tone_result.get("validation_warnings", [])
+                critical_warnings = [w for w in validation_warnings if w.get("severity") == "critical"]
+                
+                if critical_warnings:
+                    logger.warning(
+                        f"Tone validation failed for override of recommendation {recommendation_id}: "
+                        f"{[w.get('message') for w in critical_warnings]}"
+                    )
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"New content failed tone validation: {critical_warnings[0].get('message', 'Contains forbidden phrases')}"
+                    )
+            
+            # Append disclosure to new content if modified
+            content_with_disclosure = append_disclosure(request.new_content)
+            recommendation.content = content_with_disclosure
+        else:
+            # If only title changed, ensure existing content still has disclosure
+            # (disclosure should already be there from generation, but check to be safe)
+            if MANDATORY_DISCLOSURE not in recommendation.content:
+                recommendation.content = append_disclosure(recommendation.content)
+        
+        # Commit transaction
+        db.commit()
+        
+        # Refresh to get updated data
+        db.refresh(recommendation)
+        
+        logger.info(
+            f"Overridden recommendation {recommendation_id} by operator {request.operator_id}"
+        )
+        
+        # ========================================================================
+        # Log Operator Action
+        # ========================================================================
+        
+        # Create OperatorAction record with action_type='override'
+        # Include reason in operator action
+        operator_action = OperatorAction(
+            operator_id=request.operator_id,
+            action_type='override',
+            recommendation_id=recommendation_id,
+            user_id=recommendation.user_id,
+            reason=request.reason,
+            timestamp=datetime.utcnow()
+        )
+        
+        db.add(operator_action)
+        
+        # Commit transaction
+        db.commit()
+        
+        logger.info(
+            f"Logged operator action: override for recommendation {recommendation_id}"
+        )
+        
+        # ========================================================================
+        # Response
+        # ========================================================================
+        
+        # Return updated recommendation with:
+        # - New content
+        # - original_content field
+        # - override_reason
+        return {
+            "recommendation_id": recommendation.recommendation_id,
+            "title": recommendation.title,
+            "content": recommendation.content,
+            "rationale": recommendation.rationale,
+            "status": recommendation.status,
+            "persona_type": recommendation.persona_type,
+            "generated_at": recommendation.generated_at.isoformat() if recommendation.generated_at else None,
+            "original_content": recommendation.original_content,
+            "override_reason": recommendation.override_reason,
+        }
+    
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    
+    except Exception as e:
+        # Rollback database transaction on error
+        db.rollback()
+        logger.error(
+            f"Error overriding recommendation {recommendation_id}: {str(e)}",
+            exc_info=True
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=f"Server error: {str(e)}"
+        )
+
+
+@router.post("/{recommendation_id}/reject")
+async def reject_recommendation(
+    recommendation_id: str,
+    request: RecommendationReject,
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    Reject a recommendation.
+    
+    This endpoint:
+    1. Validates recommendation exists
+    2. Validates recommendation is not already approved (can't reject approved recs)
+    3. Updates recommendation status to 'rejected'
+    4. Sets metadata with rejection reason
+    5. Creates OperatorAction record for audit trail
+    6. Returns updated recommendation
+    
+    Args:
+        recommendation_id: Recommendation ID to reject
+        request: RejectRequest with operator_id and required reason
+        db: Database session
+    
+    Returns:
+        Dictionary with updated recommendation object
+    
+    Raises:
+        404: Recommendation not found
+        400: Recommendation already approved and visible to user
+        500: Server error (database error)
+    """
+    try:
+        # ========================================================================
+        # Validation
+        # ========================================================================
+        
+        # Query Recommendation by ID
+        recommendation = db.query(Recommendation).filter(
+            Recommendation.recommendation_id == recommendation_id
+        ).first()
+        
+        if not recommendation:
+            logger.warning(f"Recommendation not found: {recommendation_id}")
+            raise HTTPException(
+                status_code=404,
+                detail=f"Recommendation with ID '{recommendation_id}' not found"
+            )
+        
+        # If already approved and visible to user → 400 (shouldn't reject approved recs)
+        if recommendation.status == 'approved':
+            logger.warning(
+                f"Attempt to reject already approved recommendation: {recommendation_id}"
+            )
+            raise HTTPException(
+                status_code=400,
+                detail=f"Cannot reject recommendation '{recommendation_id}' - it has already been approved and is visible to the user"
+            )
+        
+        # ========================================================================
+        # Update Recommendation
+        # ========================================================================
+        
+        # Update status='rejected'
+        recommendation.status = 'rejected'
+        
+        # Set metadata with rejection reason
+        # Parse existing metadata if present, otherwise create new dict
+        if recommendation.metadata_json:
+            try:
+                metadata = json.loads(recommendation.metadata_json)
+            except (json.JSONDecodeError, TypeError):
+                metadata = {}
+        else:
+            metadata = {}
+        
+        # Add rejection reason to metadata
+        metadata["rejection_reason"] = request.reason
+        metadata["rejected_by"] = request.operator_id
+        metadata["rejected_at"] = datetime.utcnow().isoformat()
+        
+        # Update metadata_json field
+        recommendation.metadata_json = json.dumps(metadata)
+        
+        # Commit transaction
+        db.commit()
+        
+        # Refresh to get updated data
+        db.refresh(recommendation)
+        
+        logger.info(
+            f"Rejected recommendation {recommendation_id} by operator {request.operator_id}"
+        )
+        
+        # ========================================================================
+        # Log Reject Action
+        # ========================================================================
+        
+        # Create OperatorAction record with action_type='reject'
+        # Include reason
+        operator_action = OperatorAction(
+            operator_id=request.operator_id,
+            action_type='reject',
+            recommendation_id=recommendation_id,
+            user_id=recommendation.user_id,
+            reason=request.reason,
+            timestamp=datetime.utcnow()
+        )
+        
+        db.add(operator_action)
+        
+        # Commit transaction
+        db.commit()
+        
+        logger.info(
+            f"Logged operator action: reject for recommendation {recommendation_id}"
+        )
+        
+        # ========================================================================
+        # Response
+        # ========================================================================
+        
+        # Return updated recommendation
+        return {
+            "recommendation_id": recommendation.recommendation_id,
+            "title": recommendation.title,
+            "content": recommendation.content,
+            "rationale": recommendation.rationale,
+            "status": recommendation.status,
+            "persona_type": recommendation.persona_type,
+            "generated_at": recommendation.generated_at.isoformat() if recommendation.generated_at else None,
+            "metadata_json": recommendation.metadata_json,
+        }
+    
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    
+    except Exception as e:
+        # Rollback database transaction on error
+        db.rollback()
+        logger.error(
+            f"Error rejecting recommendation {recommendation_id}: {str(e)}",
             exc_info=True
         )
         raise HTTPException(

@@ -187,8 +187,14 @@ User Dashboard (React UI)
 
 ### Approval Workflow Pattern
 - **Default Status**: All recommendations start as `pending_approval`
-- **Bulk Operations**: Operators can approve multiple at once
-- **Override Support**: Store original content, allow edits with reason logging
+- **Approve Endpoint**: POST `/recommendations/{recommendation_id}/approve` (PR #23 Complete)
+  - Validates recommendation exists and is in valid state (not already approved, not rejected)
+  - Updates recommendation status to 'approved', sets approved_by and approved_at
+  - Creates OperatorAction record for audit trail
+  - Returns updated recommendation
+- **Bulk Operations**: Operators can approve multiple at once (to be implemented in PR #25)
+- **Override Support**: Store original content, allow edits with reason logging (to be implemented in PR #24)
+- **Reject Support**: Reject recommendations with reason logging (to be implemented in PR #24)
 - **Audit Trail**: All actions logged in `operator_actions` table
 
 ## Key Technical Decisions
@@ -242,6 +248,9 @@ User Dashboard (React UI)
   - POST /personas/{user_id}/assign - Assign persona for user (with optional window_days parameter)
   - GET /personas/{user_id} - Get personas for user (with optional window filter)
   - POST /ingest - Bulk data ingestion
+  - POST /recommendations/generate/{user_id} - Generate recommendations for user
+  - GET /recommendations/{user_id} - Get recommendations for user (with optional status and window_days filters)
+  - POST /recommendations/{recommendation_id}/approve - Approve a recommendation (PR #23 Complete)
 
 ### Frontend Constants & Enums Pattern
 - **Centralized Enums**: All enum values defined in `frontend/src/constants/enums.js`

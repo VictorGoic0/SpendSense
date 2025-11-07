@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #23 Complete - Approve Recommendation Endpoint Complete
+**Status**: PR #24 Complete - Override & Reject Endpoints Complete
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -478,14 +478,41 @@
     - Comprehensive logging for all approve actions
   - Test script created (`scripts/test_approve_recommendation.py`) for testing approval workflow
   - All 26 tasks completed
+- ✅ **PR #24 Complete: Override & Reject Endpoints (all 39 tasks finished)**
+  - Recommendations router (`backend/app/routers/recommendations.py`):
+    - POST `/recommendations/{recommendation_id}/override` endpoint implemented
+    - POST `/recommendations/{recommendation_id}/reject` endpoint implemented
+  - Schema updates:
+    - Updated `RecommendationOverride` schema to make `new_title` and `new_content` optional
+  - Override endpoint features:
+    - Accepts recommendation_id as path parameter
+    - Accepts RecommendationOverride schema (operator_id, optional new_title, optional new_content, required reason)
+    - Validation: 404 if not found, 400 if neither new_title nor new_content provided
+    - Stores original content in JSON format (original_title, original_content, overridden_at timestamp)
+    - Updates recommendation: Sets status='overridden', updates title/content if provided, appends disclosure, validates tone
+    - Tone validation: Rejects new content with critical warnings (forbidden phrases) → 400 error
+    - Creates OperatorAction record with action_type='override'
+    - Returns updated recommendation with original_content and override_reason
+  - Reject endpoint features:
+    - Accepts recommendation_id as path parameter
+    - Accepts RecommendationReject schema (operator_id, required reason)
+    - Validation: 404 if not found, 400 if already approved (can't reject approved recs)
+    - Updates recommendation: Sets status='rejected', stores rejection reason in metadata_json
+    - Metadata includes: rejection_reason, rejected_by, rejected_at
+    - Creates OperatorAction record with action_type='reject'
+    - Returns updated recommendation with rejection metadata
+  - Error handling: 404 for not found, 400 for validation errors, 500 for database errors
+  - Comprehensive logging for all override and reject actions
+  - Test script created (`scripts/test_override_reject.py`) with 8 test cases
+  - All 39 tasks completed
 
 ## Next Steps
-1. **PR #24: Override & Reject Endpoints** - Create API endpoints for overriding and rejecting recommendations with operator action logging
+1. **PR #25: Bulk Approve Endpoint** - Create API endpoint for bulk approving multiple recommendations at once
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Approval workflow endpoints** - PR #23 complete, PR #24 next - Create override and reject endpoints with operator action logging
+- **Approval workflow endpoints** - PR #23 and PR #24 complete, PR #25 next - Create bulk approve endpoint for efficient operator workflow
 - **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
 
 ### Technical Decisions Made
@@ -570,7 +597,9 @@ None - Ready to proceed with PR #21 (Recommendation Generation Endpoint)
 - PR #20 complete (all 38 tasks checked off - Guardrails Service - Tone & Consent Validation)
 - PR #21 complete (all 44 tasks checked off - Recommendation Generation Endpoint)
 - PR #22 complete (all 23 tasks checked off - Get Recommendations Endpoint)
-- Following tasks-6.md structure (PR #23 next)
+- PR #23 complete (all 26 tasks checked off - Approve Recommendation Endpoint)
+- PR #24 complete (all 39 tasks checked off - Override & Reject Endpoints)
+- Following tasks-6.md structure (PR #25 next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility

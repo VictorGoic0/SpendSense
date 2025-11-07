@@ -284,8 +284,8 @@ class RecommendationApprove(BaseModel):
 class RecommendationOverride(BaseModel):
     """Schema for overriding a recommendation"""
     operator_id: str
-    new_title: str
-    new_content: str
+    new_title: Optional[str] = None
+    new_content: Optional[str] = None
     reason: str
 
 

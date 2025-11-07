@@ -108,83 +108,83 @@
 ## PR #24: Override & Reject Endpoints
 
 ### Override Endpoint
-- [ ] 1. Create POST `/{recommendation_id}/override` endpoint
-- [ ] 2. Accept recommendation_id as path parameter
-- [ ] 3. Accept OverrideRequest schema in body:
+- [x] 1. Create POST `/{recommendation_id}/override` endpoint
+- [x] 2. Accept recommendation_id as path parameter
+- [x] 3. Accept OverrideRequest schema in body:
    - operator_id: str
    - new_title: str (optional)
    - new_content: str (optional)
    - reason: str (required)
-- [ ] 4. Get database session
+- [x] 4. Get database session
 
 ### Override Validation
-- [ ] 5. Query Recommendation by ID
-- [ ] 6. If not found → 404
-- [ ] 7. Validate at least one of new_title or new_content provided → 400 if neither
+- [x] 5. Query Recommendation by ID
+- [x] 6. If not found → 404
+- [x] 7. Validate at least one of new_title or new_content provided → 400 if neither
 
 ### Store Original Content
-- [ ] 8. Create original_content dict with:
+- [x] 8. Create original_content dict with:
    - original_title
    - original_content
    - overridden_at timestamp
-- [ ] 9. Convert to JSON string
-- [ ] 10. Store in recommendation.original_content field
+- [x] 9. Convert to JSON string
+- [x] 10. Store in recommendation.original_content field
 
 ### Update Recommendation
-- [ ] 11. Update recommendation:
+- [x] 11. Update recommendation:
    - Set status='overridden'
    - Update title if new_title provided
    - Update content if new_content provided
    - Append disclosure to new content if modified
    - Set override_reason=reason
    - Validate new content tone if modified
-- [ ] 12. If tone validation fails → 400 error
-- [ ] 13. Commit transaction
+- [x] 12. If tone validation fails → 400 error
+- [x] 13. Commit transaction
 
 ### Log Override Action
-- [ ] 14. Create OperatorAction record with action_type='override'
-- [ ] 15. Include reason in operator action
-- [ ] 16. Commit transaction
+- [x] 14. Create OperatorAction record with action_type='override'
+- [x] 15. Include reason in operator action
+- [x] 16. Commit transaction
 
 ### Override Response
-- [ ] 17. Return updated recommendation with:
+- [x] 17. Return updated recommendation with:
    - New content
    - original_content field
    - override_reason
-- [ ] 18. Return 200 status code
+- [x] 18. Return 200 status code
 
 ### Reject Endpoint
-- [ ] 19. Create POST `/{recommendation_id}/reject` endpoint
-- [ ] 20. Accept recommendation_id and RejectRequest schema:
+- [x] 19. Create POST `/{recommendation_id}/reject` endpoint
+- [x] 20. Accept recommendation_id and RejectRequest schema:
    - operator_id: str
    - reason: str (required)
 
 ### Reject Implementation
-- [ ] 21. Query Recommendation by ID
-- [ ] 22. If not found → 404
-- [ ] 23. If already approved and visible to user → 400 (shouldn't reject approved recs)
-- [ ] 24. Update status='rejected'
-- [ ] 25. Set metadata with rejection reason
-- [ ] 26. Commit transaction
+- [x] 21. Query Recommendation by ID
+- [x] 22. If not found → 404
+- [x] 23. If already approved and visible to user → 400 (shouldn't reject approved recs)
+- [x] 24. Update status='rejected'
+- [x] 25. Set metadata with rejection reason
+- [x] 26. Commit transaction
 
 ### Log Reject Action
-- [ ] 27. Create OperatorAction record with action_type='reject'
-- [ ] 28. Include reason
-- [ ] 29. Commit transaction
-- [ ] 30. Return updated recommendation
+- [x] 27. Create OperatorAction record with action_type='reject'
+- [x] 28. Include reason
+- [x] 29. Commit transaction
+- [x] 30. Return updated recommendation
 
 ### Error Handling
-- [ ] 31. Handle all validation errors with appropriate messages
-- [ ] 32. Add logging for override and reject actions
-- [ ] 33. Test both endpoints via API
+- [x] 31. Handle all validation errors with appropriate messages
+- [x] 32. Add logging for override and reject actions
+- [x] 33. Test both endpoints via API
 
 ### Testing Override & Reject
-- [ ] 34. Test override with new title and content
-- [ ] 35. Verify original content preserved
-- [ ] 36. Verify tone validation on new content
-- [ ] 37. Test reject with pending recommendation
-- [ ] 38. Verify can't reject approved recommendation
-- [ ] 39. Verify operator actions logged
+- [x] 34. Test override with new title and content
+- [x] 35. Verify original content preserved
+- [x] 36. Verify tone validation on new content
+- [x] 37. Test reject with pending recommendation
+- [x] 38. Verify can't reject approved recommendation
+- [x] 39. Verify operator actions logged
 
 ---
 

@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #22 Complete - Get Recommendations Endpoint Complete
+**Status**: PR #24 Complete - Override & Reject Endpoints Complete
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -369,6 +369,53 @@
     - Error handling: 404 for user not found, 500 for database errors, comprehensive logging
     - Test script created (`scripts/test_get_recommendations.py`) for testing various filter combinations
   - Note: Access control removed - endpoint returns all recommendations when no status filter provided (authentication needed to determine requester identity)
+- ✅ **PR #23 Complete: Approve Recommendation Endpoint (all 26 tasks finished)**
+  - Recommendations router (`backend/app/routers/recommendations.py`):
+    - POST `/recommendations/{recommendation_id}/approve` endpoint implemented
+    - Accepts recommendation_id as path parameter
+    - Accepts RecommendationApprove schema in body (operator_id, optional notes)
+    - Validation: 404 if recommendation not found, 400 if already approved, 400 if status is 'rejected'
+    - Updates recommendation: Sets status='approved', approved_by=operator_id, approved_at=current timestamp
+    - Creates OperatorAction record for audit trail (action_type='approve', includes operator_id, recommendation_id, user_id, reason)
+    - Returns updated recommendation with all fields (recommendation_id, title, content, rationale, status, persona_type, generated_at, approved_by, approved_at)
+    - Error handling: 404 for not found, 400 for invalid state transitions, 500 for database errors
+    - Comprehensive logging for all approve actions
+  - Test script created (`scripts/test_approve_recommendation.py`) for testing approval workflow
+  - All 26 tasks completed
+- ✅ **PR #24 Complete: Override & Reject Endpoints (all 39 tasks finished)**
+  - Recommendations router (`backend/app/routers/recommendations.py`):
+    - POST `/recommendations/{recommendation_id}/override` endpoint implemented
+    - POST `/recommendations/{recommendation_id}/reject` endpoint implemented
+  - Schema updates:
+    - Updated `RecommendationOverride` schema to make `new_title` and `new_content` optional
+  - Override endpoint features:
+    - Accepts recommendation_id as path parameter
+    - Accepts RecommendationOverride schema (operator_id, optional new_title, optional new_content, required reason)
+    - Validation: 404 if not found, 400 if neither new_title nor new_content provided
+    - Stores original content in JSON format (original_title, original_content, overridden_at timestamp)
+    - Updates recommendation: Sets status='overridden', updates title/content if provided, appends disclosure, validates tone
+    - Tone validation: Rejects new content with critical warnings (forbidden phrases) → 400 error
+    - Creates OperatorAction record with action_type='override'
+    - Returns updated recommendation with original_content and override_reason
+  - Reject endpoint features:
+    - Accepts recommendation_id as path parameter
+    - Accepts RecommendationReject schema (operator_id, required reason)
+    - Validation: 404 if not found, 400 if already approved (can't reject approved recs)
+    - Updates recommendation: Sets status='rejected', stores rejection reason in metadata_json
+    - Metadata includes: rejection_reason, rejected_by, rejected_at
+    - Creates OperatorAction record with action_type='reject'
+    - Returns updated recommendation with rejection metadata
+  - Error handling: 404 for not found, 400 for validation errors, 500 for database errors
+  - Comprehensive logging for all override and reject actions
+  - Test script created (`scripts/test_override_reject.py`) with 8 test cases covering:
+    - Override with new title and content
+    - Override with only new title
+    - Override with only new content
+    - Validation tests (neither title nor content, tone validation)
+    - Reject pending recommendation
+    - Reject validation (can't reject approved)
+    - Non-existent recommendation tests
+  - All 39 tasks completed
 
 ### In Progress
 - 🔄 None - Ready for next PR
@@ -410,6 +457,7 @@
 - [x] All 5 personas assigned with prioritization (PR #15, #16 complete)
 - [x] AI recommendation generation working (PR #19 complete - OpenAI integration functional)
 - [x] Guardrails enforced (consent, tone, eligibility) - **PR #20 Complete**
+- [x] Approval workflow API endpoints - **PR #23 Complete (approve), PR #24 Complete (override & reject)**
 - [ ] Recommendations visible and testable in UI
 - [ ] Approval workflow functional in UI (approve/reject/override)
 - [ ] Evaluation script outputs metrics + Parquet to S3
