@@ -380,102 +380,123 @@
 
 ## PR #27: Frontend - User Dashboard & Consent
 
+### Backend - Consent Endpoints
+- [x] 1. Create `backend/app/routers/consent.py` router
+- [x] 2. Add consent schemas to `backend/app/schemas.py`:
+   - ConsentRequest (user_id, action: grant/revoke)
+   - ConsentHistoryItem (action, timestamp)
+   - ConsentResponse (user_id, consent_status, timestamps, history)
+- [x] 3. Implement POST `/consent` endpoint:
+   - Accept ConsentRequest in body
+   - Validate user exists
+   - Update user consent_status based on action
+   - Update consent_granted_at or consent_revoked_at timestamps
+   - Create ConsentLog entry for audit trail
+   - Return ConsentResponse with updated status
+- [x] 4. Implement GET `/consent/{user_id}` endpoint:
+   - Query user by ID
+   - Query ConsentLog entries for history
+   - Return ConsentResponse with status and full history
+- [x] 5. Register consent router in `backend/app/main.py`
+- [x] 6. Add error handling (404 for user not found, 500 for server errors)
+- [x] 7. Add logging for consent changes
+
 ### User Dashboard Setup
-- [ ] 1. Update `frontend/src/pages/UserDashboard.jsx`
-- [ ] 2. Accept userId as prop or get from URL params
-- [ ] 3. Import useState, useEffect
-- [ ] 4. Import API functions: getUser, getConsent, getRecommendations, updateConsent
+- [x] 1. Update `frontend/src/pages/UserDashboard.jsx`
+- [x] 2. Accept userId as prop or get from URL params
+- [x] 3. Import useState, useEffect
+- [x] 4. Import API functions: getUser, getConsent, getRecommendations, updateConsent
 
 ### Data Fetching
-- [ ] 5. Create state variables:
+- [x] 5. Create state variables:
    - user (object)
    - consent (object with status and history)
    - recommendations (array)
    - loading (boolean)
    - error (string)
-- [ ] 6. Create useEffect to fetch all data on mount
-- [ ] 7. Fetch user info, consent status, and recommendations in parallel
-- [ ] 8. Update state with responses
+- [x] 6. Create useEffect to fetch all data on mount
+- [x] 7. Fetch user info, consent status, and recommendations in parallel
+- [x] 8. Update state with responses
 
 ### Consent Toggle Component
-- [ ] 9. Create `frontend/src/components/ConsentToggle.jsx`
-- [ ] 10. Accept props: consentStatus, onToggle, loading
-- [ ] 11. Use Shadcn Switch component
-- [ ] 12. Display current status with icon/badge
-- [ ] 13. Display last updated timestamp
-- [ ] 14. On toggle:
+- [x] 9. Create `frontend/src/components/ConsentToggle.jsx`
+- [x] 10. Accept props: consentStatus, onToggle, loading
+- [x] 11. Use Shadcn Switch component
+- [x] 12. Display current status with icon/badge
+- [x] 13. Display last updated timestamp
+- [x] 14. On toggle:
     - Show confirmation dialog
     - If confirming grant: explain what happens
     - If confirming revoke: explain data processing stops
-- [ ] 15. Call onToggle callback with action (grant/revoke)
+- [x] 15. Call onToggle callback with action (grant/revoke)
 
 ### Consent Grant Flow
-- [ ] 16. When user grants consent:
+- [x] 16. When user grants consent:
     - Call updateConsent API with action='grant'
     - Update local state
     - Fetch recommendations immediately
     - Show success message
-- [ ] 17. Add loading state during API call
+- [x] 17. Add loading state during API call
 
 ### Consent Revoke Flow
-- [ ] 18. When user revokes consent:
+- [x] 18. When user revokes consent:
     - Show warning dialog about consequences
     - Call updateConsent API with action='revoke'
     - Clear recommendations from view
     - Show informational message
-- [ ] 19. Add confirmation step (require explicit click)
+- [x] 19. Add confirmation step (require explicit click)
 
 ### No Consent State
-- [ ] 20. When consent_status=false:
+- [x] 20. When consent_status=false:
     - Show large call-to-action card
     - Explain benefits of granting consent
     - Show toggle to enable
     - Hide recommendations section
-- [ ] 21. Use friendly, encouraging tone
+- [x] 21. Use friendly, encouraging tone
 
 ### Recommendations Display
-- [ ] 22. When consent_status=true and recommendations exist:
+- [x] 22. When consent_status=true and recommendations exist:
     - Display heading "Your Personalized Recommendations"
     - Show persona badge (optional, or hide from user)
     - Use RecommendationCard component (read-only version)
     - Display 3-5 recommendations
-- [ ] 23. Add expand/collapse for full content
+- [x] 23. Add expand/collapse for full content
 
 ### Recommendation Card (User View)
-- [ ] 24. Create user-facing version of RecommendationCard
-- [ ] 25. Display:
+- [x] 24. Create user-facing version of RecommendationCard
+- [x] 25. Display:
     - Title (large, bold)
     - Content (full text, markdown formatted)
     - Rationale section (highlighted)
     - Links in metadata (if any)
-- [ ] 26. No action buttons (read-only)
-- [ ] 27. Style with Shadcn Card
+- [x] 26. No action buttons (read-only)
+- [x] 27. Style with Shadcn Card
 
 ### Empty State
-- [ ] 28. When consent=true but no recommendations yet:
+- [x] 28. When consent=true but no recommendations yet:
     - Show message "Recommendations coming soon"
     - Explain recommendations are being prepared
     - Add illustration or icon
 
 ### Page Layout
-- [ ] 29. Add page header with user name
-- [ ] 30. Add ConsentToggle in header area
-- [ ] 31. Add recommendations section below
-- [ ] 32. Use responsive layout (stack on mobile)
+- [x] 29. Add page header with user name
+- [x] 30. Add ConsentToggle in header area
+- [x] 31. Add recommendations section below
+- [x] 32. Use responsive layout (stack on mobile)
 
 ### Testing User Dashboard
-- [ ] 33. Test with user who has consent=false
+- [x] 33. Test with user who has consent=false
     - Verify CTA shown
     - Verify no recommendations visible
-- [ ] 34. Test granting consent via toggle
+- [x] 34. Test granting consent via toggle
     - Verify confirmation dialog
     - Verify API called
     - Verify recommendations fetched
-- [ ] 35. Test with user who has consent=true
+- [x] 35. Test with user who has consent=true
     - Verify recommendations displayed
     - Verify content readable
     - Verify rationales visible
-- [ ] 36. Test revoking consent
+- [x] 36. Test revoking consent
     - Verify warning shown
     - Verify recommendations hidden after revoke
-- [ ] 37. Test responsive layout on mobile
+- [x] 37. Test responsive layout on mobile

@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #26 Complete - Frontend Approval Queue Page Complete + Server Concurrency Optimizations
+**Status**: PR #26 Complete - Frontend Approval Queue Page Complete with Markdown Rendering, Expandable Content, and Server Concurrency Optimizations
 
 ## Recent Changes
 - ✅ **Server Concurrency Optimizations Complete**
@@ -526,7 +526,7 @@
     - Comprehensive logging for bulk operations
   - Test script created (`scripts/test_bulk_approve.py`) for testing bulk approval workflow
   - All 21 tasks completed
-- ✅ **PR #26 Complete: Frontend - Approval Queue Page (all 51 tasks finished)**
+- ✅ **PR #26 Complete: Frontend - Approval Queue Page (all 74 tasks finished)**
   - Backend endpoint added:
     - GET `/operator/review` endpoint: Fetches all recommendations where status != 'approved'
     - Optional status filter (pending_approval, overridden, rejected)
@@ -545,8 +545,8 @@
     - Bulk selection: Select all checkbox, individual checkboxes, selected count display
     - Bulk approve button: Disabled when no selection, loading state, success/error messaging
     - Individual approve: Per-recommendation approve with loading state, removes from queue on success
-    - Override dialog: Shadcn Dialog with form fields (new title optional, new content optional, reason required), validation, tone validation
-    - Reject dialog: Shadcn Dialog with reason field (required), removes from queue on success
+    - Override dialog: Shadcn Dialog with form fields (new title optional, new content optional, reason required), client-side validation with inline error messages
+    - Reject dialog: Shadcn Dialog with reason field (required), client-side validation with inline error messages
     - Page layout: Header with title and refresh button, toolbar with select all, count, filter dropdown, bulk approve button
     - Status filter: Dropdown for pending_approval, overridden, rejected
     - Loading states: Skeleton cards while loading
@@ -554,10 +554,35 @@
     - Success/error messages: Auto-dismiss after 5 seconds
     - Empty state: Message when no recommendations in queue
     - Auto-refresh: 30-second interval with cleanup on unmount
-  - All 51 tasks completed
+  - Server concurrency optimizations:
+    - Implemented uvicorn workers (4 workers) for concurrent request handling
+    - Enabled SQLite WAL (Write-Ahead Logging) mode for concurrent reads during writes
+    - Fixed hanging issue: User list no longer hangs when recommendation generation is running
+    - Documentation updated: README.md, techContext.md, DECISIONS.md, LIMITATIONS.md, FRAMEWORK_CONCURRENCY_COMPARISON.md
+  - Markdown rendering for recommendations:
+    - Installed react-markdown package for rendering Markdown in recommendation content
+    - Updated RecommendationCard component to use ReactMarkdown for content and rationale previews
+    - Updated OperatorUserDetail page to use ReactMarkdown for recommendation content display
+    - Added type checking to ensure ReactMarkdown always receives string values (handles undefined/null)
+    - Updated truncateText helper to validate input is a string before processing
+    - Markdown syntax (bold, italic, etc.) renders correctly in both approval queue and user detail pages
+  - Expandable content functionality:
+    - Added expandable content to RecommendationCard component with independent state for content and rationale
+    - Added expandable content to OperatorUserDetail recommendation cards using Set-based state tracking
+    - "Show more"/"Show less" buttons appear only when content/rationale exceeds 150 characters
+    - Full content expands inline with ReactMarkdown rendering
+    - Both content and rationale can be expanded independently in RecommendationCard
+    - Styled expand/collapse buttons with blue hover states (text-blue-600 hover:text-blue-800 hover:underline)
+  - Form validation improvements:
+    - Added client-side validation for override and reject dialogs
+    - Validation errors display as red italic text below input fields (not in global error state)
+    - Errors persist until user types in the field
+    - Modal stays open and prevents API call if validation fails
+    - Separate error state for each form (overrideFormError, rejectFormError)
+  - All 74 tasks completed
 
 ## Next Steps
-1. **PR #27: Frontend - User Dashboard & Consent** - Create user-facing dashboard with consent toggle and recommendation display
+1. **PR #27: Frontend - User Dashboard & Consent** - Create user-facing dashboard with consent toggle and recommendation display (0/37 tasks)
 
 ## Active Decisions and Considerations
 

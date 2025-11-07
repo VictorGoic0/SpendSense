@@ -306,3 +306,28 @@ class BulkApproveResponse(BaseModel):
     approved: int
     failed: int
     errors: List[str]
+
+
+# ============================================================================
+# Consent Schemas
+# ============================================================================
+
+class ConsentRequest(BaseModel):
+    """Schema for consent update request"""
+    user_id: str
+    action: Literal["grant", "revoke"]
+
+
+class ConsentHistoryItem(BaseModel):
+    """Schema for consent history item"""
+    action: str
+    timestamp: Optional[str] = None
+
+
+class ConsentResponse(BaseModel):
+    """Schema for consent response"""
+    user_id: str
+    consent_status: bool
+    consent_granted_at: Optional[str] = None
+    consent_revoked_at: Optional[str] = None
+    history: List[ConsentHistoryItem] = Field(default_factory=list)
