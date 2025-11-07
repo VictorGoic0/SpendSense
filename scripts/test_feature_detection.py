@@ -13,14 +13,20 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.database import SQLALCHEMY_DATABASE_URL
+
+# Get the correct database path (backend/spendsense.db)
+backend_dir = Path(__file__).parent.parent / "backend"
+database_path = backend_dir / "spendsense.db"
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{database_path.absolute()}"
+
 from app.services.feature_detection import (
     compute_subscription_signals,
     compute_savings_signals,
+    compute_credit_signals,
     get_accounts_by_type,
     get_transactions_in_window
 )
-from app.models import User, Transaction, Account
+from app.models import User, Transaction, Account, Liability
 from collections import defaultdict
 
 
@@ -124,6 +130,91 @@ def test_savings_detection(db, users, window_days):
     print(f"  Users without savings accounts: {users_without_savings}")
 
 
+def test_credit_detection(db, users, window_days):
+    """Test credit detection with users from database"""
+    print(f"\n{'='*60}")
+    print(f"Credit Signals - Window: {window_days} days")
+    print(f"{'='*60}")
+    print()
+    
+    users_with_credit = 0
+    users_without_credit = 0
+    high_utilization_count = 0
+    low_utilization_count = 0
+    min_payment_only_count = 0
+    overdue_count = 0
+    
+    for user in users:
+        # Check if user has credit card accounts
+        credit_accounts = get_accounts_by_type(db, user.user_id, ['credit card'])
+        
+        # Compute credit signals
+        signals = compute_credit_signals(db, user.user_id, window_days)
+        
+        # Display results
+        print(f"User: {user.full_name} ({user.user_id[:20]}...)")
+        
+        if credit_accounts:
+            users_with_credit += 1
+            print(f"  Credit card accounts: {len(credit_accounts)}")
+            
+            # Show account details
+            for account in credit_accounts:
+                balance = account.balance_current or 0.0
+                limit = account.balance_limit or 0.0
+                utilization = (balance / limit * 100) if limit > 0 else 0.0
+                print(f"    - Account {account.account_id[:20]}...: ${balance:,.2f} / ${limit:,.2f} ({utilization:.1f}%)")
+            
+            # Show liability details
+            liabilities = db.query(Liability).filter(
+                Liability.user_id == user.user_id,
+                Liability.liability_type == 'credit_card'
+            ).all()
+            
+            if liabilities:
+                print(f"  Liabilities: {len(liabilities)}")
+                for liab in liabilities:
+                    min_payment = liab.minimum_payment_amount or 0.0
+                    last_payment = liab.last_payment_amount or 0.0
+                    overdue = "Yes" if liab.is_overdue else "No"
+                    print(f"    - Min payment: ${min_payment:.2f}, Last payment: ${last_payment:.2f}, Overdue: {overdue}")
+        else:
+            users_without_credit += 1
+            print(f"  Credit card accounts: 0 (no credit cards)")
+        
+        print(f"  Average utilization: {signals['avg_utilization']:.2%}")
+        print(f"  Max utilization: {signals['max_utilization']:.2%}")
+        print(f"  Utilization flags:")
+        print(f"    - ≥30%: {signals['utilization_30_flag']}")
+        print(f"    - ≥50%: {signals['utilization_50_flag']}")
+        print(f"    - ≥80%: {signals['utilization_80_flag']}")
+        print(f"  Minimum payment only: {signals['minimum_payment_only_flag']}")
+        print(f"  Interest charges present: {signals['interest_charges_present']}")
+        print(f"  Any overdue: {signals['any_overdue']}")
+        
+        # Track statistics
+        if signals['max_utilization'] > 0.50:
+            high_utilization_count += 1
+        elif signals['max_utilization'] > 0 and signals['max_utilization'] < 0.30:
+            low_utilization_count += 1
+        
+        if signals['minimum_payment_only_flag']:
+            min_payment_only_count += 1
+        
+        if signals['any_overdue']:
+            overdue_count += 1
+        
+        print()
+    
+    print(f"Summary:")
+    print(f"  Users with credit cards: {users_with_credit}")
+    print(f"  Users without credit cards: {users_without_credit}")
+    print(f"  Users with high utilization (>50%): {high_utilization_count}")
+    print(f"  Users with low utilization (<30%): {low_utilization_count}")
+    print(f"  Users making minimum payments only: {min_payment_only_count}")
+    print(f"  Users with overdue accounts: {overdue_count}")
+
+
 def main():
     """Main test function"""
     # Create database session
@@ -133,7 +224,7 @@ def main():
     
     try:
         print("=" * 60)
-        print("Feature Detection Test - Subscription & Savings Signals")
+        print("Feature Detection Test - Subscription, Savings & Credit Signals")
         print("=" * 60)
         print()
         
@@ -159,6 +250,9 @@ def main():
             
             # Test savings detection
             test_savings_detection(db, users, window_days)
+            
+            # Test credit detection
+            test_credit_detection(db, users, window_days)
         
         print("\n" + "=" * 60)
         print("✅ All tests completed!")

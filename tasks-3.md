@@ -3,42 +3,42 @@
 ## PR #8: Feature Detection Service - Credit Signals
 
 ### Credit Detection - Account & Liability Queries
-1. Add `compute_credit_signals(db, user_id, window_days)` function to feature_detection.py
-2. Query all credit card accounts for user
-3. Join accounts with liabilities table
-4. If no credit cards, return zero/false values for all metrics
+- [x] 1. Add `compute_credit_signals(db, user_id, window_days)` function to feature_detection.py
+- [x] 2. Query all credit card accounts for user
+- [x] 3. Join accounts with liabilities table
+- [x] 4. If no credit cards, return zero/false values for all metrics
 
 ### Credit Utilization Calculation
-5. For each credit card account:
+- [x] 5. For each credit card account:
    - Get balance_current and balance_limit from account
    - Calculate utilization = balance_current / balance_limit
    - Store utilization per card
-6. Calculate avg_utilization across all cards
-7. Calculate max_utilization (highest single card)
-8. Set flags:
+- [x] 6. Calculate avg_utilization across all cards
+- [x] 7. Calculate max_utilization (highest single card)
+- [x] 8. Set flags:
    - utilization_30_flag = any card >= 0.30
    - utilization_50_flag = any card >= 0.50
    - utilization_80_flag = any card >= 0.80
 
 ### Minimum Payment Detection
-9. For each credit card liability:
+- [x] 9. For each credit card liability:
    - Get minimum_payment_amount from liability
    - Get last_payment_amount from liability
    - Check if last_payment <= minimum_payment (with $5 tolerance)
    - Set flag if true
-10. Set minimum_payment_only_flag = True if any card matches pattern
+- [x] 10. Set minimum_payment_only_flag = True if any card matches pattern
 
 ### Interest & Overdue Detection
-11. Query transactions for interest charges:
+- [x] 11. Query transactions for interest charges:
     - Filter category_detailed='interest charge' or similar
     - Check if any exist in window
     - Set interest_charges_present flag
-12. Check liabilities for overdue status:
+- [x] 12. Check liabilities for overdue status:
     - Query is_overdue field
     - Set any_overdue = True if any card overdue
 
 ### Credit Detection - Response
-13. Return dict with:
+- [x] 13. Return dict with:
     - avg_utilization (float, 0-1)
     - max_utilization (float, 0-1)
     - utilization_30_flag (bool)
@@ -47,16 +47,16 @@
     - minimum_payment_only_flag (bool)
     - interest_charges_present (bool)
     - any_overdue (bool)
-14. Add error handling for division by zero (limit = 0)
-15. Add logging for debugging
+- [x] 14. Add error handling for division by zero (limit = 0)
+- [x] 15. Add logging for debugging
 
 ### Testing Credit Detection
-16. Test with users having high utilization (>50%)
-17. Test with users having low utilization (<30%)
-18. Test with users making minimum payments only
-19. Test with users having overdue accounts
-20. Verify all flags set correctly
-21. Log results for validation
+- [x] 16. Test with users having high utilization (>50%)
+- [x] 17. Test with users having low utilization (<30%)
+- [x] 18. Test with users making minimum payments only
+- [x] 19. Test with users having overdue accounts
+- [x] 20. Verify all flags set correctly
+- [x] 21. Log results for validation
 
 ---
 

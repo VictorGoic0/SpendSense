@@ -12,10 +12,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
 from datetime import datetime, timedelta, date
 from collections import Counter
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 import logging
 
-from app.models import Transaction, Account
+from app.models import Transaction, Account, Liability
 
 logger = logging.getLogger(__name__)
 
@@ -307,5 +307,155 @@ def compute_savings_signals(db: Session, user_id: str, window_days: int) -> Dict
         "net_savings_inflow": net_savings_inflow,
         "savings_growth_rate": savings_growth_rate,
         "emergency_fund_months": emergency_fund_months
+    }
+
+
+# ============================================================================
+# Credit Detection
+# ============================================================================
+
+def compute_credit_signals(db: Session, user_id: str, window_days: int) -> Dict[str, Any]:
+    """
+    Compute credit-related behavioral signals for a user.
+    
+    Detects:
+    - Credit utilization (average and max across all cards)
+    - Utilization flags (30%, 50%, 80% thresholds)
+    - Minimum payment only pattern
+    - Interest charges presence
+    - Overdue account status
+    
+    Args:
+        db: Database session
+        user_id: User ID to analyze
+        window_days: Time window in days (30 or 180)
+    
+    Returns:
+        Dictionary with:
+        - avg_utilization: float (0-1, average utilization across cards)
+        - max_utilization: float (0-1, highest single card utilization)
+        - utilization_30_flag: bool (any card >= 30%)
+        - utilization_50_flag: bool (any card >= 50%)
+        - utilization_80_flag: bool (any card >= 80%)
+        - minimum_payment_only_flag: bool (making minimum payments only)
+        - interest_charges_present: bool (interest charges in window)
+        - any_overdue: bool (any overdue accounts)
+    """
+    # Query all credit card accounts for user
+    credit_card_accounts = get_accounts_by_type(db, user_id, ['credit card'])
+    
+    # If no credit cards, return zero/false values
+    if not credit_card_accounts:
+        logger.debug(f"No credit cards found for user {user_id}")
+        return {
+            "avg_utilization": 0.0,
+            "max_utilization": 0.0,
+            "utilization_30_flag": False,
+            "utilization_50_flag": False,
+            "utilization_80_flag": False,
+            "minimum_payment_only_flag": False,
+            "interest_charges_present": False,
+            "any_overdue": False
+        }
+    
+    # Get account IDs for joining with liabilities
+    account_ids = [acc.account_id for acc in credit_card_accounts]
+    
+    # Query liabilities for these credit card accounts
+    liabilities = db.query(Liability).filter(
+        and_(
+            Liability.user_id == user_id,
+            Liability.account_id.in_(account_ids),
+            Liability.liability_type == 'credit_card'
+        )
+    ).all()
+    
+    # Create a mapping of account_id to liability for easy lookup
+    liability_by_account = {liab.account_id: liab for liab in liabilities}
+    
+    # Calculate utilization for each credit card
+    utilizations = []
+    max_utilization = 0.0
+    utilization_30_flag = False
+    utilization_50_flag = False
+    utilization_80_flag = False
+    
+    for account in credit_card_accounts:
+        balance_current = account.balance_current or 0.0
+        balance_limit = account.balance_limit or 0.0
+        
+        # Handle division by zero (limit = 0)
+        if balance_limit > 0:
+            utilization = balance_current / balance_limit
+            utilizations.append(utilization)
+            
+            # Track max utilization
+            if utilization > max_utilization:
+                max_utilization = utilization
+            
+            # Set utilization flags
+            if utilization >= 0.80:
+                utilization_80_flag = True
+            if utilization >= 0.50:
+                utilization_50_flag = True
+            if utilization >= 0.30:
+                utilization_30_flag = True
+        else:
+            logger.warning(f"Credit card account {account.account_id} has zero or null balance_limit")
+    
+    # Calculate average utilization
+    avg_utilization = sum(utilizations) / len(utilizations) if utilizations else 0.0
+    
+    # Check minimum payment patterns
+    minimum_payment_only_flag = False
+    for account in credit_card_accounts:
+        liability = liability_by_account.get(account.account_id)
+        if liability:
+            minimum_payment = liability.minimum_payment_amount
+            last_payment = liability.last_payment_amount
+            
+            if minimum_payment is not None and last_payment is not None:
+                # Check if last_payment <= minimum_payment (with $5 tolerance)
+                tolerance = 5.0
+                if last_payment <= (minimum_payment + tolerance):
+                    minimum_payment_only_flag = True
+                    break
+    
+    # Query transactions for interest charges in window
+    cutoff_date = date.today() - timedelta(days=window_days)
+    interest_transactions = db.query(Transaction).filter(
+        and_(
+            Transaction.user_id == user_id,
+            Transaction.account_id.in_(account_ids),
+            Transaction.date >= cutoff_date,
+            Transaction.category_detailed.ilike('%interest%')
+        )
+    ).all()
+    
+    interest_charges_present = len(interest_transactions) > 0
+    
+    # Check for overdue accounts
+    any_overdue = False
+    for liability in liabilities:
+        if liability.is_overdue:
+            any_overdue = True
+            break
+    
+    logger.debug(
+        f"Credit signals for user {user_id}: "
+        f"avg_util={avg_utilization:.2%}, max_util={max_utilization:.2%}, "
+        f"min_payment_only={minimum_payment_only_flag}, interest={interest_charges_present}, "
+        f"overdue={any_overdue}"
+    )
+    
+    return {
+        "avg_utilization": avg_utilization,
+        "max_utilization": max_utilization,
+        "utilization_30_flag": utilization_30_flag,
+        "utilization_50_flag": utilization_50_flag,
+        "utilization_80_flag": utilization_80_flag,
+        "minimum_payment_only_flag": minimum_payment_only_flag,
+        "interest_charges_present": interest_charges_present,
+        "any_overdue": any_overdue
     }
 
