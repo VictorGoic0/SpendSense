@@ -128,3 +128,39 @@ export async function getConsent(userId) {
   return response.data;
 }
 
+/**
+ * Override a recommendation
+ * @param {string|number} recId - Recommendation ID
+ * @param {string|number} operatorId - Operator ID
+ * @param {string} reason - Reason for override (required)
+ * @param {string} newTitle - New title (optional)
+ * @param {string} newContent - New content (optional)
+ * @returns {Promise} API response
+ */
+export async function overrideRecommendation(recId, operatorId, reason, newTitle = null, newContent = null) {
+  const payload = {
+    operator_id: operatorId,
+    reason,
+  };
+  if (newTitle) payload.new_title = newTitle;
+  if (newContent) payload.new_content = newContent;
+  
+  const response = await api.post(`/recommendations/${recId}/override`, payload);
+  return response.data;
+}
+
+/**
+ * Reject a recommendation
+ * @param {string|number} recId - Recommendation ID
+ * @param {string|number} operatorId - Operator ID
+ * @param {string} reason - Reason for rejection (required)
+ * @returns {Promise} API response
+ */
+export async function rejectRecommendation(recId, operatorId, reason) {
+  const response = await api.post(`/recommendations/${recId}/reject`, {
+    operator_id: operatorId,
+    reason,
+  });
+  return response.data;
+}
+
