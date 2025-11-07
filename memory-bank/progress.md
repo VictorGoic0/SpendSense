@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #12 Complete - Frontend Operator Dashboard (Metrics & Charts) Working
+**Status**: PR #13 Complete - Frontend Operator User List Page & Backend Endpoints Working
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -197,21 +197,49 @@
   - Loading states: Skeleton placeholders for cards and charts
   - Error states: Alert component with retry functionality
   - Fast Refresh fixes: Removed unnecessary exports, updated all imports to `@src` alias
+- ✅ **PR #13 Complete: Frontend - Operator User List Page & Backend Endpoints (all 61 tasks finished)**
+  - Frontend components:
+    - UserTable component: Displays users with name, email, persona (30d), consent status, actions
+    - UserFilters component: Filter by user type and consent status using styled select dropdowns
+    - Pagination component: Previous/next buttons, page numbers (5 at a time), disabled states
+    - UserTableSkeleton component: Loading skeleton matching table structure
+  - Frontend enums system:
+    - Created `frontend/src/constants/enums.js` with UserType, ConsentStatus, ConsentAction enums
+    - Helper functions: getConsentStatusDisplay(), getUserTypeDisplay()
+    - Used throughout frontend for consistency
+  - OperatorUserList page:
+    - Data fetching with useState/useEffect, pagination, filters
+    - Search functionality with debouncing (300ms)
+    - Local filtering by name or email
+    - Loading states with skeleton
+    - Error states with alert and retry button
+    - Empty state handling
+    - Responsive layout
+  - Backend endpoints:
+    - GET /users endpoint: Pagination (limit/offset), filters (user_type, consent_status), includes 30d personas
+    - GET /operator/dashboard endpoint: Total users, users with consent, persona distribution, recommendation status breakdown, average latency
+  - Router registration: Both routers registered in main.py
+  - All components tested and working
 
 ### In Progress
-- 🔄 None - Ready for PR #13+
+- 🔄 None - Ready for PR #14+
 
 ### Not Started
-- ⏳ Persona assignment engine - **PR #13+ Next**
+- ⏳ Persona assignment engine - **PR #15 Next**
 - ⏳ AI recommendation engine
 - ⏳ Guardrails module
-- ⏳ React UI components (operator user list, user detail, approval queue, user dashboard)
+- ⏳ React UI components (operator user detail, approval queue, user dashboard)
 - ⏳ Evaluation system
 - ⏳ AWS deployment
 
 ## What's Left to Build
 
-### PR #13+: Persona Assignment Engine (Next)
+### PR #14: Operator User Detail Page (Next)
+- [ ] Build user detail page with signals and personas
+- [ ] Display user info, personas (30d and 180d), and signal breakdowns
+- [ ] Add tab navigation for signal types
+
+### PR #15: Persona Assignment Engine
 - [ ] Implement rules-based persona assignment logic
 - [ ] Create persona prioritization system
 - [ ] Add persona assignment API endpoint
@@ -222,8 +250,9 @@
 - [x] POST `/ingest` endpoint working - **PR #5 Complete**
 - [x] All behavioral signals computed (30d and 180d windows) - **PR #6-9 Complete**
 - [x] Feature computation endpoint and batch script - **PR #10 Complete**
-- [x] React UI components built (operator dashboard) - **PR #12 Complete**
-- [ ] Full integration testing possible via UI (pending backend operator dashboard endpoint)
+- [x] React UI components built (operator dashboard, user list) - **PR #12, #13 Complete**
+- [x] Backend endpoints for users and dashboard - **PR #13 Complete**
+- [ ] Full integration testing possible via UI (pending user detail page)
 
 ### Day 2 Deliverables (MVP)
 - [ ] All 5 personas assigned with prioritization
@@ -245,16 +274,16 @@
 ## Current Status
 
 ### Backend
-- **Status**: All feature detection signals complete, feature computation endpoints working
-- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, all 4 signal detection types (subscription, savings, credit, income), feature computation function, features router, profile router, batch computation script
-- **Next**: Persona assignment engine (PR #13+)
+- **Status**: Feature detection complete, API endpoints for users and dashboard working
+- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint, all 4 signal detection types (subscription, savings, credit, income), feature computation function, features router, profile router, users router, operator router, batch computation script
+- **Next**: Persona assignment engine (PR #15)
 - **Priority**: Implement rules-based persona assignment logic
 
 ### Frontend
-- **Status**: Operator Dashboard complete with metrics and charts
-- **Completed**: React 18 + Vite, Shadcn/ui configured, TailwindCSS setup, API client, API service functions, React Router setup, Layout component, Operator Dashboard with metrics cards and charts, loading/error states, responsive layout
-- **Next**: Build Operator User List and Detail pages (PR #15+)
-- **Priority**: Persona assignment engine (PR #13+)
+- **Status**: Operator Dashboard and User List complete
+- **Completed**: React 18 + Vite, Shadcn/ui configured, TailwindCSS setup, API client, API service functions, React Router setup, Layout component, Operator Dashboard with metrics cards and charts, Operator User List with table, filters, pagination, search, loading/error states, responsive layout, enum system for constants
+- **Next**: Build Operator User Detail page (PR #14)
+- **Priority**: Persona assignment engine (PR #15)
 
 ### Database
 - **Status**: ✅ Complete - All models implemented, data loaded, features computed
@@ -312,5 +341,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #13+ Completion**: Persona assignment engine complete, ready for AI recommendation generation
+**PR #14 Completion**: Operator User Detail page complete, ready for persona assignment engine (PR #15)
 

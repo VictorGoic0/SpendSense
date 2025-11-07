@@ -61,7 +61,13 @@ User Dashboard (React UI)
   - Persona distribution bar chart
   - Recommendation status breakdown chart
   - Loading and error states
-- User list with persona distribution (PR #15+)
+- ✅ User list page (PR #13 Complete)
+  - User table with pagination, filters, search
+  - Filter by user type and consent status
+  - Search by name or email
+  - Loading skeletons and error handling
+  - Backend GET /users endpoint with pagination and filters
+- User detail page with persona distribution (PR #14+)
 - Approval queue (pending recommendations) (PR #16+)
 - Override workflow (edit live recommendations) (PR #16+)
 
@@ -155,6 +161,12 @@ User Dashboard (React UI)
 - API base URL configurable (local vs AWS)
 - Path alias `@src` configured for cleaner imports
 - Fast Refresh compatible (component-only exports)
+- **Backend Endpoints Available**:
+  - GET /users - User list with pagination and filters
+  - GET /operator/dashboard - Dashboard metrics and statistics
+  - GET /profile/{user_id} - User profile with features and personas
+  - POST /features/compute/{user_id} - Compute features for user
+  - POST /ingest - Bulk data ingestion
 
 ### Frontend Constants & Enums Pattern
 - **Centralized Enums**: All enum values defined in `frontend/src/constants/enums.js`

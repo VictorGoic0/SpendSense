@@ -69,13 +69,46 @@
 - [x] 42. Show error alert if API call fails
 - [x] 43. Add refresh button in error state
 
+### Backend - Users Endpoint
+- [x] 44. Create `backend/app/routers/users.py`
+- [x] 45. Create APIRouter with prefix="/users"
+- [x] 46. Create GET `/` endpoint:
+  - Accept query parameters: limit (default: 25), offset (default: 0), user_type (optional), consent_status (optional boolean)
+  - Query User records with filters
+  - Query Persona records for 30d window (join or separate query)
+  - Apply pagination
+  - Return response with: users (array), total (count), limit, offset
+- [x] 47. For each user, include:
+  - user_id, full_name, email, user_type, consent_status
+  - personas array with 30d persona if available
+- [x] 48. Add error handling for database errors
+- [x] 49. Register router in main.py
+
+### Backend - Operator Dashboard Endpoint
+- [x] 50. Create `backend/app/routers/operator.py`
+- [x] 51. Create APIRouter with prefix="/operator"
+- [x] 52. Create GET `/dashboard` endpoint:
+  - Query total users count
+  - Query users with consent_status=True count
+  - Query persona distribution (count by persona_type for 30d window)
+  - Query recommendation status breakdown (count by status)
+  - Calculate average latency from recommendations table
+- [x] 53. Return response with:
+  - total_users
+  - users_with_consent
+  - persona_distribution (dict)
+  - recommendations (dict with status counts)
+  - metrics (dict with avg_latency_ms)
+- [x] 54. Add error handling
+- [x] 55. Register router in main.py
+
 ### Testing User List
-- [ ] 44. Verify user list displays all 75 users
-- [ ] 45. Test filter by consent status
-- [ ] 46. Test pagination (navigate through pages)
-- [ ] 47. Test search functionality
-- [ ] 48. Test click to navigate to detail page
-- [ ] 49. Verify responsive layout
+- [x] 56. Verify user list displays all 75 users
+- [x] 57. Test filter by consent status
+- [x] 58. Test pagination (navigate through pages)
+- [x] 59. Test search functionality
+- [x] 60. Test click to navigate to detail page
+- [x] 61. Verify responsive layout
 
 ---
 

@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #12 Complete - Frontend Operator Dashboard (Metrics & Charts) Finished
+**Status**: PR #13 Complete - Frontend Operator User List Page & Backend Endpoints Finished
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -224,19 +224,42 @@
     - Removed "use client" directive (not needed in Vite/React)
     - Removed variant exports from badge.jsx and button.jsx (Fast Refresh requires component-only exports)
     - All imports updated to use `@src` alias consistently
+- ✅ PR #13 Complete: Frontend - Operator User List Page & Backend Endpoints (all 61 tasks finished)
+  - Frontend components created:
+    - UserTable: Table component with columns (Name, Email, Persona 30d, Consent Status, Actions), colored badges for personas and consent, clickable rows
+    - UserFilters: Filter dropdowns for user type and consent status using styled native selects
+    - Pagination: Page navigation with previous/next buttons, page numbers (5 at a time), disabled states
+    - UserTableSkeleton: Loading skeleton matching table structure
+  - Frontend enum system:
+    - Created `frontend/src/constants/enums.js` with UserType, ConsentStatus, ConsentAction enums
+    - Helper functions for display formatting
+    - Used throughout frontend for consistency (documented in systemPatterns.md)
+  - OperatorUserList page:
+    - State management: users, filteredUsers, loading, error, searchTerm, filters, pagination
+    - Data fetching: useEffect with useCallback for fetchUsers, handles filters and pagination
+    - Search: Debounced search (300ms) with local filtering by name or email
+    - Loading states: Skeleton component during fetch
+    - Error states: Alert component with retry button
+    - Empty states: Different messages for search vs filter scenarios
+    - Responsive layout: Flex layouts, mobile-friendly
+  - Backend endpoints:
+    - GET /users: Pagination (limit/offset), filters (user_type, consent_status), includes 30d personas for each user, returns users array with total count
+    - GET /operator/dashboard: Total users, users with consent, persona distribution (30d), recommendation status breakdown, average latency metrics
+  - Router registration: Both routers registered in main.py
+  - All functionality tested and working
 
 ## Next Steps
-1. **PR #13+: Persona Assignment Engine** - Implement rules-based persona assignment
-2. **PR #14+: AI Recommendation Generation** - Create OpenAI integration with 5 persona-specific endpoints
-3. **PR #15+: Operator User List & Detail Pages** - Build user browsing and signal visualization
-4. **PR #16+: Approval Queue** - Implement recommendation approval workflow
+1. **PR #14: Operator User Detail Page** - Build user detail page with signals and personas
+2. **PR #15: Persona Assignment Engine** - Implement rules-based persona assignment
+3. **PR #16+: AI Recommendation Generation** - Create OpenAI integration with 5 persona-specific endpoints
+4. **PR #17+: Approval Queue** - Implement recommendation approval workflow
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Persona assignment engine** - Next task (PR #13+)
+- **Operator User Detail Page** - Next task (PR #14)
+- **Persona assignment engine** - After user detail page (PR #15)
 - **AI recommendation engine** - After persona assignment
-- **Operator User List & Detail Pages** - After AI integration
 
 ### Technical Decisions Made
 - **Node version** - Node.js 20 LTS (documented in techContext.md and .cursor/rules/)
@@ -262,6 +285,10 @@
 - **Income Detection** - Detects payroll deposits, calculates pay frequency, income variability, cash flow buffer, and average monthly income
 - **Feature Computation** - Combines all signals, saves to database, provides API endpoints for computation and retrieval
 - **Frontend Dashboard** - Operator dashboard complete with metrics cards, charts (persona distribution, recommendation status), loading/error states, responsive layout
+- **Frontend User List** - Operator user list complete with table, filters, pagination, search, loading/error states, responsive layout
+- **Frontend Enums** - Centralized enum system for UserType, ConsentStatus, ConsentAction with helper functions
+- **Backend Users Endpoint** - GET /users with pagination, filters, and persona data
+- **Backend Operator Dashboard Endpoint** - GET /operator/dashboard with metrics and statistics
 
 ### Integration Points
 - Frontend ↔ Backend: CORS configured, API client setup complete (`frontend/src/lib/api.js`), API service functions ready (`frontend/src/lib/apiService.js`), routing structure in place
@@ -273,7 +300,7 @@
 - Data Generation ↔ Database: ✅ Complete - All synthetic data ingested successfully
 
 ## Current Blockers
-None - Ready to proceed with PR #13+ (Persona Assignment Engine)
+None - Ready to proceed with PR #14 (Operator User Detail Page)
 
 ## Active Questions
 1. ✅ Python venv upgraded to 3.11.9 - Complete
@@ -294,8 +321,9 @@ None - Ready to proceed with PR #13+ (Persona Assignment Engine)
 - PR #9 complete (all 33 tasks checked off)
 - PR #10 complete (all 28 tasks checked off)
 - PR #11 complete (all 39 tasks checked off)
-- PR #12 complete (all 39 implementation tasks checked off, testing tasks pending backend endpoint)
-- Following tasks-2.md and tasks-3.md structure (PR #13+ next)
+- PR #12 complete (all 39 implementation tasks checked off)
+- PR #13 complete (all 61 tasks checked off, including backend endpoints)
+- Following tasks-4.md structure (PR #14 next)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility
