@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #24 Complete - Override & Reject Endpoints Complete
+**Status**: PR #26 Complete - Frontend Approval Queue Page Complete
 
 ## Recent Changes
 - ✅ PR #3 Complete: Database Schema & SQLAlchemy Models (all 58 tasks finished)
@@ -505,14 +505,59 @@
   - Comprehensive logging for all override and reject actions
   - Test script created (`scripts/test_override_reject.py`) with 8 test cases
   - All 39 tasks completed
+- ✅ **PR #25 Complete: Bulk Approve Endpoint (all 21 tasks finished)**
+  - Recommendations router (`backend/app/routers/recommendations.py`):
+    - POST `/recommendations/bulk-approve` endpoint implemented
+    - Accepts BulkApproveRequest schema (operator_id, recommendation_ids array)
+    - Processes each recommendation individually with error handling
+    - Validates each recommendation exists and is in 'pending_approval' status
+    - Updates recommendations: Sets status='approved', approved_by=operator_id, approved_at=current timestamp
+    - Creates OperatorAction records for audit trail
+    - Batch commit: All changes committed in single transaction
+    - Returns BulkApproveResponse with approved count, failed count, and error messages
+    - Error handling: Individual recommendation errors don't fail entire batch
+    - Status codes: 200 if any succeeded, 400 if all failed
+    - Comprehensive logging for bulk operations
+  - Test script created (`scripts/test_bulk_approve.py`) for testing bulk approval workflow
+  - All 21 tasks completed
+- ✅ **PR #26 Complete: Frontend - Approval Queue Page (all 51 tasks finished)**
+  - Backend endpoint added:
+    - GET `/operator/review` endpoint: Fetches all recommendations where status != 'approved'
+    - Optional status filter (pending_approval, overridden, rejected)
+    - Orders by generated_at ascending (oldest first, queue order)
+    - Includes user information via JOIN for efficient querying
+    - Returns recommendations with all relevant fields and total count
+  - Frontend components created:
+    - RecommendationCard component: Displays recommendation with checkbox, user info, persona badge, content/rationale previews, action buttons (Approve, Reject, Override)
+    - Checkbox UI component: Created using Radix UI (@radix-ui/react-checkbox)
+  - API service functions added:
+    - `overrideRecommendation()` - Override a recommendation with new content
+    - `rejectRecommendation()` - Reject a recommendation with reason
+  - OperatorApprovalQueue page:
+    - Data fetching with useState/useEffect, auto-refresh every 30 seconds
+    - State management: recommendations, selectedIds (Set), loading, error, statusFilter, actionLoading
+    - Bulk selection: Select all checkbox, individual checkboxes, selected count display
+    - Bulk approve button: Disabled when no selection, loading state, success/error messaging
+    - Individual approve: Per-recommendation approve with loading state, removes from queue on success
+    - Override dialog: Shadcn Dialog with form fields (new title optional, new content optional, reason required), validation, tone validation
+    - Reject dialog: Shadcn Dialog with reason field (required), removes from queue on success
+    - Page layout: Header with title and refresh button, toolbar with select all, count, filter dropdown, bulk approve button
+    - Status filter: Dropdown for pending_approval, overridden, rejected
+    - Loading states: Skeleton cards while loading
+    - Error states: Alert component with retry functionality
+    - Success/error messages: Auto-dismiss after 5 seconds
+    - Empty state: Message when no recommendations in queue
+    - Auto-refresh: 30-second interval with cleanup on unmount
+  - All 51 tasks completed
 
 ## Next Steps
-1. **PR #25: Bulk Approve Endpoint** - Create API endpoint for bulk approving multiple recommendations at once
+1. **PR #27: Frontend - User Dashboard & Consent** - Create user-facing dashboard with consent toggle and recommendation display
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Approval workflow endpoints** - PR #23 and PR #24 complete, PR #25 next - Create bulk approve endpoint for efficient operator workflow
+- **Approval workflow** - PR #23, #24, #25, and #26 complete - All backend endpoints and frontend approval queue page complete
+- **User dashboard** - PR #27 next - Create user-facing dashboard with consent management and recommendation display
 - **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
 
 ### Technical Decisions Made
@@ -599,7 +644,9 @@ None - Ready to proceed with PR #21 (Recommendation Generation Endpoint)
 - PR #22 complete (all 23 tasks checked off - Get Recommendations Endpoint)
 - PR #23 complete (all 26 tasks checked off - Approve Recommendation Endpoint)
 - PR #24 complete (all 39 tasks checked off - Override & Reject Endpoints)
-- Following tasks-6.md structure (PR #25 next)
+- PR #25 complete (all 21 tasks checked off - Bulk Approve Endpoint)
+- PR #26 complete (all 51 tasks checked off - Frontend Approval Queue Page)
+- Following tasks-6.md structure (PR #27 next - User Dashboard & Consent)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility

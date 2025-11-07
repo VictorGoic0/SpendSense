@@ -98,6 +98,7 @@ mangum==0.17.0
 - Recharts
 - Shadcn/ui components
 - TailwindCSS
+- @radix-ui/react-checkbox (for Checkbox component)
 
 ## Technical Constraints
 

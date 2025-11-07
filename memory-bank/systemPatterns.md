@@ -99,8 +99,14 @@ User Dashboard (React UI)
   - Recommendations section with status badges
   - Back navigation and loading/error states
   - Backend GET /users/{user_id} and GET /operator/users/{user_id}/signals endpoints
-- Approval queue (pending recommendations) (PR #16+)
-- Override workflow (edit live recommendations) (PR #16+)
+- ✅ Approval queue (PR #26 Complete)
+  - GET /operator/review endpoint: Fetches all non-approved recommendations, ordered by generated_at ascending
+  - Frontend OperatorApprovalQueue page with bulk selection, individual actions, override/reject dialogs
+  - RecommendationCard component with user info, persona badges, content previews, action buttons
+  - Auto-refresh every 30 seconds, status filtering, loading/error states
+- ✅ Override workflow (PR #24, #26 Complete)
+  - Backend override endpoint with original content preservation
+  - Frontend override dialog with form validation and tone checking
 
 ### 7. User Interface (`ui/user/`)
 - Consent management toggle
@@ -205,7 +211,16 @@ User Dashboard (React UI)
   - Stores rejection reason in metadata_json (rejection_reason, rejected_by, rejected_at)
   - Creates OperatorAction record with action_type='reject'
   - Returns updated recommendation with rejection metadata
-- **Bulk Operations**: Operators can approve multiple at once (to be implemented in PR #25)
+- **Bulk Operations**: POST `/recommendations/bulk-approve` endpoint (PR #25 Complete)
+  - Accepts array of recommendation IDs
+  - Processes each individually with error handling
+  - Batch commit in single transaction
+  - Returns summary with approved/failed counts and error messages
+- **Approval Queue Endpoint**: GET `/operator/review` (PR #26 Complete)
+  - Fetches all recommendations where status != 'approved'
+  - Optional status filter (pending_approval, overridden, rejected)
+  - Orders by generated_at ascending (oldest first, queue order)
+  - Includes user information via JOIN
 - **Audit Trail**: All actions logged in `operator_actions` table
 
 ## Key Technical Decisions
@@ -264,6 +279,8 @@ User Dashboard (React UI)
   - POST /recommendations/{recommendation_id}/approve - Approve a recommendation (PR #23 Complete)
   - POST /recommendations/{recommendation_id}/override - Override a recommendation with new content (PR #24 Complete)
   - POST /recommendations/{recommendation_id}/reject - Reject a recommendation (PR #24 Complete)
+  - POST /recommendations/bulk-approve - Bulk approve multiple recommendations (PR #25 Complete)
+  - GET /operator/review - Get approval queue (all non-approved recommendations) (PR #26 Complete)
 
 ### Frontend Constants & Enums Pattern
 - **Centralized Enums**: All enum values defined in `frontend/src/constants/enums.js`
