@@ -271,30 +271,30 @@
 ## PR #15: Persona Assignment Service
 
 ### Persona Assignment Service File
-- [ ] 1. Create `backend/app/services/persona_assignment.py`
-- [ ] 2. Import database models and session
-- [ ] 3. Import UserFeature model
+- [x] 1. Create `backend/app/services/persona_assignment.py`
+- [x] 2. Import database models and session
+- [x] 3. Import UserFeature model
 
 ### Persona Check Functions
-- [ ] 4. Create `check_high_utilization(features: UserFeature) -> bool`:
+- [x] 4. Create `check_high_utilization(features: UserFeature) -> bool`:
   - Return True if max_utilization >= 0.50
   - OR interest_charges_present == True
   - OR minimum_payment_only_flag == True
   - OR any_overdue == True
   - Otherwise return False
-- [ ] 5. Create `check_variable_income(features: UserFeature) -> bool`:
+- [x] 5. Create `check_variable_income(features: UserFeature) -> bool`:
   - Return True if median_pay_gap_days > 45
   - AND cash_flow_buffer_months < 1
   - Otherwise return False
-- [ ] 6. Create `check_subscription_heavy(features: UserFeature) -> bool`:
+- [x] 6. Create `check_subscription_heavy(features: UserFeature) -> bool`:
   - Return True if recurring_merchants >= 3
   - AND (monthly_recurring_spend >= 50 OR subscription_spend_share >= 0.10)
   - Otherwise return False
-- [ ] 7. Create `check_savings_builder(features: UserFeature) -> bool`:
+- [x] 7. Create `check_savings_builder(features: UserFeature) -> bool`:
   - Return True if (savings_growth_rate >= 0.02 OR net_savings_inflow >= 200)
   - AND avg_utilization < 0.30
   - Otherwise return False
-- [ ] 8. Create `check_wealth_builder(features: UserFeature) -> bool`:
+- [x] 8. Create `check_wealth_builder(features: UserFeature) -> bool`:
   - Return True if avg_monthly_income > 10000
   - AND features.user has savings_balance > 25000 (need to query)
   - AND max_utilization <= 0.20
@@ -303,34 +303,34 @@
   - Otherwise return False
 
 ### Savings Balance Query for Wealth Builder
-- [ ] 9. Create helper `get_total_savings_balance(db, user_id) -> float`:
+- [x] 9. Create helper `get_total_savings_balance(db, user_id) -> float`:
   - Query accounts for user where type in savings types
   - Sum balance_current across accounts
   - Return total
 
 ### Persona Assignment Logic
-- [ ] 10. Create `assign_persona(db, user_id: str, window_days: int) -> tuple[str, float, dict]`:
+- [x] 10. Create `assign_persona(db, user_id: str, window_days: int) -> tuple[str, float, dict]`:
   - Query UserFeature for user and window
   - If no features found, return ('general_wellness', 0.0, {})
   - Create list of matched personas with priorities
-- [ ] 11. Check wealth_builder first (priority 1.0)
-- [ ] 12. Check high_utilization (priority 0.95 if util>=80%, else 0.8)
-- [ ] 13. Check savings_builder (priority 0.7)
-- [ ] 14. Check variable_income (priority 0.6)
-- [ ] 15. Check subscription_heavy (priority 0.5)
-- [ ] 16. If no matches, return ('general_wellness', 0.0, {})
-- [ ] 17. Sort matched personas by priority (descending)
-- [ ] 18. Return highest priority: (persona_type, confidence_score, reasoning_dict)
+- [x] 11. Check wealth_builder first (priority 1.0)
+- [x] 12. Check high_utilization (priority 0.95 if util>=80%, else 0.8)
+- [x] 13. Check savings_builder (priority 0.7)
+- [x] 14. Check variable_income (priority 0.6)
+- [x] 15. Check subscription_heavy (priority 0.5)
+- [x] 16. If no matches, return ('general_wellness', 0.0, {})
+- [x] 17. Sort matched personas by priority (descending)
+- [x] 18. Return highest priority: (persona_type, confidence_score, reasoning_dict)
 
 ### Reasoning Dictionary
-- [ ] 19. For reasoning_dict, include:
+- [x] 19. For reasoning_dict, include:
   - matched_criteria: list of criteria that passed
   - feature_values: dict of relevant feature values
   - timestamp: current datetime
-- [ ] 20. Format as JSON-serializable dict
+- [x] 20. Format as JSON-serializable dict
 
 ### Persona Creation/Update
-- [ ] 21. Create `create_or_update_persona(db, user_id, window_days, persona_type, confidence, reasoning)`:
+- [x] 21. Create `create_or_update_persona(db, user_id, window_days, persona_type, confidence, reasoning)`:
   - Check if Persona record exists for user + window
   - If exists, update with new values
   - If not, create new Persona record
@@ -338,19 +338,19 @@
   - Return Persona object
 
 ### Main Assignment Function
-- [ ] 22. Create `assign_and_save_persona(db, user_id: str, window_days: int) -> Persona`:
+- [x] 22. Create `assign_and_save_persona(db, user_id: str, window_days: int) -> Persona`:
   - Call assign_persona() to get type, confidence, reasoning
   - Call create_or_update_persona() to save
   - Return Persona object
 
 ### Testing Persona Assignment
-- [ ] 23. Create test script `scripts/test_persona_assignment.py`
-- [ ] 24. Test with known user IDs
-- [ ] 25. Verify high_utilization assigned to high util users
-- [ ] 26. Verify savings_builder assigned to savers
-- [ ] 27. Verify wealth_builder assigned to affluent users
-- [ ] 28. Print reasoning dicts for validation
-- [ ] 29. Check database for Persona records
+- [x] 23. Create test script `scripts/test_persona_assignment.py`
+- [x] 24. Test with known user IDs
+- [x] 25. Verify high_utilization assigned to high util users
+- [x] 26. Verify savings_builder assigned to savers
+- [x] 27. Verify wealth_builder assigned to affluent users
+- [x] 28. Print reasoning dicts for validation
+- [x] 29. Check database for Persona records
 
 ---
 
