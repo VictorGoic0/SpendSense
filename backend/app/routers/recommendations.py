@@ -14,7 +14,8 @@ import time
 import logging
 
 from app.database import get_db
-from app.models import User, Persona, Recommendation
+from app.models import User, Persona, Recommendation, OperatorAction
+from app.schemas import RecommendationApprove
 from app.services.recommendation_engine import (
     build_user_context,
     validate_context,
@@ -25,6 +26,7 @@ from app.services.guardrails import (
     validate_tone,
     append_disclosure
 )
+from datetime import datetime
 
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 logger = logging.getLogger(__name__)
@@ -463,6 +465,159 @@ async def get_recommendations(
     except Exception as e:
         # Handle database errors
         logger.error(f"Error getting recommendations for user {user_id}: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Server error: {str(e)}"
+        )
+
+
+@router.post("/{recommendation_id}/approve")
+async def approve_recommendation(
+    recommendation_id: str,
+    request: RecommendationApprove,
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    Approve a recommendation.
+    
+    This endpoint:
+    1. Validates recommendation exists
+    2. Validates recommendation is in pending_approval status
+    3. Updates recommendation status to 'approved'
+    4. Sets approved_by and approved_at
+    5. Creates OperatorAction record for audit trail
+    6. Returns updated recommendation
+    
+    Args:
+        recommendation_id: Recommendation ID to approve
+        request: ApproveRequest with operator_id and optional notes
+        db: Database session
+    
+    Returns:
+        Dictionary with updated recommendation object
+    
+    Raises:
+        404: Recommendation not found
+        400: Recommendation already approved or rejected
+        500: Server error (database error)
+    """
+    try:
+        # ========================================================================
+        # Validation
+        # ========================================================================
+        
+        # Query Recommendation by recommendation_id
+        recommendation = db.query(Recommendation).filter(
+            Recommendation.recommendation_id == recommendation_id
+        ).first()
+        
+        if not recommendation:
+            logger.warning(f"Recommendation not found: {recommendation_id}")
+            raise HTTPException(
+                status_code=404,
+                detail=f"Recommendation with ID '{recommendation_id}' not found"
+            )
+        
+        # If already approved → 400 error with message
+        if recommendation.status == 'approved':
+            logger.warning(
+                f"Attempt to approve already approved recommendation: {recommendation_id}"
+            )
+            raise HTTPException(
+                status_code=400,
+                detail=f"Recommendation '{recommendation_id}' is already approved"
+            )
+        
+        # If status is 'rejected' → 400 error (can't approve rejected rec)
+        if recommendation.status == 'rejected':
+            logger.warning(
+                f"Attempt to approve rejected recommendation: {recommendation_id}"
+            )
+            raise HTTPException(
+                status_code=400,
+                detail=f"Cannot approve recommendation '{recommendation_id}' - it has been rejected"
+            )
+        
+        # ========================================================================
+        # Update Recommendation
+        # ========================================================================
+        
+        # Update recommendation:
+        # - Set status='approved'
+        # - Set approved_by=operator_id
+        # - Set approved_at=current timestamp
+        recommendation.status = 'approved'
+        recommendation.approved_by = request.operator_id
+        recommendation.approved_at = datetime.utcnow()
+        
+        # Commit transaction
+        db.commit()
+        
+        # Refresh to get updated timestamp
+        db.refresh(recommendation)
+        
+        logger.info(
+            f"Approved recommendation {recommendation_id} by operator {request.operator_id}"
+        )
+        
+        # ========================================================================
+        # Log Operator Action
+        # ========================================================================
+        
+        # Create OperatorAction record:
+        # - operator_id
+        # - action_type='approve'
+        # - recommendation_id
+        # - user_id (from recommendation)
+        # - reason=notes (if provided)
+        # - timestamp=now
+        operator_action = OperatorAction(
+            operator_id=request.operator_id,
+            action_type='approve',
+            recommendation_id=recommendation_id,
+            user_id=recommendation.user_id,
+            reason=request.notes,
+            timestamp=datetime.utcnow()
+        )
+        
+        db.add(operator_action)
+        
+        # Commit transaction
+        db.commit()
+        
+        logger.info(
+            f"Logged operator action: approve for recommendation {recommendation_id}"
+        )
+        
+        # ========================================================================
+        # Response
+        # ========================================================================
+        
+        # Query updated recommendation (already have it, but format response)
+        # Return recommendation with updated status
+        return {
+            "recommendation_id": recommendation.recommendation_id,
+            "title": recommendation.title,
+            "content": recommendation.content,
+            "rationale": recommendation.rationale,
+            "status": recommendation.status,
+            "persona_type": recommendation.persona_type,
+            "generated_at": recommendation.generated_at.isoformat() if recommendation.generated_at else None,
+            "approved_by": recommendation.approved_by,
+            "approved_at": recommendation.approved_at.isoformat() if recommendation.approved_at else None,
+        }
+    
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    
+    except Exception as e:
+        # Rollback database transaction on error
+        db.rollback()
+        logger.error(
+            f"Error approving recommendation {recommendation_id}: {str(e)}",
+            exc_info=True
+        )
         raise HTTPException(
             status_code=500,
             detail=f"Server error: {str(e)}"

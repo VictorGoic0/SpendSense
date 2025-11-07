@@ -53,55 +53,55 @@
 ## PR #23: Approve Recommendation Endpoint
 
 ### Approve Endpoint
-- [ ] 1. In recommendations router, create POST `/{recommendation_id}/approve` endpoint
-- [ ] 2. Accept recommendation_id as path parameter
-- [ ] 3. Accept ApproveRequest schema in body:
+- [x] 1. In recommendations router, create POST `/{recommendation_id}/approve` endpoint
+- [x] 2. Accept recommendation_id as path parameter
+- [x] 3. Accept ApproveRequest schema in body:
    - operator_id: str
    - notes: str (optional)
-- [ ] 4. Get database session
+- [x] 4. Get database session
 
 ### Validation
-- [ ] 5. Query Recommendation by recommendation_id
-- [ ] 6. If not found → 404 error
-- [ ] 7. If already approved → 400 error with message
-- [ ] 8. If status is 'rejected' → 400 error (can't approve rejected rec)
+- [x] 5. Query Recommendation by recommendation_id
+- [x] 6. If not found → 404 error
+- [x] 7. If already approved → 400 error with message
+- [x] 8. If status is 'rejected' → 400 error (can't approve rejected rec)
 
 ### Update Recommendation
-- [ ] 9. Update recommendation:
+- [x] 9. Update recommendation:
    - Set status='approved'
    - Set approved_by=operator_id
    - Set approved_at=current timestamp
-- [ ] 10. Commit transaction
+- [x] 10. Commit transaction
 
 ### Log Operator Action
-- [ ] 11. Create OperatorAction record:
+- [x] 11. Create OperatorAction record:
    - operator_id
    - action_type='approve'
    - recommendation_id
    - user_id (from recommendation)
    - reason=notes (if provided)
    - timestamp=now
-- [ ] 12. Commit transaction
+- [x] 12. Commit transaction
 
 ### Response
-- [ ] 13. Query updated recommendation
-- [ ] 14. Return recommendation with updated status
-- [ ] 15. Return 200 status code
+- [x] 13. Query updated recommendation
+- [x] 14. Return recommendation with updated status
+- [x] 15. Return 200 status code
 
 ### Error Handling
-- [ ] 16. Handle not found → 404
-- [ ] 17. Handle invalid state transitions → 400
-- [ ] 18. Handle database errors → 500
-- [ ] 19. Add logging for all approve actions
+- [x] 16. Handle not found → 404
+- [x] 17. Handle invalid state transitions → 400
+- [x] 18. Handle database errors → 500
+- [x] 19. Add logging for all approve actions
 
 ### Testing Approve
-- [ ] 20. Generate recommendations for test user
-- [ ] 21. Get pending recommendation ID
-- [ ] 22. Call approve endpoint with operator_id
-- [ ] 23. Verify status changed to 'approved'
-- [ ] 24. Verify approved_by and approved_at set
-- [ ] 25. Verify operator_actions table has record
-- [ ] 26. Verify user can now see recommendation via GET endpoint
+- [x] 20. Generate recommendations for test user
+- [x] 21. Get pending recommendation ID
+- [x] 22. Call approve endpoint with operator_id
+- [x] 23. Verify status changed to 'approved'
+- [x] 24. Verify approved_by and approved_at set
+- [x] 25. Verify operator_actions table has record
+- [x] 26. Verify user can now see recommendation via GET endpoint
 
 ---
 
