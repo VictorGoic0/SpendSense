@@ -1,9 +1,23 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #28 Complete - Evaluation Script - Metrics Computation Complete
+**Status**: Performance Testing Complete - OpenAI Latency Investigation & Documentation
 
 ## Recent Changes
+- ✅ **Performance Testing Complete: OpenAI Latency Investigation**
+  - Investigated 20-second average recommendation generation latency
+  - Implemented detailed timing logs (SQL query, OpenAI query, tone validation, DB save)
+  - Identified OpenAI API call as primary bottleneck (~17,000ms out of ~17,081ms total)
+  - Tested three optimization strategies:
+    1. **Model Change (gpt-3.5-turbo)**: 67% faster (17s → 5.5s) - MOST EFFECTIVE
+    2. **Data Reduction**: No improvement (18.8s) - context size not a factor
+    3. **Remove JSON Mode**: 35% slower (23s) - JSON mode is beneficial
+  - Key Finding: Model choice (gpt-4o-mini vs gpt-3.5-turbo) is the only significant performance factor
+  - Documentation: Created comprehensive testing documentation in `docs/performance_testing/`
+    - `OPENAI_LATENCY_TESTING.md`: Full overview of testing methodology, results, and conclusions
+    - `recommendation_timing_results.md`: Detailed results for each strategy
+  - Timing log code commented out in `backend/app/routers/recommendations.py` for future use
+  - Decision: Keeping gpt-4o-mini for quality over speed in MVP
 - ✅ **PR #28 Complete: Evaluation Script - Metrics Computation (all 54 tasks finished)**
   - Created `scripts/evaluate.py` evaluation script
   - Coverage metrics: Computes percentage of users with personas assigned
@@ -617,13 +631,24 @@
 ## Next Steps
 1. **Parquet Export & S3 Integration** - PR #29: Export user features and evaluation results to Parquet, upload to S3
 2. **Evaluation API Endpoint** - PR #30: Create API endpoints for running evaluations and retrieving metrics
-3. **AWS Deployment** - Deploy backend to Lambda and frontend to Vercel/Netlify
+3. **Redis Caching Layer** - PR #31: Implement multi-tier Redis caching for all DB queries and API responses
+4. **PostgreSQL Migration** - PR #32: Migrate from SQLite to PostgreSQL (AWS RDS) for production
+5. **Scale Synthetic Data** - PR #33: Generate 500-1,000 users with recommendations (prerequisite for vector DB)
+6. **Vector DB Integration** - PR #34-37: Integrate Pinecone Serverless with OpenAI embeddings for sub-1s latency
+7. **AWS Deployment** - Deploy backend to Lambda and frontend to Vercel/Netlify
 
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
-- **Approval workflow** - PR #23, #24, #25, and #26 complete - All backend endpoints and frontend approval queue page complete
-- **User dashboard** - PR #27 next - Create user-facing dashboard with consent management and recommendation display
+- **Performance Optimization Decision Made**: Vector DB + Redis hybrid architecture (see `docs/DECISIONS.md`)
+  - Based on comprehensive latency testing in `docs/OPENAI_LATENCY_TESTING.md`
+  - **Problem**: 17s OpenAI latency with gpt-4o-mini (model choice is bottleneck)
+  - **Solution**: Pinecone Serverless + OpenAI embeddings + Redis caching
+  - **Expected Result**: <1s for vector DB hits, 2-5s for OpenAI fallback (edge cases)
+  - **Prerequisites**: Scale synthetic data to 500-1,000 users first (75 users insufficient for vector DB value)
+  - **Architecture**: Hybrid retrieval (vector DB with 0.85 similarity threshold, gpt-4o-mini fallback)
+  - **Cost**: 80-90% reduction in OpenAI API costs, mostly free tier (Pinecone 1M vectors, ElastiCache Serverless)
+- **Next PR**: Parquet Export & S3 Integration (PR #29)
 - **Future Enhancement**: Enhance synthetic data generation to include more variance for all persona types
 
 ### Technical Decisions Made

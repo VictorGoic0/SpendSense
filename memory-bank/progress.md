@@ -1,9 +1,20 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #28 Complete - Evaluation Script - Metrics Computation Complete
+**Status**: Performance Testing Complete - OpenAI Latency Investigation & Documentation
 
 ### Completed ✅
+- ✅ **Performance Testing & Optimization Research Complete**
+  - Comprehensive latency investigation for recommendation generation
+  - Detailed timing instrumentation implemented (SQL, OpenAI, tone validation, DB save)
+  - Bottleneck identified: OpenAI API call (~17s out of ~17s total)
+  - Three optimization strategies tested and documented:
+    - Model change (gpt-3.5-turbo): 67% faster, most effective
+    - Data reduction: No improvement, context size not a factor
+    - JSON mode removal: 35% slower, JSON mode is beneficial
+  - Documentation created in `docs/performance_testing/`
+  - Timing log infrastructure available for future performance testing
+  - Decision pending on production optimization approach
 - ✅ Memory bank structure created
 - ✅ Core documentation established (README, DECISIONS.md, LIMITATIONS.md)
 - ✅ Backend project structure initialized
@@ -518,12 +529,15 @@
   - All 54 tasks completed
 
 ### In Progress
-- 🔄 None - Ready for next PR
+- 🔄 None - Ready for next PR (Parquet export & S3 integration)
 
 ### Not Started
 - ⏳ Parquet export & S3 integration (PR #29)
 - ⏳ Evaluation API endpoints (PR #30)
-- ⏳ Frontend metrics display (PR #31)
+- ⏳ Redis caching layer (PR #31)
+- ⏳ PostgreSQL migration (PR #32)
+- ⏳ Scale synthetic data to 500-1,000 users (PR #33)
+- ⏳ Vector DB integration with Pinecone (PR #34-37)
 - ⏳ AWS deployment
 
 ## What's Left to Build
@@ -565,11 +579,19 @@
 - [ ] Parquet export to S3 (PR #29)
 - [ ] Metrics displayed in operator dashboard (PR #31)
 
-### Day 3+ (Stretch Goals)
+### Day 3+ (Performance Optimization & Deployment)
+- [ ] Parquet export & S3 integration (PR #29)
+- [ ] Evaluation API endpoints (PR #30)
+- [ ] Redis caching layer (PR #31) - **Quick win for repeated queries**
+- [ ] PostgreSQL migration (PR #32) - **Production-grade database**
+- [ ] Scale synthetic data to 500-1,000 users (PR #33) - **Prerequisite for vector DB**
+- [ ] Vector DB integration with Pinecone (PR #34-37) - **Sub-1s latency showcase**
+  - Pinecone setup & embedding infrastructure
+  - Batch embedding job (populate vector DB)
+  - Vector search implementation
+  - Hybrid recommendation engine (vector DB + OpenAI fallback)
 - [ ] FastAPI deployed to AWS Lambda
 - [ ] Frontend deployed (Vercel/Netlify/S3+CloudFront)
-- [ ] Redis caching (optional)
-- [ ] Vector database integration (optional)
 - [ ] 10 unit tests passing
 - [ ] Documentation complete (README, decision log, limitations)
 
@@ -636,8 +658,14 @@
 - **Next**: AI recommendation generation (PR #17+)
 
 ### AI Integration
-- **Status**: ✅ Complete - OpenAI SDK installed, prompt templates complete, context building complete, OpenAI API integration complete, recommendation generation endpoint complete
+- **Status**: ✅ Complete - OpenAI SDK installed, prompt templates complete, context building complete, OpenAI API integration complete, recommendation generation endpoint complete, performance testing complete
 - **Completed**: OpenAI SDK (v2.7.1, upgraded from 1.3.5) installed, API key configured, 5 persona-specific prompts created with empowering language requirements, prompt loader utility with caching, recommendation engine service with context building and OpenAI API integration, recommendation generation endpoint with full workflow
+- **Performance Testing**: Comprehensive latency investigation completed
+  - Identified OpenAI API call as bottleneck (~17s average)
+  - Tested optimization strategies (model change, data reduction, JSON mode removal)
+  - Model choice (gpt-4o-mini vs gpt-3.5-turbo) is the primary performance factor
+  - Documentation: `docs/performance_testing/OPENAI_LATENCY_TESTING.md` and `recommendation_timing_results.md`
+  - Timing log infrastructure available (commented out) in `backend/app/routers/recommendations.py`
 - **Prompt Files**: `backend/app/prompts/` directory with 5 self-contained prompts (high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder)
   - All prompts include LANGUAGE STYLE section with explicit empowering language requirements
   - Temperature set to 0.75 for natural variation
@@ -688,6 +716,9 @@
 - **Coverage**: Target 100% (all consented users have persona + ≥3 behaviors)
 - **Explainability**: Target 100% (all recommendations have rationales)
 - **Latency**: Target <5 seconds per user recommendation generation
+  - **Current**: ~17 seconds average with gpt-4o-mini (quality-first approach)
+  - **Options**: gpt-3.5-turbo achieves 5.5s (67% faster), Redis caching + async task queue, or hybrid approach
+  - **Decision Pending**: Optimizing for quality vs speed trade-offs
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Server Concurrency & Performance

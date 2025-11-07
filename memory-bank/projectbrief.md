@@ -40,20 +40,27 @@ Built for an AI engineering fellowship with emphasis on:
 ## Scope Boundaries
 **In Scope (MVP):**
 - ✅ Synthetic data generation (75 users) - **COMPLETE**
-- Feature detection pipeline (subscriptions, savings, credit, income)
-- 5 persona assignment with prioritization
-- AI recommendation generation (5 persona-specific endpoints)
-- Guardrails (consent, tone, eligibility)
-- Operator approval workflow
-- React UI (operator + user views)
-- Evaluation metrics and Parquet exports to S3
-- AWS Lambda deployment
+- ✅ Feature detection pipeline (subscriptions, savings, credit, income) - **COMPLETE**
+- ✅ 5 persona assignment with prioritization - **COMPLETE**
+- ✅ AI recommendation generation (5 persona-specific endpoints) - **COMPLETE**
+- ✅ Guardrails (consent, tone, eligibility) - **COMPLETE**
+- ✅ Operator approval workflow - **COMPLETE**
+- ✅ React UI (operator + user views) - **COMPLETE**
+- ✅ Evaluation metrics - **COMPLETE**
+- ⏳ Parquet exports to S3 (PR #29)
+- ⏳ AWS Lambda deployment
 
-**Out of Scope (Stretch Goals):**
-- Redis caching
-- Vector database integration
-- AWS RDS PostgreSQL migration
+**In Scope (Performance Optimization):**
+- ⏳ Redis caching layer (PR #31)
+- ⏳ PostgreSQL migration (PR #32)
+- ⏳ Scale synthetic data to 500-1,000 users (PR #33)
+- ⏳ Vector database integration with Pinecone (PR #34-37)
+- **Goal**: Achieve sub-1s recommendation latency (from 17s baseline)
+- **Architecture**: Hybrid vector DB + OpenAI fallback
+
+**Out of Scope (Future):**
 - Authentication/JWT
-- Real bank data integration
+- Real bank data integration (Plaid API)
 - Mobile app
+- Real-time transaction streaming
 

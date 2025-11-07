@@ -20,8 +20,23 @@
 
 ### AI/ML
 - **OpenAI Python SDK** - GPT-4o-mini integration
+- **Model Choice**: gpt-4o-mini (quality-first approach)
+  - Latency: ~17 seconds average per recommendation generation
+  - Quality priority over speed for MVP
+  - Alternative: gpt-3.5-turbo (67% faster at 5.5s, lower quality)
+  - Performance testing documented in `docs/OPENAI_LATENCY_TESTING.md`
 - **5 separate endpoints** - One per persona with distinct system prompts
-- **JSON response format** - Structured output for recommendations
+- **JSON response format** - Structured output for recommendations (beneficial for performance)
+- **Vector Database (Planned)**: Pinecone Serverless
+  - Semantic search for recommendation retrieval
+  - 1M vectors free tier
+  - OpenAI text-embedding-3-small for embeddings ($0.00002/1k tokens)
+  - Sub-1s latency for vector DB hits
+  - Hybrid architecture with OpenAI fallback
+- **Caching Layer (Planned)**: Redis (AWS ElastiCache Serverless)
+  - Multi-tier caching (user context, recommendations, DB queries)
+  - TTL-based expiration
+  - Cache invalidation on updates
 
 ### Infrastructure
 - **AWS Lambda** - Serverless compute
@@ -95,13 +110,20 @@ sqlalchemy==2.0.23
 pydantic==2.5.0
 python-dotenv==1.0.0
 openai==2.7.1
-pandas==2.1.3
+pandas==2.1.4
+numpy==1.26.2
 pyarrow==14.0.1
 faker==20.1.0
 boto3==1.29.7
 pytest==7.4.3
 httpx==0.25.2
 mangum==0.17.0
+requests==2.31.0
+
+# Vector DB & Caching (to be added)
+pinecone-client==latest (TBD in PR #34)
+redis==latest (TBD in PR #31)
+psycopg2-binary==latest (TBD in PR #32 for PostgreSQL)
 ```
 
 ### Frontend (package.json)
@@ -178,6 +200,13 @@ mangum==0.17.0
 4. Frontend runs on `http://localhost:5173`
 5. Frontend proxies API calls to backend
 6. **Note**: Use workers (4) for concurrent request handling - prevents blocking during recommendation generation
+
+### Performance Testing
+- **Timing Logs**: Infrastructure exists in `backend/app/routers/recommendations.py` (currently commented out)
+  - Can be uncommented to enable detailed timing logs for performance testing
+  - Logs output to `docs/recommendation_timing_logs.json`
+  - Tracks: SQL query duration, OpenAI query duration, tone validation, DB save, total request time
+  - Used for optimization strategy testing (see `docs/performance_testing/`)
 
 ### Testing
 - Backend: `pytest tests/ -v`

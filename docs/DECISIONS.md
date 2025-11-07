@@ -301,3 +301,72 @@ This document tracks key architectural and technical decisions made during the d
 - Removed `general_wellness` persona type entirely (no prompt file, no explicit criteria)
 - Location: `backend/app/services/persona_assignment.py` lines 264-271 and 380-387
 
+## Performance Optimization Decisions
+
+### Vector Database Integration for Sub-1s Latency
+**Decision**: Integrate Pinecone Serverless vector database with OpenAI embeddings to achieve sub-1 second recommendation retrieval
+**Context**: Based on comprehensive latency testing documented in `docs/OPENAI_LATENCY_TESTING.md`
+**Problem Statement**:
+- Current OpenAI API latency: ~17 seconds average per recommendation generation
+- Testing revealed model choice (gpt-4o-mini) is the primary bottleneck, not context size or JSON mode
+- Alternative (gpt-3.5-turbo) is 67% faster but lower quality
+- Need to maintain gpt-4o-mini quality while achieving <1s response times
+**Rationale**:
+- **Vector DB for semantic search**: Pre-compute embeddings for user contexts and recommendations, retrieve similar recommendations in <50ms instead of generating fresh via OpenAI
+- **Quality preservation**: Keep gpt-4o-mini for edge cases and unique user contexts (similarity score < 0.85)
+- **Hybrid architecture**: Use vector DB for high-similarity matches, fall back to OpenAI for edge cases
+- **Cost reduction**: 80-90% reduction in OpenAI API costs (fewer fresh generations)
+- **Showcase AI engineering**: Demonstrates production-grade LLM application architecture with embeddings, semantic search, and hybrid retrieval
+**Architecture**:
+- **Pinecone Serverless**: Vector database for storing and querying recommendation embeddings (1M vectors free tier)
+- **OpenAI text-embedding-3-small**: Generate embeddings for user contexts and recommendations ($0.00002/1k tokens)
+- **Similarity threshold**: 0.85 cutoff for vector DB matches vs OpenAI fallback
+- **Redis caching layer**: Multi-tier caching strategy (user context, recommendations, DB queries)
+- **AWS ElastiCache Serverless**: Redis instance for production deployment
+**Expected Performance**:
+- Vector DB hits: <1 second total latency (50ms vector search + 100ms DB/API overhead)
+- OpenAI fallback (edge cases): 2-5 seconds with gpt-4o-mini
+- Overall improvement: 94% latency reduction for cached/similar contexts
+**Prerequisites**:
+- Scale synthetic data to 500-1,000 users (current: 75 users insufficient for vector DB value)
+- Generate recommendations for all users (need 1,500-5,000 recommendations for meaningful similarity matching)
+- Implement Redis caching layer first (quick win, simpler than vector DB)
+- Migrate to PostgreSQL (AWS RDS) for production-grade database
+**Implementation Plan**:
+- Phase 1: Redis caching layer (PR #31)
+- Phase 2: PostgreSQL migration (PR #32)
+- Phase 3: Scale synthetic data to 500-1,000 users (PR #33)
+- Phase 4: Vector DB integration with Pinecone (PR #34-37)
+**Testing Results** (See `docs/OPENAI_LATENCY_TESTING.md`):
+- ❌ Context size reduction: No improvement (18.8s vs 17s baseline)
+- ❌ JSON mode removal: 35% slower (23s vs 17s baseline)
+- ✅ Model change (gpt-3.5-turbo): 67% faster (5.5s) but lower quality
+- ✅ Vector DB approach: Maintains quality while achieving <1s for similar contexts
+**Location**: To be implemented in `backend/app/services/vector_recommendation_engine.py`
+
+### Redis Caching Strategy
+**Decision**: Implement multi-tier Redis caching for all database queries and API responses
+**Rationale**:
+- Quick win: Instant response for repeated queries (user profiles, recommendations, features)
+- Complements vector DB: Cache vector DB results for subsequent requests
+- Production-ready: AWS ElastiCache Serverless (free tier available)
+- Reduces database load and improves overall system performance
+**Implementation**:
+- Cache keys: `user_context:{user_id}:{window_days}`, `recommendations:{user_id}:{window_days}`, `features:{user_id}:{window_days}`
+- TTLs: User context (1h), recommendations (24h), features (1h)
+- Cache invalidation: On new transactions, feature updates, or force_regenerate=True
+**Location**: To be implemented in `backend/app/services/redis_cache.py`
+
+### PostgreSQL Migration for Production
+**Decision**: Migrate from SQLite to PostgreSQL (AWS RDS) for production deployment
+**Rationale**:
+- Better concurrency than SQLite (no WAL mode limitations)
+- Production-grade durability and backup capabilities
+- AWS RDS integration for managed service benefits
+- All SQLAlchemy models are PostgreSQL-compatible (no schema changes needed)
+**Implementation**:
+- Keep SQLite for local development
+- Use environment variable for DATABASE_URL switching
+- Re-ingest synthetic data or use pg_dump for migration
+**Location**: `backend/app/database.py` (connection string update)
+

@@ -1,0 +1,57 @@
+[
+  {
+    "user_id": "usr_c456f75f-1c82-4005-88ea-c18a0e43667e",
+    "window_days": 30,
+    "timestamp": "2025-11-07T14:56:26.342107",
+    "sql_query_duration_ms": 7,
+    "openai_query_duration_ms": 17039,
+    "tone_validation_duration_ms": 0,
+    "db_save_duration_ms": 9,
+    "total_request_duration_ms": 17081,
+    "status": "success",
+    "error": null,
+    "recommendations_count": 3,
+    "persona_type": "subscription_heavy"
+  },
+  {
+    "user_id": "usr_c456f75f-1c82-4005-88ea-c18a0e43667e",
+    "window_days": 30,
+    "timestamp": "2025-11-07T15:02:06.990739",
+    "sql_query_duration_ms": 7,
+    "openai_query_duration_ms": 5526,
+    "tone_validation_duration_ms": 0,
+    "db_save_duration_ms": 10,
+    "total_request_duration_ms": 5573,
+    "status": "success",
+    "error": null,
+    "recommendations_count": 3,
+    "persona_type": "subscription_heavy"
+  },
+  {
+    "user_id": "usr_c456f75f-1c82-4005-88ea-c18a0e43667e",
+    "window_days": 30,
+    "timestamp": "2025-11-07T15:05:20.668438",
+    "sql_query_duration_ms": 7,
+    "openai_query_duration_ms": 18812,
+    "tone_validation_duration_ms": 0,
+    "db_save_duration_ms": 10,
+    "total_request_duration_ms": 18872,
+    "status": "success",
+    "error": null,
+    "recommendations_count": 5,
+    "persona_type": "subscription_heavy"
+  },
+  {
+    "user_id": "usr_c456f75f-1c82-4005-88ea-c18a0e43667e",
+    "window_days": 30,
+    "timestamp": "2025-11-07T15:09:44.549496",
+    "sql_query_duration_ms": 7,
+    "openai_query_duration_ms": 23051,
+    "tone_validation_duration_ms": null,
+    "db_save_duration_ms": null,
+    "total_request_duration_ms": 23089,
+    "status": "error",
+    "error": "HTTP 500: OpenAI returned no valid recommendations",
+    "recommendations_count": null
+  }
+]

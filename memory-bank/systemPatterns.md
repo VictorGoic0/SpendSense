@@ -74,6 +74,19 @@ User Dashboard (React UI)
   - Plain-language rationales citing specific data
   - All recommendations validated for empowering tone
   - Test script: `scripts/test_openai_generation.py` - All quality checks passing
+- 🔄 **Hybrid Vector DB + OpenAI architecture planned (PR #34-37)**
+  - **Problem**: 17s OpenAI latency with gpt-4o-mini (documented in `docs/OPENAI_LATENCY_TESTING.md`)
+  - **Solution**: Pinecone Serverless + OpenAI embeddings + hybrid retrieval
+  - **Architecture**:
+    - Vector DB for semantic search (retrieve similar recommendations in <50ms)
+    - OpenAI fallback for edge cases (similarity score < 0.85)
+    - Redis caching layer for instant repeated queries
+  - **Expected Performance**: <1s for vector DB hits, 2-5s for OpenAI fallback
+  - **Prerequisites**: Scale data to 500-1,000 users (75 users insufficient for meaningful similarity matching)
+  - **Services**:
+    - `embedding_service.py`: Generate embeddings with text-embedding-3-small
+    - `vector_search_service.py`: Query Pinecone for similar recommendations
+    - `recommendation_engine.py` (updated): Hybrid logic (vector DB → OpenAI fallback)
 
 ### 5. Guardrails Module (`guardrails/`)
 - Consent enforcement (no recs without opt-in)
@@ -164,8 +177,28 @@ User Dashboard (React UI)
 - **Helper Functions**: get_total_savings_balance(), has_overdraft_or_late_fees() for wealth_builder checks
 - **Reasoning Storage**: JSON-serialized reasoning dict stored in Persona.reasoning field
 
+### Hybrid Recommendation Retrieval Pattern (Planned)
+- **Vector DB first, OpenAI fallback**: Optimize for speed without sacrificing quality
+- **Similarity threshold**: 0.85 cutoff for vector DB vs OpenAI (configurable)
+- **Embedding strategy**: User context embeddings + recommendation embeddings
+- **Metadata filtering**: Query by persona_type for relevant results only
+- **Background jobs**: Embed new recommendations immediately after OpenAI generation
+- **Monitoring**: Track vector DB hit rate, similarity scores, latency breakdown
+- **Implementation**: To be added in PR #34-37
+- **Services**:
+  - `embedding_service.py`: OpenAI text-embedding-3-small integration
+  - `vector_search_service.py`: Pinecone query logic
+  - `recommendation_engine.py` (updated): Hybrid retrieval logic
+
 ### AI Integration Pattern
 - **OpenAI SDK**: Version 2.7.1 installed and configured (upgraded from 1.3.5 for compatibility)
+- **Model Selection**: Using gpt-4o-mini (prioritizing quality over speed)
+  - Average latency: ~17 seconds per recommendation generation
+  - Performance Testing (documented in `docs/performance_testing/`):
+    - gpt-3.5-turbo: 67% faster (5.5s) but lower quality
+    - Context size: Not a significant factor in latency
+    - JSON mode: Beneficial for performance, should NOT be removed
+  - Future optimization options: Redis caching, async task queue, or model switch
 - **Prompt System**: 5 self-contained persona-specific prompts following "just right" calibration guide
   - Each prompt is lean (~50-60 lines), self-contained, principle-based
   - Structure: Role & Context, Core Principles, LANGUAGE STYLE (empowering language requirements), Response Framework (5 steps), Guidelines (with topic lists), Output Format
