@@ -1,7 +1,7 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #4 Complete - Pydantic Schemas for Data Validation Working
+**Status**: PR #5 Complete - Data Ingestion API Endpoint Working
 
 ### Completed ✅
 - ✅ Memory bank structure created
@@ -72,13 +72,32 @@
   - Date parsing validators for string-to-date conversion
   - ORM compatibility configured with `from_attributes = True`
   - Validation tested and working
+- ✅ **PR #5: Data Ingestion API Endpoint Complete**
+  - FastAPI app updated with CORS middleware (localhost:5173, localhost:3000)
+  - Created `backend/app/routers/ingest.py` with POST `/ingest` endpoint
+  - Bulk ingestion implemented for all entity types:
+    - Users: Bulk insert with transaction commit
+    - Accounts: Bulk insert with transaction commit
+    - Transactions: Batched processing (1000 per batch) for performance
+    - Liabilities: Bulk insert with transaction commit
+  - Error handling with rollback on failure
+  - Idempotency handling for duplicate key errors (409 status)
+  - Returns IngestResponse with counts and duration in milliseconds
+  - Test script created (`scripts/test_ingest.py`)
+  - All synthetic data successfully ingested:
+    - 75 users loaded
+    - 272 accounts loaded
+    - 15,590 transactions loaded
+    - 92 liabilities loaded
+  - Data verified in database using SQLite browser
+  - Swagger UI accessible at `/docs`
+  - Requests dependency added (requests==2.31.0)
 
 ### In Progress
-- 🔄 None - Ready for PR #5
+- 🔄 None - Ready for PR #6
 
 ### Not Started
-- ⏳ POST `/ingest` endpoint - **PR #5 Next**
-- ⏳ Feature detection pipeline
+- ⏳ Feature detection pipeline - **PR #6 Next**
 - ⏳ Persona assignment engine
 - ⏳ AI recommendation engine
 - ⏳ Guardrails module
@@ -88,22 +107,16 @@
 
 ## What's Left to Build
 
-### PR #5: Data Ingestion API Endpoint (Next)
-- [ ] FastAPI app setup with CORS middleware
-- [ ] Create ingest router (`backend/app/routers/ingest.py`)
-- [ ] Implement POST `/ingest` endpoint
-- [ ] Process users list (bulk insert)
-- [ ] Process accounts list (bulk insert)
-- [ ] Process transactions list (batched, 1000 per batch)
-- [ ] Process liabilities list (bulk insert)
-- [ ] Error handling and transaction rollback
-- [ ] Idempotency handling (duplicate key errors)
-- [ ] Test with synthetic JSON data
-- [ ] Verify data in database
+### PR #6: Feature Detection Service - Subscription Signals (Next)
+- [ ] Create feature detection service file
+- [ ] Implement helper functions for transaction/account queries
+- [ ] Implement subscription detection logic
+- [ ] Calculate subscription signals
+- [ ] Test with known users
 
 ### Day 1 Deliverables (MVP)
 - [x] SQLite database schema (10 tables) - **PR #3 Complete**
-- [ ] POST `/ingest` endpoint working - **PR #5 Next**
+- [x] POST `/ingest` endpoint working - **PR #5 Complete**
 - [ ] All behavioral signals computed (30d and 180d windows)
 - [ ] React UI components built (operator dashboard, user dashboard)
 - [ ] Full integration testing possible via UI
@@ -128,33 +141,40 @@
 ## Current Status
 
 ### Backend
-- **Status**: Database schema and validation schemas complete, ready for API endpoints
-- **Completed**: FastAPI skeleton, database setup, all 10 models, all Pydantic schemas
-- **Next**: PR #5 (data ingestion endpoint)
-- **Priority**: Implement POST `/ingest` endpoint to load synthetic data into database
+- **Status**: Data ingestion complete, ready for feature detection
+- **Completed**: FastAPI app, database setup, all 10 models, all Pydantic schemas, ingestion endpoint
+- **Next**: PR #6 (feature detection service - subscription signals)
+- **Priority**: Implement behavioral pattern detection for subscriptions
 
 ### Frontend
 - **Status**: Structure initialized, ready for component development
 - **Completed**: React 18 + Vite, Shadcn/ui configured, TailwindCSS setup, project directories
 - **Next**: Build UI components after backend endpoints are ready
-- **Priority**: Wait for data ingestion endpoint before building UI
+- **Priority**: Wait for feature detection endpoints before building UI
 
 ### Database
-- **Status**: ✅ Complete - All models implemented and verified
+- **Status**: ✅ Complete - All models implemented and data loaded
 - **Completed**: SQLAlchemy configuration, all 10 models, relationships, indexes, constraints, initialization
 - **Database File**: `backend/spendsense.db` (verified with DB Browser)
-- **Next**: Load data via ingestion endpoint (PR #5)
+- **Data Loaded**: 75 users, 272 accounts, 15,590 transactions, 92 liabilities
+- **Next**: Compute behavioral features (PR #6)
 
 ### Data Generation
 - **Status**: ✅ Complete and tested
 - **Completed**: All 4 JSON seed files generated with realistic patterns
-- **Output**: Ready for ingestion into database
+- **Output**: ✅ Ingested into database
 - **Quality**: Validated (dates, amounts, IDs, distributions correct)
 
 ### Data Validation
 - **Status**: ✅ Complete - All Pydantic schemas implemented
 - **Completed**: All 31 schema tasks, validation tested, ORM compatibility configured
-- **Next**: Use schemas in API endpoints (PR #5)
+- **Usage**: ✅ Used successfully in ingestion endpoint
+
+### Data Ingestion
+- **Status**: ✅ Complete - Endpoint functional and tested
+- **Completed**: POST `/ingest` endpoint, bulk insertion, batching, error handling, idempotency
+- **Data Loaded**: All synthetic data successfully ingested
+- **Next**: Use ingested data for feature detection (PR #6)
 
 ### AI Integration
 - **Status**: Not implemented
@@ -177,5 +197,5 @@
 - **Auditability**: Target 100% (all recommendations have decision traces)
 
 ## Next Milestone
-**PR #5 Completion**: Data ingestion endpoint implemented, synthetic data loaded into database, ready for feature detection pipeline
+**PR #6 Completion**: Feature detection service implemented for subscription signals, ready for savings signals and persona assignment
 

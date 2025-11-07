@@ -61,24 +61,24 @@
 ## PR #5: Data Ingestion API Endpoint
 
 ### FastAPI App Setup
-1. Update `backend/app/main.py` to create FastAPI instance
-2. Add title, description, version to FastAPI app
-3. Add CORS middleware with allowed origins (include localhost:5173 for frontend)
-4. Configure CORS to allow credentials and all methods/headers
-5. Import database session dependency
+- [x] 1. Update `backend/app/main.py` to create FastAPI instance
+- [x] 2. Add title, description, version to FastAPI app
+- [x] 3. Add CORS middleware with allowed origins (include localhost:5173 for frontend)
+- [x] 4. Configure CORS to allow credentials and all methods/headers
+- [x] 5. Import database session dependency
 
 ### Ingest Router Creation
-6. Create `backend/app/routers/ingest.py`
-7. Create APIRouter instance with prefix="/ingest" and tags=["ingestion"]
-8. Import database models and schemas
-9. Import database session dependency
+- [x] 6. Create `backend/app/routers/ingest.py`
+- [x] 7. Create APIRouter instance with prefix="/ingest" and tags=["ingestion"]
+- [x] 8. Import database models and schemas
+- [x] 9. Import database session dependency
 
 ### Ingest Endpoint - Users
-10. Create POST endpoint `/` (full path: `/ingest`)
-11. Accept `IngestRequest` schema as request body
-12. Accept database session as dependency
-13. Start timer to track duration
-14. Process users list:
+- [x] 10. Create POST endpoint `/` (full path: `/ingest`)
+- [x] 11. Accept `IngestRequest` schema as request body
+- [x] 12. Accept database session as dependency
+- [x] 13. Start timer to track duration
+- [x] 14. Process users list:
     - Loop through users in request
     - Create User model instances
     - Bulk insert using `db.bulk_save_objects()`
@@ -86,7 +86,7 @@
     - Capture count of users inserted
 
 ### Ingest Endpoint - Accounts
-15. Process accounts list:
+- [x] 15. Process accounts list:
     - Loop through accounts in request
     - Create Account model instances
     - Bulk insert using `db.bulk_save_objects()`
@@ -94,7 +94,7 @@
     - Capture count of accounts inserted
 
 ### Ingest Endpoint - Transactions
-16. Process transactions list (handle in batches for performance):
+- [x] 16. Process transactions list (handle in batches for performance):
     - Split transactions into batches of 1000
     - For each batch:
       - Create Transaction model instances
@@ -103,7 +103,7 @@
     - Capture total count of transactions inserted
 
 ### Ingest Endpoint - Liabilities
-17. Process liabilities list:
+- [x] 17. Process liabilities list:
     - Loop through liabilities in request
     - Create Liability model instances
     - Bulk insert using `db.bulk_save_objects()`
@@ -111,32 +111,32 @@
     - Capture count of liabilities inserted
 
 ### Ingest Endpoint - Response
-18. Calculate duration in milliseconds
-19. Create response with:
+- [x] 18. Calculate duration in milliseconds
+- [x] 19. Create response with:
     - status: "success"
     - ingested counts for each entity type
     - duration_ms
-20. Return IngestResponse
-21. Add error handling with try/except:
+- [x] 20. Return IngestResponse
+- [x] 21. Add error handling with try/except:
     - Rollback transaction on error
     - Return 500 error with error message
 
 ### Router Registration
-22. Import ingest router in `backend/app/main.py`
-23. Include router in FastAPI app: `app.include_router(ingest.router)`
+- [x] 22. Import ingest router in `backend/app/main.py`
+- [x] 23. Include router in FastAPI app: `app.include_router(ingest.router)`
 
 ### Testing Ingestion
-24. Start FastAPI server: `uvicorn app.main:app --reload`
-25. Create test script `scripts/test_ingest.py` to POST synthetic data
-26. Test with all 4 JSON files
-27. Verify successful response with correct counts
-28. Use SQLite browser to verify data in database:
+- [x] 24. Start FastAPI server: `uvicorn app.main:app --reload`
+- [x] 25. Create test script `scripts/test_ingest.py` to POST synthetic data
+- [x] 26. Test with all 4 JSON files
+- [x] 27. Verify successful response with correct counts
+- [x] 28. Use SQLite browser to verify data in database:
     - Check users table has 75 records
     - Check accounts table populated
     - Check transactions table populated (15k+ records)
     - Check liabilities table populated
-29. Test idempotency: run ingestion twice, handle duplicate key errors gracefully
-30. Verify API accessible at `http://localhost:8000/docs` (Swagger UI)
+- [x] 29. Test idempotency: run ingestion twice, handle duplicate key errors gracefully
+- [x] 30. Verify API accessible at `http://localhost:8000/docs` (Swagger UI)
 
 ---
 
