@@ -155,7 +155,7 @@ All products must include the following disclosure text:
 ## Related Documentation
 
 - See `scripts/generate_product_catalog.py` for catalog generation
-- See `scripts/seed_product_catalog.py` for database seeding (PR #39)
+- See `scripts/test_ingest_products.py` for product ingestion via API (PR #39)
 - See `backend/app/services/product_matcher.py` for product matching logic (PR #40)
 - See `backend/app/services/guardrails.py` for eligibility checking (PR #41)
 

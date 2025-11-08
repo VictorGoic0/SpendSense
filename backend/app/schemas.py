@@ -148,6 +148,55 @@ class LiabilityResponse(LiabilityBase):
 
 
 # ============================================================================
+# Product Schemas
+# ============================================================================
+
+class ProductBase(BaseModel):
+    """Base product schema with core fields"""
+    product_name: str
+    product_type: Literal["savings_account", "credit_card", "app", "service", "investment_account"]
+    category: str
+    persona_targets: List[str]  # Will be converted to JSON string
+    short_description: str
+    benefits: List[str]  # Will be converted to JSON string
+    disclosure: str
+    partner_name: str
+    
+    # Eligibility criteria
+    min_income: float = Field(default=0.0)
+    max_credit_utilization: float = Field(default=1.0)
+    requires_no_existing_savings: bool = Field(default=False)
+    requires_no_existing_investment: bool = Field(default=False)
+    min_credit_score: Optional[int] = None
+    
+    # Content fields
+    typical_apy_or_fee: Optional[str] = None
+    partner_link: Optional[str] = None
+    
+    # Business fields
+    commission_rate: float = Field(default=0.0)
+    priority: int = Field(default=1)
+    active: bool = Field(default=True)
+
+
+class ProductCreate(ProductBase):
+    """Schema for creating a product"""
+    product_id: str
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+
+class ProductResponse(ProductBase):
+    """Schema for product response with all fields"""
+    product_id: str
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# ============================================================================
 # Ingestion Schemas
 # ============================================================================
 
@@ -157,6 +206,7 @@ class IngestRequest(BaseModel):
     accounts: List[AccountCreate] = Field(default_factory=list)
     transactions: List[TransactionCreate] = Field(default_factory=list)
     liabilities: List[LiabilityCreate] = Field(default_factory=list)
+    products: List[ProductCreate] = Field(default_factory=list)
 
 
 class IngestResponse(BaseModel):

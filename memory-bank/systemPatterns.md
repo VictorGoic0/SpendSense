@@ -137,7 +137,29 @@ User Dashboard (React UI)
 - Educational content display
 - Rationale transparency
 
-### 8. Evaluation Harness (`eval/`)
+### 8. Product Catalog (`products/`)
+- ✅ Product catalog generation (PR #38 Complete)
+  - `ProductOffer` model: Stores financial products (savings accounts, credit cards, apps, services, investment accounts)
+  - Product generation script: `scripts/generate_product_catalog.py`
+    - Uses OpenAI GPT-4o to generate 20-25 realistic products
+    - Loads `.env` from backend folder automatically
+    - Validates and enhances products with metadata
+    - Generates `data/product_catalog.json` with complete product data
+  - Generated catalog: 21 products covering all 5 personas
+    - Categories: balance_transfer, hysa, budgeting_app, subscription_manager, robo_advisor, investment_account, retirement_plan, debt_consolidation
+    - All products include disclosures, benefits, eligibility criteria, partner information
+  - Schema documentation: `docs/PRODUCT_SCHEMA.md` with complete field descriptions and JSON format
+- 🔄 Product seeding (PR #39 - Next)
+  - Script to load products from JSON into database
+  - Distribution statistics and validation
+- 🔄 Product matching service (PR #40 - Planned)
+  - Persona-based matching with relevance scoring
+  - Signal-based scoring (utilization, savings, income, subscriptions)
+- 🔄 Eligibility filtering (PR #41 - Planned)
+  - Income requirements, credit utilization limits, existing account checks
+  - Category-specific rules (e.g., balance transfer requires min 30% utilization)
+
+### 9. Evaluation Harness (`eval/`)
 - ✅ Metrics computation script (PR #28 Complete)
   - `scripts/evaluate.py`: Comprehensive evaluation script
   - Coverage metrics: Percentage of users with personas assigned
@@ -153,7 +175,7 @@ User Dashboard (React UI)
 - SQLite table for dashboard display (evaluation_metrics table)
 - Parquet export to S3 for deep analysis (PR #29 - Next)
 
-## Database Schema (10 Tables)
+## Database Schema (11 Tables)
 
 1. **users** - User accounts with consent tracking
 2. **accounts** - Bank accounts (checking, savings, credit, investment)
@@ -165,6 +187,14 @@ User Dashboard (React UI)
 8. **evaluation_metrics** - System performance metrics
 9. **consent_log** - Audit trail of consent changes
 10. **operator_actions** - Log of approve/reject/override actions
+11. **product_offers** - Financial product catalog (savings accounts, credit cards, apps, services, investment accounts) ✅ PR #38 Complete
+    - Core fields: product_id (PK), product_name, product_type, category, persona_targets (JSON array)
+    - Eligibility criteria: min_income, max_credit_utilization, requires_no_existing_savings/investment, min_credit_score
+    - Content fields: short_description, benefits (JSON array), typical_apy_or_fee, partner_link, disclosure
+    - Business fields: partner_name, commission_rate, priority, active
+    - Timestamps: created_at, updated_at (auto-set/updated)
+    - Indexes: persona_targets, active status
+    - See `docs/PRODUCT_SCHEMA.md` for complete schema documentation
 
 ## Design Patterns
 

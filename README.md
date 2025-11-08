@@ -213,10 +213,12 @@ All API routes are prefixed with their router prefix. The base URL is `http://lo
 ### Ingestion
 
 #### `POST /ingest/`
-- **Description**: Bulk ingest users, accounts, transactions, and liabilities
-- **Request Body**: `IngestRequest` (users, accounts, transactions, liabilities arrays)
+- **Description**: Bulk ingest users, accounts, transactions, liabilities, and products
+- **Request Body**: `IngestRequest` (users, accounts, transactions, liabilities, products arrays)
 - **Response**: `IngestResponse` (status, ingested counts, duration_ms)
 - **Tags**: `ingestion`
+- **Processing Order**: Users → Accounts → Transactions → Liabilities → Products
+- **Note**: Transactions are processed in batches of 1000 for performance
 
 ---
 
@@ -498,43 +500,62 @@ npm run preview
 
 ### Data Ingestion Workflow
 
-1. **Generate synthetic data**:
+**First-Time Setup** (complete workflow):
+
+1. **Start the backend server** (creates database tables automatically):
 ```bash
+cd backend
+source venv/bin/activate  # or venv\Scripts\activate on Windows
+uvicorn app.main:app --reload
+```
+The database tables are automatically created on server startup via `init_db()` in `backend/app/main.py`. This uses SQLAlchemy's `Base.metadata.create_all()` to create all tables from the model definitions.
+
+2. **Generate synthetic user data** (creates JSON files):
+```bash
+# From project root
 python scripts/generate_synthetic_data.py
 ```
+This generates:
+- `data/synthetic_users.json` (75 users: 71 customers, 4 operators)
+- `data/synthetic_accounts.json` (2-4 accounts per user)
+- `data/synthetic_transactions.json` (150-300 transactions per user)
+- `data/synthetic_liabilities.json` (credit card liabilities)
 
-2. **Ingest data via API**:
+3. **Ingest user data via API** (loads JSON into database):
 ```bash
+# Make sure backend server is running first
 python scripts/test_ingest.py
 ```
+This POSTs the JSON data to `/ingest/` endpoint, which bulk inserts users, accounts, transactions, and liabilities into the database.
 
-3. **Compute features for users**:
+4. **Compute features for users**:
 ```bash
 python scripts/compute_all_features.py
 ```
+Computes behavioral features (subscriptions, savings, credit utilization, income patterns) for all users.
 
-4. **Assign personas**:
+5. **Assign personas**:
 ```bash
 python scripts/assign_all_personas.py
 ```
+Assigns personas (high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder) to all users based on their features.
 
-5. **Generate product catalog** (optional, for product recommendations):
+6. **Generate and ingest product catalog** (optional, for product recommendations):
 ```bash
-# Ensure OPENAI_API_KEY is set in your .env file
+# Step 6a: Generate product catalog JSON (requires OPENAI_API_KEY in .env)
 python scripts/generate_product_catalog.py
 ```
-
-This script uses OpenAI GPT-4o to generate 20-25 realistic financial products (savings accounts, credit cards, apps, services, investment accounts) matched to the 5 personas. The generated catalog is saved to `data/product_catalog.json`.
+This uses OpenAI GPT-4o to generate 20-25 realistic financial products matched to the 5 personas. The catalog is saved to `data/product_catalog.json`.
 
 **Expected runtime**: ~30-60 seconds  
 **Expected API cost**: ~$0.10-0.20
 
-The script generates products with:
-- Realistic eligibility criteria (income requirements, credit score minimums, etc.)
-- Persona targeting (products matched to specific user personas)
-- Complete metadata (benefits, APY/fees, partner information, disclosures)
-
-After generation, use `scripts/seed_product_catalog.py` to load products into the database (see PR #39).
+```bash
+# Step 6b: Ingest products via API
+# Make sure backend server is running first
+python scripts/test_ingest_products.py
+```
+This POSTs the product catalog JSON to the `/ingest/` endpoint, which bulk inserts products into the database. Products are ingested the same way as all other data (users, accounts, transactions, liabilities) for consistency.
 
 ---
 

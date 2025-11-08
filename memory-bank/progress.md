@@ -515,6 +515,23 @@
     - Responsive layout
   - All 44 tasks completed (7 backend + 37 frontend)
 - ✅ **PR #28 Complete: Evaluation Script - Metrics Computation (all 54 tasks finished)**
+- ✅ **PR #38 Complete: Database Schema & Product Catalog Generation (all 64 tasks finished)**
+  - Created `ProductOffer` model in `backend/app/models.py` with all required fields (product_id, product_name, product_type, category, persona_targets, eligibility criteria, content fields, business fields, timestamps, indexes)
+  - Product generation script (`scripts/generate_product_catalog.py`) enhanced and tested:
+    - Loads `.env` from backend folder automatically
+    - Uses OpenAI GPT-4o to generate 20-25 realistic financial products
+    - Includes all 5 personas, eligibility criteria guidelines, standard disclosure template
+    - Validation and enhancement functions add all required metadata
+  - Generated product catalog (`data/product_catalog.json`):
+    - 21 products successfully generated (within 20-25 target)
+    - Persona distribution: high_utilization (5), variable_income (7), subscription_heavy (4), savings_builder (6), wealth_builder (7)
+    - All products include disclosures, 3-5 benefits, realistic APY/fee values, appropriate eligibility criteria
+    - Product names realistic (Chase, Marcus, YNAB, Rocket Money, etc.)
+  - Documentation:
+    - Added product catalog generation instructions to README.md
+    - Created `docs/PRODUCT_SCHEMA.md` with complete schema documentation
+    - Updated project structure in README.md
+  - Test script created (`scripts/test_product_offer_model.py`) for model validation
   - Created `scripts/evaluate.py` evaluation script
   - Coverage metrics: `compute_coverage_metrics()` - Calculates percentage of users with personas assigned
   - Explainability metrics: `compute_explainability_metrics()` - Calculates percentage of recommendations with rationale
@@ -529,6 +546,12 @@
   - All 54 tasks completed
 
 ### In Progress
+- 🔄 **Product Catalog Feature (PR #38-45)** - PR #38 Complete, PR #39 Next
+  - ✅ PR #38: Database schema, product generation, catalog created (21 products)
+  - 🔄 PR #39: Product seeding script to load catalog into database
+  - 🔄 PR #40: Product matching service (persona + signal based scoring)
+  - 🔄 PR #41: Eligibility filtering (income, utilization, existing accounts)
+  - 🔄 PR #42-45: Hybrid recommendation engine, frontend display, product management API, unit tests
 - 🔄 **Article Catalog Feature (PR #46-51)** - Planning complete, ready for implementation
   - Comprehensive 275+ task breakdown created in tasks-12.md
   - 6 PRs planned: Database schema + article generation, article seeding + vector population, article matching service, hybrid engine integration, frontend display, unit tests & documentation
@@ -537,11 +560,6 @@
   - 50 LLM-generated articles for MVP (10 per persona) - will replace with real articles later
   - Expected timeline: 2.5-3.5 hours total
   - Expected cost: ~$0.30-0.50 for one-time LLM-generated article catalog
-- 🔄 **Product Catalog Feature (PR #38-45)** - Planning complete, implementation after article catalog
-  - Comprehensive 410+ task breakdown created in tasks-10.md
-  - 8 PRs planned: Database schema, product generation, matching service, eligibility filtering, hybrid recommendation engine, frontend display, optional product management API, unit tests & documentation
-  - Expected timeline: 4-6 hours total
-  - Expected cost: ~$0.20 for one-time LLM-generated product catalog
 
 ### Not Started
 - ⏳ Parquet export & S3 integration (PR #29) - **PAUSED: No AWS access**
@@ -622,13 +640,14 @@
 - **Priority**: Evaluation system and AWS deployment
 
 ### Database
-- **Status**: ✅ Complete - All models implemented, data loaded, features computed, personas assigned
-- **Completed**: SQLAlchemy configuration, all 10 models, relationships, indexes, constraints, initialization
+- **Status**: ✅ Complete - All models implemented, data loaded, features computed, personas assigned, product catalog schema ready
+- **Completed**: SQLAlchemy configuration, all 11 models (including ProductOffer), relationships, indexes, constraints, initialization
 - **Database File**: `backend/spendsense.db` (verified with DB Browser)
 - **Data Loaded**: 75 users, 272 accounts, 15,590 transactions, 92 liabilities
 - **Features Computed**: 142 feature records (71 users × 2 windows: 30d and 180d)
 - **Personas Assigned**: 142 persona records (71 users × 2 windows: 30d and 180d)
-- **Next**: AI recommendation generation (PR #17+)
+- **Product Catalog**: Schema ready, 21 products generated in JSON (ready for seeding in PR #39)
+- **Next**: Product seeding (PR #39)
 
 ### Data Generation
 - **Status**: ✅ Complete and tested

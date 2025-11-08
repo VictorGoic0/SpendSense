@@ -6,8 +6,9 @@ import time
 from typing import List
 
 from app.database import get_db
-from app.models import User, Account, Transaction, Liability
+from app.models import User, Account, Transaction, Liability, ProductOffer
 from app.schemas import IngestRequest, IngestResponse
+import json
 
 router = APIRouter(prefix="/ingest", tags=["ingestion"])
 
@@ -18,13 +19,14 @@ async def ingest_data(
     db: Session = Depends(get_db)
 ):
     """
-    Bulk ingest users, accounts, transactions, and liabilities into the database.
+    Bulk ingest users, accounts, transactions, liabilities, and products into the database.
     
     Handles data in the following order:
     1. Users (must be inserted first due to foreign key constraints)
     2. Accounts (depends on users)
     3. Transactions (depends on accounts and users)
     4. Liabilities (depends on accounts and users)
+    5. Products (independent, can be inserted at any time)
     
     Transactions are processed in batches of 1000 for performance.
     """
@@ -35,7 +37,8 @@ async def ingest_data(
             "users": 0,
             "accounts": 0,
             "transactions": 0,
-            "liabilities": 0
+            "liabilities": 0,
+            "products": 0
         }
         
         # Process Users
@@ -137,6 +140,43 @@ async def ingest_data(
             db.bulk_save_objects(liability_objects)
             db.commit()
             ingested_counts["liabilities"] = len(liability_objects)
+        
+        # Process Products
+        if request.products:
+            product_objects = []
+            for product_data in request.products:
+                # Convert persona_targets and benefits lists to JSON strings
+                persona_targets_json = json.dumps(product_data.persona_targets)
+                benefits_json = json.dumps(product_data.benefits)
+                
+                product_obj = ProductOffer(
+                    product_id=product_data.product_id,
+                    product_name=product_data.product_name,
+                    product_type=product_data.product_type,
+                    category=product_data.category,
+                    persona_targets=persona_targets_json,
+                    min_income=product_data.min_income,
+                    max_credit_utilization=product_data.max_credit_utilization,
+                    requires_no_existing_savings=product_data.requires_no_existing_savings,
+                    requires_no_existing_investment=product_data.requires_no_existing_investment,
+                    min_credit_score=product_data.min_credit_score,
+                    short_description=product_data.short_description,
+                    benefits=benefits_json,
+                    typical_apy_or_fee=product_data.typical_apy_or_fee,
+                    partner_link=product_data.partner_link,
+                    disclosure=product_data.disclosure,
+                    partner_name=product_data.partner_name,
+                    commission_rate=product_data.commission_rate,
+                    priority=product_data.priority,
+                    active=product_data.active,
+                    created_at=product_data.created_at or datetime.utcnow(),
+                    updated_at=product_data.updated_at or datetime.utcnow()
+                )
+                product_objects.append(product_obj)
+            
+            db.bulk_save_objects(product_objects)
+            db.commit()
+            ingested_counts["products"] = len(product_objects)
         
         # Calculate duration
         duration_ms = int((time.time() - start_time) * 1000)
