@@ -17,6 +17,8 @@ from dotenv import load_dotenv
 
 from app.models import User, UserFeature, Persona, Account, Transaction, Liability
 from app.utils.prompt_loader import load_prompt
+from app.services.product_matcher import match_products
+from app.services.guardrails import filter_eligible_products
 
 load_dotenv()
 
@@ -616,4 +618,177 @@ def generate_recommendations_via_openai(persona_type: str, user_context: dict) -
                 )
                 logger.debug(f"Full error details: {repr(e)}")
                 raise
+
+
+# ============================================================================
+# Combined Recommendation Generation
+# ============================================================================
+
+def generate_combined_recommendations(
+    db: Session,
+    user_id: str,
+    persona_type: str,
+    window_days: int
+) -> List[Dict[str, Any]]:
+    """
+    Generate combined recommendations (2-3 educational + 1-2 product offers).
+    
+    Process:
+    1. Generate educational recommendations via OpenAI (target: 2-3)
+    2. Get user features for window_days
+    3. Match products using product_matcher
+    4. Apply eligibility filtering
+    5. Take top 1-2 eligible products
+    6. Format product data for recommendation structure
+    7. Combine educational and product recommendations
+    8. Return combined list (target: 3-5 total)
+    
+    Args:
+        db: Database session
+        user_id: User ID to generate recommendations for
+        persona_type: Persona type (e.g., "high_utilization")
+        window_days: Time window in days (30 or 180)
+    
+    Returns:
+        List of recommendation dictionaries with:
+        - title, content (optional), rationale
+        - content_type ('education' or 'partner_offer')
+        - product fields (for partner_offer type)
+        - metadata fields
+    """
+    logger.info(f"Generating combined recommendations for user {user_id}, persona {persona_type}, window {window_days}d")
+    
+    combined_recommendations = []
+    
+    # ========================================================================
+    # Step 1: Generate Product Recommendations First (to determine if we should limit education)
+    # ========================================================================
+    
+    logger.info(f"Step 1: Generating product recommendations for user {user_id}")
+    
+    product_recommendations = []
+    
+    try:
+        # Get user features for window_days
+        user_feature = db.query(UserFeature).filter(
+            and_(
+                UserFeature.user_id == user_id,
+                UserFeature.window_days == window_days
+            )
+        ).first()
+        
+        if not user_feature:
+            logger.warning(f"User {user_id} has no features for window {window_days}d, skipping product recommendations")
+        else:
+            # Call match_products() from product_matcher
+            # Note: match_products applies eligibility filtering internally
+            product_matches = match_products(db, user_id, persona_type, user_feature)
+            
+            # Take top 1-2 eligible products
+            top_products = product_matches[:2]
+            
+            # Format product data for recommendation structure
+            for product_match in top_products:
+                # Create recommendation dict with product data
+                product_rec = {
+                    "content_type": "partner_offer",
+                    "title": product_match.get("product_name", "Product Recommendation"),
+                    "content": None,  # No content for product recommendations
+                    "rationale": product_match.get("rationale", ""),
+                    "product_id": product_match.get("product_id"),
+                    "product_name": product_match.get("product_name"),
+                    "short_description": product_match.get("short_description"),
+                    "benefits": product_match.get("benefits", []),
+                    "partner_link": product_match.get("partner_link"),
+                    "disclosure": product_match.get("disclosure", ""),
+                    "typical_apy_or_fee": product_match.get("typical_apy_or_fee"),
+                    "partner_name": product_match.get("partner_name"),
+                    "category": product_match.get("category"),
+                    "persona_type": persona_type,
+                    "generation_time_ms": 0,  # Product matching is fast, no significant latency
+                }
+                
+                product_recommendations.append(product_rec)
+            
+            logger.info(f"Added {len(product_recommendations)} product recommendations to final list")
+    
+    except Exception as e:
+        logger.error(f"Failed to generate product recommendations: {str(e)}", exc_info=True)
+        # Continue with educational recommendations even if products fail
+    
+    # ========================================================================
+    # Step 2: Generate Educational Recommendations
+    # ========================================================================
+    
+    logger.info(f"Step 2: Generating educational recommendations for user {user_id}")
+    
+    # Build user context
+    user_context = build_user_context(db, user_id, window_days)
+    
+    # Validate context
+    if not validate_context(user_context):
+        logger.error(f"Invalid context for user {user_id}, skipping educational recommendations")
+    else:
+        # Call OpenAI to generate educational recommendations
+        try:
+            educational_recs = generate_recommendations_via_openai(persona_type, user_context)
+            
+            # Only limit to 3 if we actually have product recommendations
+            # Otherwise, allow more educational recommendations
+            if product_recommendations:
+                logger.info(f"Product recommendations found ({len(product_recommendations)}), limiting educational to 3")
+                educational_recs = educational_recs[:3]
+            else:
+                logger.info(f"No product recommendations found, allowing all educational recommendations ({len(educational_recs)})")
+            
+            # Set content_type = 'education' on each
+            for rec in educational_recs:
+                rec["content_type"] = "education"
+                # Ensure content is present for education type
+                if not rec.get("content"):
+                    logger.warning(f"Educational recommendation missing content, skipping")
+                    continue
+                combined_recommendations.append(rec)
+            
+            logger.info(f"Generated {len([r for r in combined_recommendations if r.get('content_type') == 'education'])} educational recommendations")
+        except Exception as e:
+            logger.error(f"Failed to generate educational recommendations: {str(e)}", exc_info=True)
+            # Continue even if educational fails
+    
+    # Add product recommendations to combined list
+    combined_recommendations.extend(product_recommendations)
+    
+    # ========================================================================
+    # Step 3: Combine and Format
+    # ========================================================================
+    
+    # Target total: 3-5 recommendations (2-3 education + 1-2 products)
+    # We already have the combined list, just need to add metadata
+    
+    # Add metadata fields to each recommendation
+    for rec in combined_recommendations:
+        # Add recommendation_id placeholder (will be generated when saving)
+        rec["recommendation_id"] = None  # Will be set when saving to DB
+        
+        # Add user_id and window_days
+        rec["user_id"] = user_id
+        rec["window_days"] = window_days
+        
+        # Add generated_at timestamp
+        rec["generated_at"] = datetime.now()
+        
+        # Initialize metadata if not present
+        if "metadata" not in rec:
+            rec["metadata"] = {}
+    
+    # Log recommendation mix
+    education_count = sum(1 for rec in combined_recommendations if rec.get("content_type") == "education")
+    product_count = sum(1 for rec in combined_recommendations if rec.get("content_type") == "partner_offer")
+    
+    logger.info(
+        f"Generated {len(combined_recommendations)} total recommendations "
+        f"({education_count} education, {product_count} products) for user {user_id}"
+    )
+    
+    return combined_recommendations
 

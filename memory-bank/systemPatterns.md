@@ -93,6 +93,10 @@ User Dashboard (React UI)
 ### 5. Guardrails Module (`guardrails/`)
 - Consent enforcement (no recs without opt-in)
 - Eligibility filters (income, credit, existing accounts)
+- Product eligibility checking (PR #41 Complete):
+  - `check_product_eligibility()`: Checks income, utilization, existing accounts, category-specific rules
+  - `filter_eligible_products()`: Batch filters product matches by eligibility
+  - Integrated into product matching flow
 - Tone validation (no shaming language)
 - Mandatory disclosures
 
@@ -140,16 +144,22 @@ User Dashboard (React UI)
 - Rationale transparency
 
 ### 8. Product Catalog (`products/`)
-- ✅ Product catalog generation (PR #38 Complete)
-  - `ProductOffer` model: Stores financial products (savings accounts, credit cards, apps, services, investment accounts)
+- ✅ Product catalog generation (PR #38 Complete, PR #42 Normalized)
+  - `ProductOffer` model: Stores financial products (savings accounts, credit cards, apps, services, investment accounts, loans)
   - Product generation script: `scripts/generate_product_catalog.py`
-    - Uses OpenAI GPT-4o to generate 20-25 realistic products
+    - Uses OpenAI GPT-4o with batch generation (5 batches of ~30 products) to generate ~150 products
     - Loads `.env` from backend folder automatically
+    - Applies deterministic eligibility rules post-LLM generation:
+      - `requires_no_existing_savings = TRUE` only for HYSA products
+      - `requires_no_existing_investment = TRUE` only for investment/robo_advisor products
+      - `min_income`, `max_credit_utilization`, `min_credit_score` set deterministically based on category
     - Validates and enhances products with metadata
     - Generates `data/product_catalog.json` with complete product data
-  - Generated catalog: 21 products covering all 5 personas
-    - Categories: balance_transfer, hysa, budgeting_app, subscription_manager, robo_advisor, investment_account, retirement_plan, debt_consolidation
+  - Generated catalog: ~150 products covering all 5 personas
+    - Categories: balance_transfer, hysa, budgeting_app, subscription_manager, robo_advisor, investment_account, retirement_plan, debt_consolidation, personal_loan, credit_builder
+    - Product types: savings_account, credit_card, app, service, investment_account, loan
     - All products include disclosures, benefits, eligibility criteria, partner information
+    - Eligibility flags set correctly (no subscription apps requiring no savings)
   - Schema documentation: `docs/PRODUCT_SCHEMA.md` with complete field descriptions and JSON format
 - ✅ Product ingestion via API (PR #39 Complete)
   - Products ingested through `/ingest/` endpoint (same as users, accounts, transactions, liabilities)
@@ -167,11 +177,14 @@ User Dashboard (React UI)
     - Subscription managers: High recurring merchants + spend share
     - Investment products: High income + low utilization + good emergency fund (penalizes existing investment)
   - Rationale generation: `generate_product_rationale()` with personalized explanations citing user data
-  - Main matching: `match_products()` - Filters by persona, scores products, generates rationales, returns top 3
+  - Main matching: `match_products()` - Filters by persona, scores products, generates rationales, applies eligibility filtering, returns top 3 eligible products
   - Test script: `scripts/test_product_matching.py` with comprehensive coverage for all personas
-- 🔄 Eligibility filtering (PR #41 - Next)
-  - Income requirements, credit utilization limits, existing account checks
-  - Category-specific rules (e.g., balance transfer requires min 30% utilization)
+- ✅ Eligibility filtering (PR #41 Complete)
+  - Service file: `backend/app/services/guardrails.py`
+  - `check_product_eligibility()`: Checks income, utilization, existing accounts, category-specific rules
+  - `filter_eligible_products()`: Batch filters product matches by eligibility
+  - Integrated into product matching flow (products filtered after scoring)
+  - Test script: `scripts/test_product_eligibility.py` with comprehensive coverage
 
 ### 9. Evaluation Harness (`eval/`)
 - ✅ Metrics computation script (PR #28 Complete)
@@ -197,13 +210,20 @@ User Dashboard (React UI)
 4. **liabilities** - Credit cards and loans with APR/payment info
 5. **user_features** - Computed behavioral signals (30d and 180d windows)
 6. **personas** - Persona assignments with confidence scores
-7. **recommendations** - AI-generated content with approval status
+7. **recommendations** - AI-generated content with approval status ✅ PR #42 Updated
+    - Core fields: recommendation_id (PK), user_id (FK), persona_type, window_days, content_type ('education' or 'partner_offer')
+    - Content fields: title, content (nullable - only for education), rationale, product_id (nullable - only for partner_offer)
+    - Status fields: status, approved_by, approved_at, override_reason, original_content
+    - Metadata: metadata_json (includes product_data for partner_offer recommendations)
+    - Timestamps: generated_at, generation_time_ms, expires_at
+    - Indexes: user_id, status, window_days
 8. **evaluation_metrics** - System performance metrics
 9. **consent_log** - Audit trail of consent changes
 10. **operator_actions** - Log of approve/reject/override actions
-11. **product_offers** - Financial product catalog (savings accounts, credit cards, apps, services, investment accounts) ✅ PR #38 Complete
-    - Core fields: product_id (PK), product_name, product_type, category, persona_targets (JSON array)
+11. **product_offers** - Financial product catalog (savings accounts, credit cards, apps, services, investment accounts, loans) ✅ PR #38 Complete, PR #42 Normalized
+    - Core fields: product_id (PK), product_name, product_type (includes "loan"), category, persona_targets (JSON array)
     - Eligibility criteria: min_income, max_credit_utilization, requires_no_existing_savings/investment, min_credit_score
+      - Eligibility flags set deterministically: requires_no_existing_savings only for HYSA, requires_no_existing_investment only for investment products
     - Content fields: short_description, benefits (JSON array), typical_apy_or_fee, partner_link, disclosure
     - Business fields: partner_name, commission_rate, priority, active
     - Timestamps: created_at, updated_at (auto-set/updated)
@@ -286,6 +306,11 @@ User Dashboard (React UI)
   - **Notable warnings** (lacks empowering language): severity="notable", type="lacks_empowering_language" → YELLOW in operator UI
   - Validation warnings stored in `metadata_json["validation_warnings"]` (empty array if valid)
   - **All recommendations persisted** regardless of warnings - operator reviews and decides
+- **Product Eligibility** (PR #41 Complete):
+  - `check_product_eligibility()`: Checks income, credit utilization, existing accounts, category-specific rules
+  - `filter_eligible_products()`: Batch filters product matches by eligibility
+  - Integrated into product matching flow (products filtered after scoring, before returning)
+  - Returns tuple of (is_eligible: bool, reason: str) with comprehensive logging
 - **Eligibility**: Filter partner offers based on user income/credit profile
 - **Mandatory Disclosures**: Append to every recommendation content
 

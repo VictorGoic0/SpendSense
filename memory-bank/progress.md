@@ -515,14 +515,38 @@
     - Responsive layout
   - All 44 tasks completed (7 backend + 37 frontend)
 - ✅ **PR #28 Complete: Evaluation Script - Metrics Computation (all 54 tasks finished)**
+- ✅ **PR #42 Complete: Hybrid Recommendation Engine + Product Data Normalization (all 119 tasks finished)**
+  - Hybrid recommendation engine:
+    - Updated schemas: ProductOfferBase, ProductOfferResponse, RecommendationResponse with product fields
+    - Created `generate_combined_recommendations()` function combining educational and product recommendations
+    - Educational recommendations limited to 3 only if product recommendations found
+    - Updated database models: Added product_id column, made content nullable
+    - Updated API endpoints: POST and GET recommendations endpoints handle both content types
+    - Test script: `scripts/test_hybrid_recommendations.py` with comprehensive coverage
+  - Product catalog data normalization:
+    - Regenerated catalog with ~150 products (batch generation: 5 batches of ~30 products)
+    - Applied deterministic eligibility rules post-LLM generation:
+      - `requires_no_existing_savings` only TRUE for HYSA
+      - `requires_no_existing_investment` only TRUE for investment products
+      - Numeric eligibility fields set deterministically based on category
+    - Database schema updates: Added "loan" product_type, made content nullable
+    - Migration consolidation: Added `apply_migrations()` to database.py, removed temporary scripts
 - ✅ **PR #40 Complete: Product Matching Service (all 91 tasks finished)**
   - Created `backend/app/services/product_matcher.py` service file
   - Helper functions: `get_account_types()`, `has_hysa()`, `has_investment_account()`
   - Relevance scoring: `calculate_relevance_score()` with category-specific rules for all 5 product categories
   - Rationale generation: `generate_product_rationale()` with personalized explanations citing specific user data
-  - Main matching function: `match_products()` - Filters by persona, scores products, generates rationales, returns top 3
+  - Main matching function: `match_products()` - Filters by persona, scores products, generates rationales, applies eligibility filtering, returns top 3 eligible products
   - Test script: `scripts/test_product_matching.py` with comprehensive coverage for all 5 personas and edge cases
   - All 91 tasks completed (service setup, scoring logic, rationale generation, main function, helper functions, testing)
+- ✅ **PR #41 Complete: Enhanced Guardrails - Product Eligibility (all 66 tasks finished)**
+  - Updated `backend/app/services/guardrails.py` with product eligibility checking:
+    - Added `check_product_eligibility()` function that checks income, utilization, existing accounts, category-specific rules
+    - Returns tuple of (is_eligible: bool, reason: str) with comprehensive logging
+    - Added `filter_eligible_products()` function for batch filtering product matches
+  - Updated `backend/app/services/product_matcher.py` to integrate eligibility filtering
+  - Created test script (`scripts/test_product_eligibility.py`) with comprehensive coverage
+  - All 66 tasks completed (eligibility checker, batch filtering, integration, testing)
 - ✅ **PR #38 Complete: Database Schema & Product Catalog Generation (all 64 tasks finished)**
 - ✅ **PR #39 Complete: Product Ingestion via API (all tasks finished)**
   - Added products support to `/ingest/` endpoint for consistency
@@ -561,12 +585,13 @@
   - All 54 tasks completed
 
 ### In Progress
-- 🔄 **Product Catalog Feature (PR #38-45)** - PR #38-40 Complete, PR #41 Next
+- 🔄 **Product Catalog Feature (PR #38-45)** - PR #38-42 Complete, PR #43-45 Next
   - ✅ PR #38: Database schema, product generation, catalog created (21 products)
   - ✅ PR #39: Product ingestion via API endpoint (consistent with other data)
   - ✅ PR #40: Product matching service (persona + signal based scoring, rationale generation, top 3 products)
-  - 🔄 PR #41: Eligibility filtering (income, utilization, existing accounts)
-  - 🔄 PR #42-45: Hybrid recommendation engine, frontend display, product management API, unit tests
+  - ✅ PR #41: Eligibility filtering (income, utilization, existing accounts, category-specific rules)
+  - ✅ PR #42: Hybrid recommendation engine + product data normalization (combined educational + product recommendations, ~150 products with deterministic eligibility rules)
+  - 🔄 PR #43-45: Frontend display, product management API, unit tests
 - 🔄 **Article Catalog Feature (PR #46-51)** - Planning complete, ready for implementation
   - Comprehensive 275+ task breakdown created in tasks-12.md
   - 6 PRs planned: Database schema + article generation, article seeding + vector population, article matching service, hybrid engine integration, frontend display, unit tests & documentation
@@ -663,7 +688,8 @@
 - **Personas Assigned**: 142 persona records (71 users × 2 windows: 30d and 180d)
 - **Product Catalog**: Schema ready, 21 products generated in JSON, ingested via `/ingest/` endpoint
 - **Product Matching**: Service complete (`backend/app/services/product_matcher.py`), matches products to users based on persona and signals
-- **Next**: Eligibility filtering (PR #41)
+- **Product Eligibility**: Service complete (`backend/app/services/guardrails.py`), filters products by eligibility criteria
+- **Next**: Hybrid recommendation engine (PR #42)
 
 ### Data Generation
 - **Status**: ✅ Complete and tested
@@ -737,18 +763,22 @@
 - **Next**: Approval workflow UI components
 
 ### Guardrails
-- **Status**: ✅ Complete - Guardrails service implemented and tested, integrated into recommendation endpoint
-- **Completed**: Guardrails service with tone validation, consent checking, eligibility validation, partner offer filtering, mandatory disclosure
+- **Status**: ✅ Complete - Guardrails service implemented and tested, integrated into recommendation endpoint and product matching
+- **Completed**: Guardrails service with tone validation, consent checking, eligibility validation, partner offer filtering, product eligibility checking, mandatory disclosure
 - **Service File**: `backend/app/services/guardrails.py`
 - **Functions**:
   - `validate_tone()` - Returns structured warnings (critical/notable) stored in metadata_json
   - `check_consent()` - Checks user consent status
   - `check_income_eligibility()`, `check_credit_eligibility()`, `check_account_exists()` - Eligibility checks
+  - `check_product_eligibility()` - Checks product eligibility (income, utilization, existing accounts, category-specific rules) (PR #41)
+  - `filter_eligible_products()` - Batch filters product matches by eligibility (PR #41)
   - `filter_partner_offers()` - Filters offers based on eligibility
   - `append_disclosure()` - Appends mandatory disclosure
-- **Test Script**: `scripts/test_guardrails.py` - All tests passing
+- **Test Scripts**: 
+  - `scripts/test_guardrails.py` - All tests passing
+  - `scripts/test_product_eligibility.py` - Comprehensive product eligibility tests (PR #41)
 - **Key Design**: All recommendations persisted regardless of warnings - operator reviews and decides
-- **Integration**: ✅ Integrated into recommendation generation endpoint (PR #21)
+- **Integration**: ✅ Integrated into recommendation generation endpoint (PR #21) and product matching flow (PR #41)
 
 ### Infrastructure
 - **Status**: Not deployed

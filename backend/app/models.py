@@ -199,8 +199,9 @@ class Recommendation(Base):
     persona_type = Column(String, nullable=False)
     window_days = Column(Integer, nullable=False)
     content_type = Column(String, CheckConstraint("content_type IN ('education', 'partner_offer')"), nullable=False)
+    product_id = Column(String, nullable=True)  # For partner_offer recommendations
     title = Column(String, nullable=False)
-    content = Column(Text, nullable=False)
+    content = Column(Text, nullable=True)  # Optional, only for education type
     rationale = Column(Text, nullable=False)
     status = Column(String, CheckConstraint("status IN ('pending_approval', 'approved', 'overridden', 'rejected')"), default='pending_approval')
     approved_by = Column(String, nullable=True)
@@ -299,7 +300,7 @@ class ProductOffer(Base):
 
     product_id = Column(String, primary_key=True)
     product_name = Column(String, nullable=False)
-    product_type = Column(String, CheckConstraint("product_type IN ('savings_account', 'credit_card', 'app', 'service', 'investment_account')"), nullable=False)
+    product_type = Column(String, CheckConstraint("product_type IN ('savings_account', 'credit_card', 'app', 'service', 'investment_account', 'loan')"), nullable=False)
     category = Column(String, nullable=False)  # balance_transfer, hysa, budgeting_app, subscription_manager, robo_advisor, etc.
     persona_targets = Column(Text, nullable=False)  # JSON array of target personas
     

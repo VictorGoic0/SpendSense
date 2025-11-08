@@ -20,7 +20,8 @@ from app.schemas import RecommendationApprove, RecommendationOverride, Recommend
 from app.services.recommendation_engine import (
     build_user_context,
     validate_context,
-    generate_recommendations_via_openai
+    generate_recommendations_via_openai,
+    generate_combined_recommendations
 )
 from app.services.guardrails import (
     check_consent,
@@ -223,37 +224,20 @@ async def generate_recommendations(
         
         persona_type = persona.persona_type
         
-        # Build user context using build_user_context()
-        logger.info(f"Building context for user {user_id}, window {window_days}d, persona {persona_type}")
-        # TIMING LOG - COMMENTED OUT
-        # sql_query_start = time.time()
-        user_context = build_user_context(db, user_id, window_days)
-        # sql_query_end = time.time()
-        # sql_query_duration_ms = int((sql_query_end - sql_query_start) * 1000)
-        # timing_log["sql_query_duration_ms"] = sql_query_duration_ms
-        # logger.info(f"SQL query duration: {sql_query_duration_ms}ms for user {user_id}")
-        
-        # Validate context
-        if not validate_context(user_context):
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid user context - required fields missing or incorrect data types"
-            )
-        
         # ========================================================================
-        # Call OpenAI
+        # Generate Combined Recommendations
         # ========================================================================
         
-        # Call generate_recommendations_via_openai() with persona and context
-        logger.info(f"Generating recommendations via OpenAI for user {user_id}, persona {persona_type}")
-        # TIMING LOG - COMMENTED OUT
-        # openai_query_start = time.time()
+        # Call generate_combined_recommendations() to get both education and product recommendations
+        logger.info(f"Generating combined recommendations for user {user_id}, persona {persona_type}")
         generation_start = time.time()
         
         try:
-            generated_recommendations = generate_recommendations_via_openai(persona_type, user_context)
+            generated_recommendations = generate_combined_recommendations(
+                db, user_id, persona_type, window_days
+            )
         except Exception as e:
-            logger.error(f"OpenAI call failed for user {user_id}: {str(e)}")
+            logger.error(f"Combined recommendation generation failed for user {user_id}: {str(e)}")
             raise HTTPException(
                 status_code=500,
                 detail=f"Failed to generate recommendations: {str(e)}"
@@ -261,70 +245,72 @@ async def generate_recommendations(
         
         generation_end = time.time()
         generation_time_ms = int((generation_end - generation_start) * 1000)
-        # TIMING LOG - COMMENTED OUT
-        # openai_query_duration_ms = generation_time_ms
-        # timing_log["openai_query_duration_ms"] = openai_query_duration_ms
-        # logger.info(f"OpenAI query duration: {openai_query_duration_ms}ms for user {user_id}")
         
         if not generated_recommendations:
             raise HTTPException(
                 status_code=500,
-                detail="OpenAI returned no valid recommendations"
+                detail="No recommendations generated"
             )
         
         logger.info(f"Generated {len(generated_recommendations)} recommendations for user {user_id} in {generation_time_ms}ms")
         
         # ========================================================================
-        # Validate Tone
+        # Validate Tone and Prepare for Storage
         # ========================================================================
         
-        # For each generated recommendation, validate tone
+        # For each generated recommendation, validate tone (only for education type)
         recommendations_to_save = []
-        # TIMING LOG - COMMENTED OUT
-        # tone_validation_start = time.time()
         
         for rec_dict in generated_recommendations:
-            # Extract content field
-            content = rec_dict.get("content", "")
-            
-            # Call guardrails.validate_tone() → returns {"is_valid": bool, "validation_warnings": [...]}
-            tone_result = validate_tone(content)
-            validation_warnings = tone_result.get("validation_warnings", [])
-            
-            # Store validation_warnings in recommendation metadata
-            # Initialize metadata dict if not present
+            content_type = rec_dict.get("content_type", "education")
             metadata = rec_dict.get("metadata", {})
             if not isinstance(metadata, dict):
                 metadata = {}
             
-            # IMPORTANT: Strip token_usage and estimated_cost_usd from metadata before saving
-            # These are for logging/review only, not stored in database
-            metadata.pop("token_usage", None)
-            metadata.pop("estimated_cost_usd", None)
+            # For education type: validate tone and append disclosure
+            if content_type == "education":
+                content = rec_dict.get("content", "")
+                
+                # Call guardrails.validate_tone() → returns {"is_valid": bool, "validation_warnings": [...]}
+                tone_result = validate_tone(content)
+                validation_warnings = tone_result.get("validation_warnings", [])
+                
+                # IMPORTANT: Strip token_usage and estimated_cost_usd from metadata before saving
+                metadata.pop("token_usage", None)
+                metadata.pop("estimated_cost_usd", None)
+                
+                # Set validation_warnings in metadata
+                metadata["validation_warnings"] = validation_warnings
+                
+                # Log warnings if any (for monitoring)
+                if validation_warnings:
+                    logger.warning(
+                        f"Recommendation for user {user_id} has {len(validation_warnings)} tone validation warning(s): "
+                        f"{[w.get('message', '') for w in validation_warnings]}"
+                    )
             
-            # Set validation_warnings in metadata
-            metadata["validation_warnings"] = validation_warnings
+            # Store product data in metadata for partner_offer type
+            if content_type == "partner_offer":
+                product_metadata = {
+                    "product_name": rec_dict.get("product_name"),
+                    "short_description": rec_dict.get("short_description"),
+                    "benefits": rec_dict.get("benefits", []),
+                    "partner_link": rec_dict.get("partner_link"),
+                    "disclosure": rec_dict.get("disclosure"),
+                    "typical_apy_or_fee": rec_dict.get("typical_apy_or_fee"),
+                    "partner_name": rec_dict.get("partner_name"),
+                }
+                metadata["product_data"] = product_metadata
             
-            # Log warnings if any (for monitoring)
-            if validation_warnings:
-                logger.warning(
-                    f"Recommendation for user {user_id} has {len(validation_warnings)} tone validation warning(s): "
-                    f"{[w.get('message', '') for w in validation_warnings]}"
-                )
-            
-            # IMPORTANT: Do NOT skip recommendations with warnings - persist all for operator review
             recommendations_to_save.append({
+                "content_type": content_type,
                 "title": rec_dict.get("title"),
-                "content": rec_dict.get("content"),
+                "content": rec_dict.get("content"),  # None for partner_offer
                 "rationale": rec_dict.get("rationale"),
+                "product_id": rec_dict.get("product_id"),  # For partner_offer
                 "metadata": metadata,
                 "generation_time_ms": rec_dict.get("generation_time_ms", generation_time_ms)
             })
-        
-        # TIMING LOG - COMMENTED OUT
-        # tone_validation_end = time.time()
-        # tone_validation_duration_ms = int((tone_validation_end - tone_validation_start) * 1000)
-        # timing_log["tone_validation_duration_ms"] = tone_validation_duration_ms
         
         # ========================================================================
         # Save to Database
@@ -332,17 +318,21 @@ async def generate_recommendations(
         
         # For each recommendation (including those with warnings):
         recommendation_objects = []
-        # TIMING LOG - COMMENTED OUT
-        # db_save_start = time.time()
         
         for rec_data in recommendations_to_save:
             # Generate recommendation_id (rec_{uuid})
             recommendation_id = f"rec_{uuid.uuid4().hex[:16]}"
             
-            # Append mandatory disclosure to content
-            content_with_disclosure = append_disclosure(rec_data["content"])
+            content_type = rec_data["content_type"]
+            content = rec_data["content"]
             
-            # Serialize metadata dict (includes validation_warnings) to JSON string
+            # Append mandatory disclosure to content (only for education type)
+            if content_type == "education" and content:
+                content_with_disclosure = append_disclosure(content)
+            else:
+                content_with_disclosure = content  # None for partner_offer
+            
+            # Serialize metadata dict to JSON string
             metadata_json = json.dumps(rec_data["metadata"])
             
             # Create Recommendation model instance
@@ -351,11 +341,12 @@ async def generate_recommendations(
                 user_id=user_id,
                 persona_type=persona_type,
                 window_days=window_days,
-                content_type="education",  # All AI-generated recommendations are education type
+                content_type=content_type,
+                product_id=rec_data.get("product_id"),  # For partner_offer recommendations
                 title=rec_data["title"],
-                content=content_with_disclosure,
+                content=content_with_disclosure,  # None for partner_offer
                 rationale=rec_data["rationale"],
-                status="pending_approval",  # All recommendations start pending, regardless of warnings
+                status="pending_approval",  # All recommendations start pending
                 generation_time_ms=rec_data["generation_time_ms"],
                 metadata_json=metadata_json
             )
@@ -384,10 +375,10 @@ async def generate_recommendations(
         # ========================================================================
         
         # Query newly created recommendations
-        # Convert to schema objects
+        # Convert to schema objects with product data
         recommendations_list = []
         for rec in recommendation_objects:
-            recommendations_list.append({
+            rec_dict = {
                 "recommendation_id": rec.recommendation_id,
                 "title": rec.title,
                 "content": rec.content,
@@ -399,7 +390,23 @@ async def generate_recommendations(
                 "generation_time_ms": rec.generation_time_ms,
                 "generated_at": rec.generated_at.isoformat() if rec.generated_at else None,
                 "metadata_json": rec.metadata_json
-            })
+            }
+            
+            # Add product fields for partner_offer type
+            if rec.content_type == "partner_offer" and rec.metadata_json:
+                try:
+                    metadata = json.loads(rec.metadata_json)
+                    product_data = metadata.get("product_data", {})
+                    rec_dict["product_id"] = rec.product_id
+                    rec_dict["product_name"] = product_data.get("product_name")
+                    rec_dict["short_description"] = product_data.get("short_description")
+                    rec_dict["benefits"] = product_data.get("benefits", [])
+                    rec_dict["partner_link"] = product_data.get("partner_link")
+                    rec_dict["disclosure"] = product_data.get("disclosure")
+                except (json.JSONDecodeError, TypeError):
+                    logger.warning(f"Failed to parse metadata for recommendation {rec.recommendation_id}")
+            
+            recommendations_list.append(rec_dict)
         
         # Calculate total request time
         end_time = time.time()
@@ -545,20 +552,39 @@ async def get_recommendations(
         # Response Formatting
         # ========================================================================
         
-        # Convert recommendation models to schema objects
+        # Convert recommendation models to schema objects with product data
         recommendations_list = []
         for rec in recommendations:
-            recommendations_list.append({
+            rec_dict = {
                 "recommendation_id": rec.recommendation_id,
                 "title": rec.title,
                 "content": rec.content,
                 "rationale": rec.rationale,
                 "status": rec.status,
                 "persona_type": rec.persona_type,
+                "content_type": rec.content_type,
                 "generated_at": rec.generated_at.isoformat() if rec.generated_at else None,
                 "approved_by": rec.approved_by,
                 "approved_at": rec.approved_at.isoformat() if rec.approved_at else None,
-            })
+            }
+            
+            # Add product fields for partner_offer type
+            if rec.content_type == "partner_offer" and rec.metadata_json:
+                try:
+                    metadata = json.loads(rec.metadata_json)
+                    product_data = metadata.get("product_data", {})
+                    rec_dict["product_id"] = rec.product_id
+                    rec_dict["product_name"] = product_data.get("product_name")
+                    rec_dict["short_description"] = product_data.get("short_description")
+                    rec_dict["benefits"] = product_data.get("benefits", [])
+                    rec_dict["partner_link"] = product_data.get("partner_link")
+                    rec_dict["disclosure"] = product_data.get("disclosure")
+                    rec_dict["typical_apy_or_fee"] = product_data.get("typical_apy_or_fee")
+                    rec_dict["partner_name"] = product_data.get("partner_name")
+                except (json.JSONDecodeError, TypeError):
+                    logger.warning(f"Failed to parse metadata for recommendation {rec.recommendation_id}")
+            
+            recommendations_list.append(rec_dict)
         
         # Return JSON response with recommendations list and total count
         return {

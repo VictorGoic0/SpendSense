@@ -154,7 +154,7 @@ class LiabilityResponse(LiabilityBase):
 class ProductBase(BaseModel):
     """Base product schema with core fields"""
     product_name: str
-    product_type: Literal["savings_account", "credit_card", "app", "service", "investment_account"]
+    product_type: Literal["savings_account", "credit_card", "app", "service", "investment_account", "loan"]
     category: str
     persona_targets: List[str]  # Will be converted to JSON string
     short_description: str
@@ -191,6 +191,33 @@ class ProductResponse(ProductBase):
     product_id: str
     created_at: datetime
     updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# ============================================================================
+# Product Offer Schemas (for recommendations)
+# ============================================================================
+
+class ProductOfferBase(BaseModel):
+    """Base schema for product offers in recommendations"""
+    product_name: str
+    product_type: str
+    category: str
+    short_description: str
+    benefits: List[str]
+    typical_apy_or_fee: Optional[str] = None
+    partner_link: Optional[str] = None
+    disclosure: str
+    partner_name: str
+
+
+class ProductOfferResponse(ProductOfferBase):
+    """Schema for product offer response with all fields"""
+    product_id: str
+    persona_targets: List[str]
+    active: bool
 
     class Config:
         from_attributes = True
@@ -290,7 +317,7 @@ class RecommendationBase(BaseModel):
     window_days: int
     content_type: Literal["education", "partner_offer"]
     title: str
-    content: str
+    content: Optional[str] = None  # Optional, only for education type
     rationale: str
 
 
@@ -320,6 +347,14 @@ class RecommendationResponse(RecommendationBase):
     generated_at: datetime
     generation_time_ms: Optional[int] = None
     expires_at: Optional[datetime] = None
+    
+    # Optional product fields (for partner_offer content_type)
+    product_id: Optional[str] = None
+    product_name: Optional[str] = None
+    short_description: Optional[str] = None
+    benefits: Optional[List[str]] = None
+    partner_link: Optional[str] = None
+    disclosure: Optional[str] = None
 
     class Config:
         from_attributes = True

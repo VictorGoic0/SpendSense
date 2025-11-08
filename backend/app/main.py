@@ -3,6 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import init_db, Base
 from app import models  # Import models to register them with Base
 from app.routers import ingest, features, profile, users, operator, personas, recommendations, consent
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 app = FastAPI(
     title="SpendSense API",

@@ -1,9 +1,62 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: Product Catalog Feature - PR #38-40 Complete, PR #41 Next (Eligibility Filtering)
+**Status**: PR #42 Complete - Hybrid Recommendation Engine with Product Data Normalization
 
 ## Recent Changes
+- ✅ **PR #42 Complete: Hybrid Recommendation Engine + Product Data Normalization (all 119 tasks finished)**
+  - Hybrid recommendation engine implemented:
+    - Updated Pydantic schemas: Added `ProductOfferBase`, `ProductOfferResponse`, updated `RecommendationResponse` with optional product fields and content_type
+    - Created `generate_combined_recommendations()` function in `recommendation_engine.py`:
+      - Generates product recommendations first (via `match_products()` and eligibility filtering)
+      - Educational recommendations limited to 3 *only if* product recommendations are found; otherwise all educational recommendations included
+      - Combines educational and product recommendations into single list (3-5 total)
+    - Updated database models: Added `product_id` column to `Recommendation` model, made `content` nullable
+    - Updated API endpoints: POST `/recommendations/generate/{user_id}` uses combined logic, GET `/recommendations/{user_id}` includes product data
+    - Test script created: `scripts/test_hybrid_recommendations.py` with comprehensive coverage
+  - Product catalog data normalization:
+    - Regenerated product catalog with ~150 products (5 batches of ~30 products each)
+    - Modified `scripts/generate_product_catalog.py`:
+      - Reverted prompt changes (removed explicit eligibility rules from LLM prompt)
+      - Implemented batch generation to overcome OpenAI output token limits
+      - Applied deterministic eligibility rules post-LLM generation:
+        - `requires_no_existing_savings = TRUE` only for HYSA products
+        - `requires_no_existing_investment = TRUE` only for investment/robo_advisor products
+        - `min_income`, `max_credit_utilization`, `min_credit_score` set deterministically based on category with random values within ranges
+    - Database schema updates:
+      - Added "loan" as valid `product_type` (updated models, schemas, and type_mapping)
+      - Made `recommendations.content` nullable (for partner_offer recommendations)
+    - Migration consolidation:
+      - Added `apply_migrations()` function to `backend/app/database.py` for automatic migration on startup
+      - Removed temporary migration scripts (migrate_add_product_id.py, migrate_add_loan_product_type.py, migrate_make_content_nullable.py)
+      - Removed `refresh_product_catalog.py` script (one-time use complete)
+    - All 119 tasks completed (hybrid engine + data normalization)
+- ✅ **PR #41 Complete: Enhanced Guardrails - Product Eligibility (all 66 tasks finished)**
+  - Updated `backend/app/services/guardrails.py` with product eligibility checking:
+    - Added `check_product_eligibility()` function that checks:
+      - Income requirements (min_income)
+      - Credit utilization requirements (max_credit_utilization)
+      - Existing savings requirement (requires_no_existing_savings)
+      - Existing investment requirement (requires_no_existing_investment)
+      - Category-specific rules (balance_transfer requires utilization >= 0.3)
+    - Returns tuple of (is_eligible: bool, reason: str) with comprehensive logging
+    - Added `filter_eligible_products()` function for batch filtering:
+      - Accepts list of product matches with scores
+      - Runs eligibility check for each product
+      - Returns filtered list of eligible products only
+      - Logs reasons for filtered products
+  - Updated `backend/app/services/product_matcher.py`:
+    - Integrated eligibility filtering into `match_products()` function
+    - Products are now filtered by eligibility after scoring and sorting
+    - Only eligible products are returned to users
+  - Created test script (`scripts/test_product_eligibility.py`):
+    - Tests income requirement eligibility
+    - Tests credit utilization requirement eligibility
+    - Tests existing account requirements (savings and investment)
+    - Tests category-specific rules (balance transfer)
+    - Tests full flow: match + filter
+    - Comprehensive test coverage for all eligibility scenarios
+  - All 66 tasks completed (eligibility checker, batch filtering, integration, testing)
 - ✅ **PR #40 Complete: Product Matching Service (all 91 tasks finished)**
   - Created `backend/app/services/product_matcher.py` service file
   - Helper functions: `get_account_types()`, `has_hysa()`, `has_investment_account()`
@@ -87,7 +140,7 @@
   - Database schema designed for product_offers table with eligibility criteria
   - Product generation script enhanced with validation and better prompting
   - Product matching service architecture defined (persona + signal based relevance scoring)
-  - Eligibility filtering logic designed (income, utilization, existing accounts)
+  - ✅ Eligibility filtering logic implemented (PR #41 complete)
   - Hybrid recommendation engine planned (2-3 educational + 1-2 product offers)
   - Frontend display components specified (benefits, partner links, disclosure)
   - 20+ unit tests planned for product matching and eligibility
@@ -730,7 +783,7 @@
    - ✅ **PR #38 Complete**: Database schema, product generation, catalog created (21 products)
    - ✅ **PR #39 Complete**: Product ingestion via API endpoint (consistent with other data)
    - ✅ **PR #40 Complete**: Product matching service (persona + signal based scoring, rationale generation, top 3 products)
-   - 🔄 **PR #41**: Eligibility filtering (income, utilization, existing accounts)
+   - ✅ **PR #41 Complete**: Eligibility filtering (income, utilization, existing accounts, category-specific rules)
    - 🔄 **PR #42-45**: Hybrid recommendation engine, frontend display, product management API, unit tests
    - **PAUSED AWS tasks** - No AWS access currently, implementing features instead
 2. **Parquet Export & S3 Integration** - PR #29: Export user features and evaluation results to Parquet, upload to S3 (PAUSED - no AWS access)

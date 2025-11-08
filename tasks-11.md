@@ -3,108 +3,135 @@
 **Goal**: Update recommendation engine to generate combined recommendations (2-3 educational + 1-2 product offers).
 
 ### Update Pydantic Schemas
-- [ ] 1. Update `backend/app/schemas.py`
-- [ ] 2. Create `ProductOfferBase` schema:
-  - [ ] 3. product_name: str
-  - [ ] 4. product_type: str
-  - [ ] 5. category: str
-  - [ ] 6. short_description: str
-  - [ ] 7. benefits: list[str]
-  - [ ] 8. typical_apy_or_fee: Optional[str]
-  - [ ] 9. partner_link: Optional[str]
-  - [ ] 10. disclosure: str
-  - [ ] 11. partner_name: str
-- [ ] 12. Create `ProductOfferResponse` schema (extends ProductOfferBase):
-  - [ ] 13. product_id: str
-  - [ ] 14. persona_targets: list[str]
-  - [ ] 15. active: bool
-  - [ ] 16. Add Config class with from_attributes=True
-- [ ] 17. Update `RecommendationResponse` schema:
-  - [ ] 18. Add content_type: str field ('education' or 'partner_offer')
-  - [ ] 19. Make content field optional (only for education)
-  - [ ] 20. Add optional product fields:
-    - [ ] 21. product_id: Optional[str]
-    - [ ] 22. product_name: Optional[str]
-    - [ ] 23. short_description: Optional[str]
-    - [ ] 24. benefits: Optional[list[str]]
-    - [ ] 25. partner_link: Optional[str]
-    - [ ] 26. disclosure: Optional[str]
-  - [ ] 27. Keep existing common fields (rationale, status, persona_type, etc.)
+- [x] 1. Update `backend/app/schemas.py`
+- [x] 2. Create `ProductOfferBase` schema:
+  - [x] 3. product_name: str
+  - [x] 4. product_type: str
+  - [x] 5. category: str
+  - [x] 6. short_description: str
+  - [x] 7. benefits: list[str]
+  - [x] 8. typical_apy_or_fee: Optional[str]
+  - [x] 9. partner_link: Optional[str]
+  - [x] 10. disclosure: str
+  - [x] 11. partner_name: str
+- [x] 12. Create `ProductOfferResponse` schema (extends ProductOfferBase):
+  - [x] 13. product_id: str
+  - [x] 14. persona_targets: list[str]
+  - [x] 15. active: bool
+  - [x] 16. Add Config class with from_attributes=True
+- [x] 17. Update `RecommendationResponse` schema:
+  - [x] 18. Add content_type: str field ('education' or 'partner_offer')
+  - [x] 19. Make content field optional (only for education)
+  - [x] 20. Add optional product fields:
+    - [x] 21. product_id: Optional[str]
+    - [x] 22. product_name: Optional[str]
+    - [x] 23. short_description: Optional[str]
+    - [x] 24. benefits: Optional[list[str]]
+    - [x] 25. partner_link: Optional[str]
+    - [x] 26. disclosure: Optional[str]
+  - [x] 27. Keep existing common fields (rationale, status, persona_type, etc.)
 
 ### Enhanced Recommendation Engine
-- [ ] 28. Update `backend/app/services/recommendation_engine.py`
-- [ ] 29. Import product_matcher functions
-- [ ] 30. Import guardrails eligibility functions
-- [ ] 31. Create `generate_combined_recommendations(db, user_id: str, persona_type: str, window_days: int) -> list[dict]` function:
-- [ ] 32. **Step 1: Generate educational recommendations**
-  - [ ] 33. Call existing OpenAI generation logic
-  - [ ] 34. Target: 2-3 educational recommendations
-  - [ ] 35. Set content_type = 'education' on each
-- [ ] 36. **Step 2: Generate product recommendations**
-  - [ ] 37. Get user features for window_days
-  - [ ] 38. Call `match_products()` from product_matcher
-  - [ ] 39. Get top 3 matched products with scores
-  - [ ] 40. Apply eligibility filtering
-  - [ ] 41. Take top 1-2 eligible products
-  - [ ] 42. Set content_type = 'partner_offer' on each
-  - [ ] 43. Format product data for recommendation structure
-- [ ] 44. **Step 3: Combine and format**
-  - [ ] 45. Merge educational and product recommendations into single list
-  - [ ] 46. Target total: 3-5 recommendations (2-3 education + 1-2 products)
-  - [ ] 47. Add metadata fields (recommendation_id, user_id, generated_at, etc.)
-  - [ ] 48. Return combined list
-- [ ] 49. Add logging for recommendation mix (X education, Y products)
+- [x] 28. Update `backend/app/services/recommendation_engine.py`
+- [x] 29. Import product_matcher functions
+- [x] 30. Import guardrails eligibility functions
+- [x] 31. Create `generate_combined_recommendations(db, user_id: str, persona_type: str, window_days: int) -> list[dict]` function:
+- [x] 32. **Step 1: Generate educational recommendations**
+  - [x] 33. Call existing OpenAI generation logic
+  - [x] 34. Target: 2-3 educational recommendations
+  - [x] 35. Set content_type = 'education' on each
+- [x] 36. **Step 2: Generate product recommendations**
+  - [x] 37. Get user features for window_days
+  - [x] 38. Call `match_products()` from product_matcher
+  - [x] 39. Get top 3 matched products with scores
+  - [x] 40. Apply eligibility filtering
+  - [x] 41. Take top 1-2 eligible products
+  - [x] 42. Set content_type = 'partner_offer' on each
+  - [x] 43. Format product data for recommendation structure
+- [x] 44. **Step 3: Combine and format**
+  - [x] 45. Merge educational and product recommendations into single list
+  - [x] 46. Target total: 3-5 recommendations (2-3 education + 1-2 products)
+  - [x] 47. Add metadata fields (recommendation_id, user_id, generated_at, etc.)
+  - [x] 48. Return combined list
+- [x] 49. Add logging for recommendation mix (X education, Y products)
 
 ### Store Product Recommendations in Database
-- [ ] 50. Update recommendation storage logic
-- [ ] 51. For partner_offer recommendations:
-  - [ ] 52. Store product_id in new field (add to recommendations table)
-  - [ ] 53. Store content_type field
-  - [ ] 54. Store product data as JSON in content field (or separate fields)
-- [ ] 55. Add database migration if new fields needed:
-  - [ ] 56. ALTER TABLE recommendations ADD COLUMN content_type TEXT DEFAULT 'education'
-  - [ ] 57. ALTER TABLE recommendations ADD COLUMN product_id TEXT
-  - [ ] 58. Add foreign key relationship to product_offers if desired
-- [ ] 59. Update recommendation query logic to handle both types
+- [x] 50. Update recommendation storage logic
+- [x] 51. For partner_offer recommendations:
+  - [x] 52. Store product_id in new field (add to recommendations table)
+  - [x] 53. Store content_type field
+  - [x] 54. Store product data as JSON in content field (or separate fields)
+- [x] 55. Add database migration if new fields needed:
+  - [x] 56. ALTER TABLE recommendations ADD COLUMN content_type TEXT DEFAULT 'education'
+  - [x] 57. ALTER TABLE recommendations ADD COLUMN product_id TEXT
+  - [x] 58. Add foreign key relationship to product_offers if desired
+- [x] 59. Update recommendation query logic to handle both types
 
 ### Update Recommendation Generation Endpoint
-- [ ] 60. Update `backend/app/routers/recommendations.py`
-- [ ] 61. Modify `POST /recommendations/generate/{user_id}` endpoint:
-  - [ ] 62. Replace old generation logic with `generate_combined_recommendations()`
-  - [ ] 63. Store both education and product recommendations
-  - [ ] 64. Return combined list in response
-  - [ ] 65. Add content_type to response JSON
-- [ ] 66. Update `GET /recommendations/{user_id}` endpoint:
-  - [ ] 67. Include content_type in response
-  - [ ] 68. Include product data for partner_offer recommendations
-  - [ ] 69. Format benefits and persona_targets as arrays (parse JSON)
+- [x] 60. Update `backend/app/routers/recommendations.py`
+- [x] 61. Modify `POST /recommendations/generate/{user_id}` endpoint:
+  - [x] 62. Replace old generation logic with `generate_combined_recommendations()`
+  - [x] 63. Store both education and product recommendations
+  - [x] 64. Return combined list in response
+  - [x] 65. Add content_type to response JSON
+- [x] 66. Update `GET /recommendations/{user_id}` endpoint:
+  - [x] 67. Include content_type in response
+  - [x] 68. Include product data for partner_offer recommendations
+  - [x] 69. Format benefits and persona_targets as arrays (parse JSON)
 
 ### Testing Hybrid Engine
-- [ ] 70. Create `scripts/test_hybrid_recommendations.py`
-- [ ] 71. Test with high_utilization user:
-  - [ ] 72. Generate combined recommendations
-  - [ ] 73. Verify 2-3 educational recs present
-  - [ ] 74. Verify 1-2 product recs present
-  - [ ] 75. Verify balance transfer card included in products
-  - [ ] 76. Verify all products pass eligibility checks
-  - [ ] 77. Print full recommendation list
-- [ ] 78. Test with savings_builder user:
-  - [ ] 79. Generate recommendations
-  - [ ] 80. Verify HYSA products included
-  - [ ] 81. If user has existing HYSA, verify it's excluded
-- [ ] 82. Test with variable_income user:
-  - [ ] 83. Verify budgeting app products included
-- [ ] 84. Test with subscription_heavy user:
-  - [ ] 85. Verify subscription manager products included
-- [ ] 86. Test with wealth_builder user:
-  - [ ] 87. Verify investment products included
-- [ ] 88. Test edge case: no eligible products
-  - [ ] 89. Verify only educational recommendations returned
-  - [ ] 90. Verify no errors thrown
-- [ ] 91. Verify recommendation storage in database
-- [ ] 92. Verify content_type field set correctly
-- [ ] 93. Query recommendations via API endpoint
-- [ ] 94. Verify response includes all product data
+- [x] 70. Create `scripts/test_hybrid_recommendations.py`
+- [x] 71. Test with high_utilization user:
+  - [x] 72. Generate combined recommendations
+  - [x] 73. Verify 2-3 educational recs present
+  - [x] 74. Verify 1-2 product recs present
+  - [x] 75. Verify balance transfer card included in products
+  - [x] 76. Verify all products pass eligibility checks
+  - [x] 77. Print full recommendation list
+- [x] 78. Test with savings_builder user:
+  - [x] 79. Generate recommendations
+  - [x] 80. Verify HYSA products included
+  - [x] 81. If user has existing HYSA, verify it's excluded
+- [x] 82. Test with variable_income user:
+  - [x] 83. Verify budgeting app products included
+- [x] 84. Test with subscription_heavy user:
+  - [x] 85. Verify subscription manager products included
+- [x] 86. Test with wealth_builder user:
+  - [x] 87. Verify investment products included
+- [x] 88. Test edge case: no eligible products
+  - [x] 89. Verify only educational recommendations returned
+  - [x] 90. Verify no errors thrown`
+- [x] 91. Verify recommendation storage in database
+- [x] 92. Verify content_type field set correctly
+- [x] 93. Query recommendations via API endpoint
+- [x] 94. Verify response includes all product data
+
+### Product Catalog Data Normalization
+- [x] 95. Regenerate product catalog with ~150 products (instead of ~25)
+- [x] 96. Modify `scripts/generate_product_catalog.py`:
+  - [x] 97. Revert prompt changes (remove explicit eligibility rules from LLM prompt)
+  - [x] 98. Implement batch generation (5 batches of ~30 products each)
+  - [x] 99. Add `generate_product_catalog_batch()` function for individual LLM calls
+- [x] 100. Apply deterministic eligibility rules post-LLM generation:
+  - [x] 101. Set `requires_no_existing_savings = TRUE` only for HYSA products
+  - [x] 102. Set `requires_no_existing_investment = TRUE` only for investment/robo_advisor products
+  - [x] 103. Set `min_income`, `max_credit_utilization`, `min_credit_score` deterministically based on category
+  - [x] 104. Use random values within specified ranges for numeric eligibility fields
+- [x] 105. Add "loan" as valid product_type:
+  - [x] 106. Update `backend/app/models.py` ProductOffer model (add "loan" to CheckConstraint)
+  - [x] 107. Update `backend/app/schemas.py` ProductBase schema (add "loan" to Literal)
+  - [x] 108. Update `scripts/generate_product_catalog.py` type_mapping (map personal_loan, debt_consolidation, credit_builder to "loan")
+- [x] 109. Make recommendations.content nullable:
+  - [x] 110. Update `backend/app/models.py` Recommendation model (content = Column(Text, nullable=True))
+  - [x] 111. Update `backend/app/schemas.py` RecommendationBase schema (content: Optional[str])
+- [x] 112. Consolidate database migrations:
+  - [x] 113. Add `apply_migrations()` function to `backend/app/database.py`
+  - [x] 114. Automatically apply `product_id` column migration on startup
+  - [x] 115. Document that content nullable and loan product_type migrations already applied
+  - [x] 116. Remove temporary migration scripts (migrate_add_product_id.py, migrate_add_loan_product_type.py, migrate_make_content_nullable.py)
+- [x] 117. Remove refresh_product_catalog.py script (one-time use complete)
+- [x] 118. Verify product catalog generation produces ~150 products with correct eligibility flags
+- [x] 119. Verify all products have sensible eligibility criteria (no subscription apps requiring no savings)
 
 ---
 

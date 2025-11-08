@@ -6,17 +6,15 @@
     "persona_targets": [
       "high_utilization"
     ],
-    "short_description": "Transfer balances with 0% APR for 18 months.",
+    "short_description": "Transfer balances with no intro APR.",
     "benefits": [
       "0% intro APR for 18 months",
       "No annual fee",
-      "Lower interest rate with on-time payments"
+      "Free credit score tracking"
     ],
     "typical_apy_or_fee": "0% intro APR for 18mo",
     "min_income": 2500,
-    "max_credit_utilization": 0.75,
-    "requires_no_existing_savings": true,
-    "requires_no_existing_investment": true,
+    "max_credit_utilization": 0.84,
     "min_credit_score": 670,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
     "product_id": "prod_001",
@@ -25,8 +23,10 @@
     "commission_rate": 0.0,
     "priority": 1,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
   },
   {
     "product_name": "Marcus High-Yield Savings",
@@ -34,19 +34,17 @@
     "category": "hysa",
     "persona_targets": [
       "savings_builder",
-      "variable_income"
+      "wealth_builder"
     ],
-    "short_description": "Earn more with a high-yield savings account.",
+    "short_description": "Boost your savings with high APY.",
     "benefits": [
-      "4.5% APY",
-      "No minimum deposit",
-      "No monthly fees"
+      "4.5% APY on your savings",
+      "No monthly fees",
+      "FDIC insured"
     ],
     "typical_apy_or_fee": "4.5% APY",
     "min_income": 0,
     "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": false,
-    "requires_no_existing_investment": true,
     "min_credit_score": null,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
     "product_id": "prod_002",
@@ -55,8 +53,10 @@
     "commission_rate": 0.0,
     "priority": 1,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
   },
   {
     "product_name": "YNAB Budgeting App",
@@ -64,19 +64,18 @@
     "category": "budgeting_app",
     "persona_targets": [
       "variable_income",
+      "subscription_heavy",
       "savings_builder"
     ],
-    "short_description": "Take control of your budget with YNAB.",
+    "short_description": "Take control of your money with YNAB.",
     "benefits": [
-      "Customizable budgeting tools",
-      "Real-time account syncing",
-      "Report generation for spending insights"
+      "Real-time spending tracking",
+      "Customizable budget categories",
+      "Goal setting and progress tracking"
     ],
     "typical_apy_or_fee": "$11.99/month",
     "min_income": 0,
     "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": true,
-    "requires_no_existing_investment": true,
     "min_credit_score": null,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
     "product_id": "prod_003",
@@ -85,8 +84,10 @@
     "commission_rate": 0.0,
     "priority": 1,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
   },
   {
     "product_name": "Rocket Money Subscription Manager",
@@ -95,17 +96,15 @@
     "persona_targets": [
       "subscription_heavy"
     ],
-    "short_description": "Manage and reduce your subscriptions easily.",
+    "short_description": "Manage and cancel subscriptions easily.",
     "benefits": [
-      "Identify unused subscriptions",
-      "Negotiate bills for savings",
-      "Cancel subscriptions in one click"
+      "Identify recurring charges",
+      "Easily cancel unwanted subscriptions",
+      "Track subscription spending trends"
     ],
-    "typical_apy_or_fee": "$3.99/month",
+    "typical_apy_or_fee": "$10/month",
     "min_income": 0,
     "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": true,
-    "requires_no_existing_investment": true,
     "min_credit_score": null,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
     "product_id": "prod_004",
@@ -114,38 +113,10 @@
     "commission_rate": 0.0,
     "priority": 1,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
-  },
-  {
-    "product_name": "Ally Online Savings",
-    "product_type": "savings_account",
-    "category": "hysa",
-    "persona_targets": [
-      "savings_builder",
-      "variable_income"
-    ],
-    "short_description": "Boost your savings with Ally's high rate.",
-    "benefits": [
-      "4.25% APY",
-      "No monthly maintenance fees",
-      "Automatic savings tools"
-    ],
-    "typical_apy_or_fee": "4.25% APY",
-    "min_income": 0,
-    "max_credit_utilization": 1.0,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
     "requires_no_existing_savings": false,
-    "requires_no_existing_investment": true,
-    "min_credit_score": null,
-    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_005",
-    "partner_name": "Ally Online",
-    "partner_link": "https://example.com/prod_005",
-    "commission_rate": 0.0,
-    "priority": 1,
-    "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "requires_no_existing_investment": false
   },
   {
     "product_name": "Wealthfront Robo Advisor",
@@ -154,202 +125,57 @@
     "persona_targets": [
       "wealth_builder"
     ],
-    "short_description": "Automate your investments with Wealthfront.",
+    "short_description": "Automate investing with Wealthfront.",
     "benefits": [
-      "Customized portfolios",
-      "Tax-loss harvesting",
-      "Low-cost management fees"
+      "Low-cost diversified portfolios",
+      "Automatic rebalancing",
+      "Tax-loss harvesting"
     ],
     "typical_apy_or_fee": "0.25% advisory fee",
     "min_income": 5000,
-    "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": false,
-    "requires_no_existing_investment": false,
-    "min_credit_score": null,
+    "max_credit_utilization": 0.41,
+    "min_credit_score": 650,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_006",
+    "product_id": "prod_005",
     "partner_name": "Wealthfront Robo",
-    "partner_link": "https://example.com/prod_006",
+    "partner_link": "https://example.com/prod_005",
     "commission_rate": 0.0,
-    "priority": 2,
+    "priority": 1,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
-  },
-  {
-    "product_name": "T. Rowe Price Retirement Plan",
-    "product_type": "investment_account",
-    "category": "retirement_plan",
-    "persona_targets": [
-      "wealth_builder"
-    ],
-    "short_description": "Plan for retirement with T. Rowe Price.",
-    "benefits": [
-      "Diversified fund options",
-      "Low expense ratios",
-      "Retirement planning tools"
-    ],
-    "typical_apy_or_fee": "Varies by fund",
-    "min_income": 6000,
-    "max_credit_utilization": 1.0,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
     "requires_no_existing_savings": false,
-    "requires_no_existing_investment": false,
-    "min_credit_score": null,
-    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_007",
-    "partner_name": "T. Rowe",
-    "partner_link": "https://example.com/prod_007",
-    "commission_rate": 0.0,
-    "priority": 2,
-    "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "requires_no_existing_investment": true
   },
   {
-    "product_name": "Fidelity Go",
-    "product_type": "investment_account",
-    "category": "robo_advisor",
-    "persona_targets": [
-      "wealth_builder"
-    ],
-    "short_description": "Fidelity-managed portfolios for easy investing.",
-    "benefits": [
-      "No advisory fees for balances under $10k",
-      "Goal tracking features",
-      "Automatic rebalancing"
-    ],
-    "typical_apy_or_fee": "0.35% advisory fee",
-    "min_income": 5000,
-    "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": false,
-    "requires_no_existing_investment": false,
-    "min_credit_score": null,
-    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_008",
-    "partner_name": "Fidelity Go",
-    "partner_link": "https://example.com/prod_008",
-    "commission_rate": 0.0,
-    "priority": 2,
-    "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
-  },
-  {
-    "product_name": "Citi Simplicity Card",
-    "product_type": "credit_card",
-    "category": "balance_transfer",
-    "persona_targets": [
-      "high_utilization"
-    ],
-    "short_description": "Simplify your debt with no late fees ever.",
-    "benefits": [
-      "0% intro APR for 21 months",
-      "No late fees or penalty rates",
-      "No annual fee"
-    ],
-    "typical_apy_or_fee": "0% intro APR for 21mo",
-    "min_income": 3000,
-    "max_credit_utilization": 0.85,
-    "requires_no_existing_savings": true,
-    "requires_no_existing_investment": true,
-    "min_credit_score": 680,
-    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_009",
-    "partner_name": "Citi Simplicity",
-    "partner_link": "https://example.com/prod_009",
-    "commission_rate": 0.0,
-    "priority": 2,
-    "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
-  },
-  {
-    "product_name": "SoFi Personal Loan",
-    "product_type": "service",
-    "category": "debt_consolidation",
-    "persona_targets": [
-      "high_utilization"
-    ],
-    "short_description": "Consolidate debt with a low-interest loan.",
-    "benefits": [
-      "Fixed rates as low as 5.99%",
-      "No origination fees",
-      "Flexible repayment terms"
-    ],
-    "typical_apy_or_fee": "Rates as low as 5.99%",
-    "min_income": 4000,
-    "max_credit_utilization": 0.85,
-    "requires_no_existing_savings": true,
-    "requires_no_existing_investment": true,
-    "min_credit_score": 680,
-    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_010",
-    "partner_name": "SoFi Personal",
-    "partner_link": "https://example.com/prod_010",
-    "commission_rate": 0.0,
-    "priority": 2,
-    "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
-  },
-  {
-    "product_name": "Betterment Smart Saver",
+    "product_name": "Ally Bank High Yield Savings",
     "product_type": "savings_account",
     "category": "hysa",
-    "persona_targets": [
-      "savings_builder"
-    ],
-    "short_description": "Earn more on idle cash with Betterment.",
-    "benefits": [
-      "Competitive interest rates",
-      "FDIC insured",
-      "No annual fees"
-    ],
-    "typical_apy_or_fee": "2.85% APY",
-    "min_income": 0,
-    "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": false,
-    "requires_no_existing_investment": true,
-    "min_credit_score": null,
-    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_011",
-    "partner_name": "Betterment Smart",
-    "partner_link": "https://example.com/prod_011",
-    "commission_rate": 0.0,
-    "priority": 2,
-    "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
-  },
-  {
-    "product_name": "Acorns Invest",
-    "product_type": "app",
-    "category": "investment_account",
     "persona_targets": [
       "savings_builder",
       "wealth_builder"
     ],
-    "short_description": "Invest spare change automatically with Acorns.",
+    "short_description": "Grow savings with Ally's high yield.",
     "benefits": [
-      "Automatic round-ups",
-      "Diversified portfolios",
-      "No account minimums"
+      "4.25% APY",
+      "No monthly maintenance fees",
+      "24/7 customer support"
     ],
-    "typical_apy_or_fee": "$1/month",
+    "typical_apy_or_fee": "4.25% APY",
     "min_income": 0,
     "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": false,
-    "requires_no_existing_investment": true,
     "min_credit_score": null,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_012",
-    "partner_name": "Acorns Invest",
-    "partner_link": "https://example.com/prod_012",
+    "product_id": "prod_006",
+    "partner_name": "Ally Bank",
+    "partner_link": "https://example.com/prod_006",
     "commission_rate": 0.0,
-    "priority": 2,
+    "priority": 1,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
   },
   {
     "product_name": "Mint Budgeting App",
@@ -359,86 +185,173 @@
       "variable_income",
       "subscription_heavy"
     ],
-    "short_description": "Track and manage your finances with Mint.",
+    "short_description": "Track spending and budget with Mint.",
     "benefits": [
-      "Free budgeting tools",
-      "Bill tracking and alerts",
-      "Custom spending reports"
+      "Comprehensive financial tracking",
+      "Free credit score",
+      "Bill tracking and alerts"
     ],
     "typical_apy_or_fee": "Free",
     "min_income": 0,
     "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": true,
-    "requires_no_existing_investment": true,
     "min_credit_score": null,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_013",
+    "product_id": "prod_007",
     "partner_name": "Mint Budgeting",
-    "partner_link": "https://example.com/prod_013",
+    "partner_link": "https://example.com/prod_007",
     "commission_rate": 0.0,
-    "priority": 2,
+    "priority": 1,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
   },
   {
-    "product_name": "Ellevest Investment Account",
+    "product_name": "Personal Capital Financial Tools",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Comprehensive financial tracking and advice.",
+    "benefits": [
+      "Net worth tracking",
+      "Investment checkup",
+      "Retirement planning tools"
+    ],
+    "typical_apy_or_fee": "Free for basic tools",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_008",
+    "partner_name": "Personal Capital",
+    "partner_link": "https://example.com/prod_008",
+    "commission_rate": 0.0,
+    "priority": 1,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Citi Double Cash Card",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Earn cash back and transfer balances.",
+    "benefits": [
+      "2% cash back on purchases",
+      "0% intro APR for 18 months",
+      "No annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 18mo",
+    "min_income": 3000,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 680,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_009",
+    "partner_name": "Citi Double",
+    "partner_link": "https://example.com/prod_009",
+    "commission_rate": 0.0,
+    "priority": 1,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Betterment Robo Advisor",
     "product_type": "investment_account",
     "category": "robo_advisor",
     "persona_targets": [
       "wealth_builder"
     ],
-    "short_description": "Invest with gender-aware strategies via Ellevest.",
+    "short_description": "Smart investing with Betterment.",
     "benefits": [
-      "Personalized investment portfolios",
-      "Impact investing options",
-      "Financial planning resources"
+      "Low-cost ETFs",
+      "Personalized financial advice",
+      "Automatic rebalancing"
     ],
-    "typical_apy_or_fee": "0.25% annual fee",
-    "min_income": 5000,
-    "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": false,
-    "requires_no_existing_investment": false,
+    "typical_apy_or_fee": "0.25% advisory fee",
+    "min_income": 6819,
+    "max_credit_utilization": 0.34,
     "min_credit_score": null,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_014",
-    "partner_name": "Ellevest Investment",
-    "partner_link": "https://example.com/prod_014",
+    "product_id": "prod_010",
+    "partner_name": "Betterment Robo",
+    "partner_link": "https://example.com/prod_010",
     "commission_rate": 0.0,
-    "priority": 2,
+    "priority": 1,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
   },
   {
-    "product_name": "Truebill Budget App",
-    "product_type": "app",
-    "category": "budgeting_app",
+    "product_name": "SoFi Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
     "persona_targets": [
-      "variable_income",
-      "subscription_heavy"
+      "high_utilization",
+      "variable_income"
     ],
-    "short_description": "Manage your budget and subscriptions with Truebill.",
+    "short_description": "Low-rate personal loans from SoFi.",
     "benefits": [
-      "Subscription tracking",
-      "Custom budgeting tools",
-      "Expense categorization"
+      "No fees",
+      "Fixed rates",
+      "Unemployment protection"
     ],
-    "typical_apy_or_fee": "$4.99/month",
-    "min_income": 0,
-    "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": true,
-    "requires_no_existing_investment": true,
-    "min_credit_score": null,
+    "typical_apy_or_fee": "Fixed rates starting at 5.99%",
+    "min_income": 3000,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 680,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_015",
-    "partner_name": "Truebill Budget",
-    "partner_link": "https://example.com/prod_015",
+    "product_id": "prod_011",
+    "partner_name": "SoFi Personal",
+    "partner_link": "https://example.com/prod_011",
     "commission_rate": 0.0,
     "priority": 2,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Tally Debt Consolidation",
+    "product_type": "service",
+    "category": "debt_consolidation",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Consolidate debt with Tally.",
+    "benefits": [
+      "Lower interest rates",
+      "Automated payments",
+      "No late fees"
+    ],
+    "typical_apy_or_fee": "APR varies by creditworthiness",
+    "min_income": 2500,
+    "max_credit_utilization": 0.9,
+    "min_credit_score": 640,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_012",
+    "partner_name": "Tally Debt",
+    "partner_link": "https://example.com/prod_012",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
   },
   {
     "product_name": "Discover It Balance Transfer",
@@ -447,27 +360,1596 @@
     "persona_targets": [
       "high_utilization"
     ],
-    "short_description": "Transfer debt with 0% APR for 18 months.",
+    "short_description": "Transfer balances with cash back rewards.",
     "benefits": [
       "0% intro APR for 18 months",
-      "Cashback on every purchase",
+      "Cash back on all purchases",
       "No annual fee"
     ],
     "typical_apy_or_fee": "0% intro APR for 18mo",
+    "min_income": 2800,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 670,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_013",
+    "partner_name": "Discover It",
+    "partner_link": "https://example.com/prod_013",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Acorns Invest",
+    "product_type": "app",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Invest spare change automatically.",
+    "benefits": [
+      "Round-ups on purchases",
+      "Diversified portfolios",
+      "Automatic rebalancing"
+    ],
+    "typical_apy_or_fee": "$1/month for Lite plan",
+    "min_income": 9034,
+    "max_credit_utilization": 0.35,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_014",
+    "partner_name": "Acorns Invest",
+    "partner_link": "https://example.com/prod_014",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Capital One Quicksilver",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Unlimited 1.5% cash back on purchases.",
+    "benefits": [
+      "0% intro APR for 15 months",
+      "Unlimited 1.5% cash back",
+      "No annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 15mo",
     "min_income": 2500,
-    "max_credit_utilization": 0.75,
-    "requires_no_existing_savings": true,
-    "requires_no_existing_investment": true,
-    "min_credit_score": 680,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 660,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_015",
+    "partner_name": "Capital One",
+    "partner_link": "https://example.com/prod_015",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Digit Savings App",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "savings_builder"
+    ],
+    "short_description": "Automate your savings effortlessly.",
+    "benefits": [
+      "Automatic savings based on spending",
+      "No account minimums",
+      "Savings bonuses"
+    ],
+    "typical_apy_or_fee": "$5/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
     "product_id": "prod_016",
-    "partner_name": "Discover It",
+    "partner_name": "Digit",
     "partner_link": "https://example.com/prod_016",
     "commission_rate": 0.0,
     "priority": 2,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "NerdWallet Subscription Manager",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy"
+    ],
+    "short_description": "Optimize and manage subscriptions.",
+    "benefits": [
+      "Subscription categorization",
+      "Spending alerts",
+      "Cancel with one click"
+    ],
+    "typical_apy_or_fee": "$5/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_017",
+    "partner_name": "NerdWallet Subscription",
+    "partner_link": "https://example.com/prod_017",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "American Express Blue Cash Everyday",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Cash back on groceries and more.",
+    "benefits": [
+      "0% intro APR for 15 months",
+      "3% cash back at supermarkets",
+      "No annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 15mo",
+    "min_income": 3000,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 680,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_018",
+    "partner_name": "American Express",
+    "partner_link": "https://example.com/prod_018",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Upgrade Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "high_utilization",
+      "variable_income"
+    ],
+    "short_description": "Flexible personal loans for any need.",
+    "benefits": [
+      "Low fixed rates",
+      "No prepayment penalties",
+      "Fast funding"
+    ],
+    "typical_apy_or_fee": "APR varies by creditworthiness",
+    "min_income": 2500,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 620,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_019",
+    "partner_name": "Upgrade Personal",
+    "partner_link": "https://example.com/prod_019",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Fidelity Go Robo Advisor",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Simple automated investing with Fidelity.",
+    "benefits": [
+      "Professional management",
+      "Low cost",
+      "Retirement planning integration"
+    ],
+    "typical_apy_or_fee": "0.35% advisory fee",
+    "min_income": 9018,
+    "max_credit_utilization": 0.37,
+    "min_credit_score": 696,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_020",
+    "partner_name": "Fidelity Go",
+    "partner_link": "https://example.com/prod_020",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Aspiration Spend & Save",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Earn interest while spending ethically.",
+    "benefits": [
+      "Up to 5% APY",
+      "No monthly fees",
+      "Cash back on ethical spending"
+    ],
+    "typical_apy_or_fee": "Up to 5% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_021",
+    "partner_name": "Aspiration Spend",
+    "partner_link": "https://example.com/prod_021",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Chime Credit Builder Card",
+    "product_type": "credit_card",
+    "category": "credit_builder",
+    "persona_targets": [
+      "high_utilization",
+      "variable_income"
+    ],
+    "short_description": "Build credit with no fees.",
+    "benefits": [
+      "No annual fee",
+      "No credit check to apply",
+      "Build credit with on-time payments"
+    ],
+    "typical_apy_or_fee": "No fees",
+    "min_income": 500,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_022",
+    "partner_name": "Chime Credit",
+    "partner_link": "https://example.com/prod_022",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Clarity Money Subscription Manager",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy"
+    ],
+    "short_description": "Streamline your subscription management.",
+    "benefits": [
+      "Track recurring expenses",
+      "Easy cancellation options",
+      "Identify savings opportunities"
+    ],
+    "typical_apy_or_fee": "Free",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_023",
+    "partner_name": "Clarity Money",
+    "partner_link": "https://example.com/prod_023",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "LendingClub Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "high_utilization",
+      "variable_income"
+    ],
+    "short_description": "Get flexible personal loans online.",
+    "benefits": [
+      "Competitive interest rates",
+      "No prepayment penalties",
+      "Simple online application"
+    ],
+    "typical_apy_or_fee": "APR varies by creditworthiness",
+    "min_income": 2500,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 640,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_024",
+    "partner_name": "LendingClub Personal",
+    "partner_link": "https://example.com/prod_024",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Citi Simplicity Card",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "No fees ever for late payments.",
+    "benefits": [
+      "0% intro APR for 21 months",
+      "No late fees",
+      "No penalty rate"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 21mo",
+    "min_income": 2500,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 670,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_025",
+    "partner_name": "Citi Simplicity",
+    "partner_link": "https://example.com/prod_025",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Stash Invest",
+    "product_type": "app",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Invest in fractional shares easily.",
+    "benefits": [
+      "Diversified investment options",
+      "Educational resources",
+      "Retirement account options"
+    ],
+    "typical_apy_or_fee": "$1/month for Beginner plan",
+    "min_income": 5292,
+    "max_credit_utilization": 0.45,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_026",
+    "partner_name": "Stash Invest",
+    "partner_link": "https://example.com/prod_026",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Truebill Subscription Manager",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy"
+    ],
+    "short_description": "Easily manage all subscriptions.",
+    "benefits": [
+      "Track and cancel subscriptions",
+      "Lower your bills",
+      "Budgeting and savings tools"
+    ],
+    "typical_apy_or_fee": "$3/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_027",
+    "partner_name": "Truebill Subscription",
+    "partner_link": "https://example.com/prod_027",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Mint Budget Planner",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "savings_builder",
+      "subscription_heavy"
+    ],
+    "short_description": "Track expenses and manage budgets effortlessly.",
+    "benefits": [
+      "Link all accounts for a holistic view",
+      "Customizable budget categories",
+      "Track spending trends over time"
+    ],
+    "typical_apy_or_fee": "$0/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_028",
+    "partner_name": "Mint Budget",
+    "partner_link": "https://example.com/prod_028",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Rocket Money Subscription Manager",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy",
+      "variable_income"
+    ],
+    "short_description": "Identify and cancel unwanted subscriptions.",
+    "benefits": [
+      "Automatic subscription detection",
+      "Cancel subscriptions with one click",
+      "Track recurring expenses"
+    ],
+    "typical_apy_or_fee": "$3/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_029",
+    "partner_name": "Rocket Money",
+    "partner_link": "https://example.com/prod_029",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Ally High-Yield Savings",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Grow your savings with competitive interest rates.",
+    "benefits": [
+      "4.0% APY on all balances",
+      "No monthly maintenance fees",
+      "24/7 customer support"
+    ],
+    "typical_apy_or_fee": "4.0% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_030",
+    "partner_name": "Ally",
+    "partner_link": "https://example.com/prod_030",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Chase Freedom Unlimited",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization",
+      "subscription_heavy"
+    ],
+    "short_description": "Earn cash back on every purchase.",
+    "benefits": [
+      "Unlimited 1.5% cash back",
+      "0% intro APR for 15 months",
+      "No annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 15mo",
+    "min_income": 1500,
+    "max_credit_utilization": 0.8,
+    "min_credit_score": 690,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_031",
+    "partner_name": "Chase Freedom",
+    "partner_link": "https://example.com/prod_031",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Betterment Robo-Advisor",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder",
+      "savings_builder"
+    ],
+    "short_description": "Automated investing for all financial goals.",
+    "benefits": [
+      "Personalized investment portfolios",
+      "Automatic rebalancing",
+      "Tax-loss harvesting"
+    ],
+    "typical_apy_or_fee": "0.25% advisory fee",
+    "min_income": 5000,
+    "max_credit_utilization": 0.42,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_032",
+    "partner_name": "Betterment Robo-Advisor",
+    "partner_link": "https://example.com/prod_032",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Marcus Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "high_utilization",
+      "variable_income"
+    ],
+    "short_description": "Consolidate debt with a low-interest personal loan.",
+    "benefits": [
+      "Fixed APRs starting at 6.99%",
+      "No fees or prepayment penalties",
+      "Flexible payment terms"
+    ],
+    "typical_apy_or_fee": "6.99% APR",
+    "min_income": 3000,
+    "max_credit_utilization": 0.7,
+    "min_credit_score": 680,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_033",
+    "partner_name": "Marcus Personal",
+    "partner_link": "https://example.com/prod_033",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "YNAB (You Need A Budget)",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "savings_builder"
+    ],
+    "short_description": "Gain total control of your money.",
+    "benefits": [
+      "Helps you prioritize spending",
+      "Real-time expense tracking",
+      "Customizable budget goals"
+    ],
+    "typical_apy_or_fee": "$11.99/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_034",
+    "partner_name": "YNAB (You",
+    "partner_link": "https://example.com/prod_034",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Personal Capital Wealth Management",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Comprehensive wealth management services.",
+    "benefits": [
+      "Personalized investment strategies",
+      "Dedicated financial advisors",
+      "Retirement planning tools"
+    ],
+    "typical_apy_or_fee": "0.89% advisory fee",
+    "min_income": 10000,
+    "max_credit_utilization": 0.47,
+    "min_credit_score": 680,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_035",
+    "partner_name": "Personal Capital",
+    "partner_link": "https://example.com/prod_035",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "SoFi Credit Builder",
+    "product_type": "credit_card",
+    "category": "credit_builder",
+    "persona_targets": [
+      "savings_builder",
+      "variable_income"
+    ],
+    "short_description": "Build credit with responsible use.",
+    "benefits": [
+      "No annual fee",
+      "Reports to all three credit bureaus",
+      "Cash back rewards on purchases"
+    ],
+    "typical_apy_or_fee": "$0 annual fee",
+    "min_income": 2000,
+    "max_credit_utilization": 0.9,
+    "min_credit_score": 600,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_036",
+    "partner_name": "SoFi Credit",
+    "partner_link": "https://example.com/prod_036",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Vanguard Digital Advisor",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Automated investment advice from Vanguard.",
+    "benefits": [
+      "Low-cost advisory fee",
+      "Goal-based financial planning",
+      "Diversified investment options"
+    ],
+    "typical_apy_or_fee": "0.15% advisory fee",
+    "min_income": 5000,
+    "max_credit_utilization": 0.42,
+    "min_credit_score": 682,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_037",
+    "partner_name": "Vanguard Digital",
+    "partner_link": "https://example.com/prod_037",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Citi Simplicity Card",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "No late fees, no penalty rate credit card.",
+    "benefits": [
+      "0% intro APR on balance transfers for 21 months",
+      "No late fees ever",
+      "No penalty APR"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 21mo",
+    "min_income": 2000,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 700,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_038",
+    "partner_name": "Citi Simplicity",
+    "partner_link": "https://example.com/prod_038",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Stash Invest",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Begin investing with as little as $5.",
+    "benefits": [
+      "Fractional share investing",
+      "Personalized investment guidance",
+      "Automatic dividend reinvestment"
+    ],
+    "typical_apy_or_fee": "$1/month",
+    "min_income": 8463,
+    "max_credit_utilization": 0.38,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_039",
+    "partner_name": "Stash Invest",
+    "partner_link": "https://example.com/prod_039",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Acorns Personal",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Invest spare change effortlessly.",
+    "benefits": [
+      "Round-up spare change from purchases",
+      "Automated portfolio management",
+      "Diversified investment options"
+    ],
+    "typical_apy_or_fee": "$3/month",
+    "min_income": 7843,
+    "max_credit_utilization": 0.39,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_040",
+    "partner_name": "Acorns Personal",
+    "partner_link": "https://example.com/prod_040",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Fidelity Cash Management Account",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Earn interest on your cash with FDIC insurance.",
+    "benefits": [
+      "Competitive interest rates",
+      "No account fees",
+      "Access to ATM network"
+    ],
+    "typical_apy_or_fee": "3.5% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_041",
+    "partner_name": "Fidelity Cash",
+    "partner_link": "https://example.com/prod_041",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Capital One Quicksilver",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization",
+      "subscription_heavy"
+    ],
+    "short_description": "Unlimited 1.5% cash back on every purchase.",
+    "benefits": [
+      "No annual fee",
+      "0% intro APR for 15 months",
+      "Unlimited cash back rewards"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 15mo",
+    "min_income": 2000,
+    "max_credit_utilization": 0.75,
+    "min_credit_score": 680,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_042",
+    "partner_name": "Capital One",
+    "partner_link": "https://example.com/prod_042",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Discover it Balance Transfer",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Transfer balances and earn cash back.",
+    "benefits": [
+      "0% intro APR for 18 months on balance transfers",
+      "1% - 5% cash back on purchases",
+      "No annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 18mo",
+    "min_income": 2500,
+    "max_credit_utilization": 0.8,
+    "min_credit_score": 690,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_043",
+    "partner_name": "Discover it",
+    "partner_link": "https://example.com/prod_043",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Avant Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "high_utilization",
+      "variable_income"
+    ],
+    "short_description": "Access quick funds with flexible terms.",
+    "benefits": [
+      "Loan amounts up to $35,000",
+      "APR starting at 9.95%",
+      "Funds available in as soon as one day"
+    ],
+    "typical_apy_or_fee": "9.95% APR",
+    "min_income": 2000,
+    "max_credit_utilization": 0.8,
+    "min_credit_score": 600,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_044",
+    "partner_name": "Avant Personal",
+    "partner_link": "https://example.com/prod_044",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Tally Debt Manager",
+    "product_type": "app",
+    "category": "debt_consolidation",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Simplify and pay down your credit card debt.",
+    "benefits": [
+      "Automated credit card management",
+      "Lower interest rates on balances",
+      "No late fees"
+    ],
+    "typical_apy_or_fee": "$0 to $25/month",
+    "min_income": 2500,
+    "max_credit_utilization": 0.9,
+    "min_credit_score": 660,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_045",
+    "partner_name": "Tally Debt",
+    "partner_link": "https://example.com/prod_045",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Trim Financial Manager",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy",
+      "variable_income"
+    ],
+    "short_description": "Manage subscriptions and save money.",
+    "benefits": [
+      "Subscription cancellation service",
+      "Bill negotiation features",
+      "Analytics on spending habits"
+    ],
+    "typical_apy_or_fee": "$10/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_046",
+    "partner_name": "Trim Financial",
+    "partner_link": "https://example.com/prod_046",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Truebill Subscription Tracker",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy"
+    ],
+    "short_description": "Keep track of all your subscriptions.",
+    "benefits": [
+      "Detects and lists all subscriptions",
+      "Cancel subscriptions with one tap",
+      "Negotiate bills for potential savings"
+    ],
+    "typical_apy_or_fee": "$5/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_047",
+    "partner_name": "Truebill Subscription",
+    "partner_link": "https://example.com/prod_047",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Acorns Family",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Invest for yourself and your family.",
+    "benefits": [
+      "Includes investment, retirement, and checking",
+      "Round-ups and automatic rebalancing",
+      "Access to financial literacy content"
+    ],
+    "typical_apy_or_fee": "$5/month",
+    "min_income": 8975,
+    "max_credit_utilization": 0.43,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_048",
+    "partner_name": "Acorns Family",
+    "partner_link": "https://example.com/prod_048",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Wealthfront Cash Account",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "High interest and easy access to your cash.",
+    "benefits": [
+      "4.3% APY on deposits",
+      "No account fees",
+      "FDIC insured up to $1 million"
+    ],
+    "typical_apy_or_fee": "4.3% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_049",
+    "partner_name": "Wealthfront Cash",
+    "partner_link": "https://example.com/prod_049",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Digit Savings App",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "savings_builder",
+      "variable_income"
+    ],
+    "short_description": "Automated savings based on your spending habits.",
+    "benefits": [
+      "Smart savings algorithm",
+      "No overdraft guarantee",
+      "Customizable savings goals"
+    ],
+    "typical_apy_or_fee": "$5/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_050",
+    "partner_name": "Digit",
+    "partner_link": "https://example.com/prod_050",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Netspend Prepaid Card",
+    "product_type": "credit_card",
+    "category": "credit_builder",
+    "persona_targets": [
+      "variable_income",
+      "savings_builder"
+    ],
+    "short_description": "Build credit with a prepaid card.",
+    "benefits": [
+      "No credit check required",
+      "Direct deposit for faster access to funds",
+      "No late fees"
+    ],
+    "typical_apy_or_fee": "$5.95 monthly fee",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_051",
+    "partner_name": "Netspend Prepaid",
+    "partner_link": "https://example.com/prod_051",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Marcus by Goldman Sachs High-Yield Online Savings",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "High-yield savings with no fees.",
+    "benefits": [
+      "3.9% APY on deposits",
+      "No minimum deposit required",
+      "No monthly fees"
+    ],
+    "typical_apy_or_fee": "3.9% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_052",
+    "partner_name": "Marcus by",
+    "partner_link": "https://example.com/prod_052",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "NerdWallet Balance Transfer Finder",
+    "product_type": "service",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Locate the best balance transfer offers.",
+    "benefits": [
+      "Compares multiple offers at once",
+      "Identifies highest savings potential",
+      "Free to use"
+    ],
+    "typical_apy_or_fee": "$0",
+    "min_income": 2183,
+    "max_credit_utilization": 0.77,
+    "min_credit_score": 678,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_053",
+    "partner_name": "NerdWallet Balance",
+    "partner_link": "https://example.com/prod_053",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Kickoff Credit Builder",
+    "product_type": "credit_card",
+    "category": "credit_builder",
+    "persona_targets": [
+      "savings_builder",
+      "variable_income"
+    ],
+    "short_description": "Build credit with small monthly payments.",
+    "benefits": [
+      "Reports to all major credit bureaus",
+      "No interest or fees",
+      "Flexible payment schedule"
+    ],
+    "typical_apy_or_fee": "$2/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_054",
+    "partner_name": "Kickoff Credit",
+    "partner_link": "https://example.com/prod_054",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Chase Freedom Unlimited",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Unlimited cash back with balance transfer benefits.",
+    "benefits": [
+      "0% intro APR for 15 months",
+      "Unlimited 1.5% cash back",
+      "$0 annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 15mo",
+    "min_income": 2000,
+    "max_credit_utilization": 0.7,
+    "min_credit_score": 670,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_055",
+    "partner_name": "Chase Freedom",
+    "partner_link": "https://example.com/prod_055",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Ally Online Savings",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "High-yield savings with no monthly fees.",
+    "benefits": [
+      "4.5% APY",
+      "No monthly maintenance fees",
+      "24/7 customer support"
+    ],
+    "typical_apy_or_fee": "4.5% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_056",
+    "partner_name": "Ally Online",
+    "partner_link": "https://example.com/prod_056",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Mint Budget Planner",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "subscription_heavy"
+    ],
+    "short_description": "Comprehensive budgeting tool with subscription tracking.",
+    "benefits": [
+      "Track spending and income",
+      "Custom budget categories",
+      "Alerts for upcoming bills"
+    ],
+    "typical_apy_or_fee": "Free",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_057",
+    "partner_name": "Mint Budget",
+    "partner_link": "https://example.com/prod_057",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Rocket Money Subscription Manager",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy"
+    ],
+    "short_description": "Manage and cancel subscriptions easily.",
+    "benefits": [
+      "Identify unwanted subscriptions",
+      "Easy cancellation process",
+      "Monthly spending summary"
+    ],
+    "typical_apy_or_fee": "$10/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_058",
+    "partner_name": "Rocket Money",
+    "partner_link": "https://example.com/prod_058",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Wealthfront Robo Advisor",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Automated investing with personalized strategies.",
+    "benefits": [
+      "0.25% annual advisory fee",
+      "Tax-loss harvesting",
+      "Portfolio rebalancing"
+    ],
+    "typical_apy_or_fee": "0.25% advisory fee",
+    "min_income": 5000,
+    "max_credit_utilization": 0.5,
+    "min_credit_score": 664,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_059",
+    "partner_name": "Wealthfront Robo",
+    "partner_link": "https://example.com/prod_059",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Marcus Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "high_utilization",
+      "variable_income"
+    ],
+    "short_description": "Flexible personal loans with no fees.",
+    "benefits": [
+      "Fixed interest rates",
+      "No origination fees",
+      "Flexible payment terms"
+    ],
+    "typical_apy_or_fee": "6.99% - 19.99% APR",
+    "min_income": 2500,
+    "max_credit_utilization": 0.6,
+    "min_credit_score": 660,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_060",
+    "partner_name": "Marcus Personal",
+    "partner_link": "https://example.com/prod_060",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Discover It Balance Transfer",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Cash back card with balance transfer perks.",
+    "benefits": [
+      "0% intro APR for 18 months",
+      "5% cash back in rotating categories",
+      "$0 annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 18mo",
+    "min_income": 1500,
+    "max_credit_utilization": 0.65,
+    "min_credit_score": 680,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_061",
+    "partner_name": "Discover It",
+    "partner_link": "https://example.com/prod_061",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "YNAB (You Need A Budget)",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "savings_builder"
+    ],
+    "short_description": "Proactive budgeting tool for better money management.",
+    "benefits": [
+      "Real-time budget tracking",
+      "Goal setting and tracking",
+      "Customizable spending categories"
+    ],
+    "typical_apy_or_fee": "$11.99/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_062",
+    "partner_name": "YNAB (You",
+    "partner_link": "https://example.com/prod_062",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "SoFi Invest",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Automated investing with no management fees.",
+    "benefits": [
+      "No advisory fees",
+      "Fractional shares investing",
+      "Access to financial planners"
+    ],
+    "typical_apy_or_fee": "0% advisory fee",
+    "min_income": 5000,
+    "max_credit_utilization": 0.5,
+    "min_credit_score": 665,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_063",
+    "partner_name": "SoFi Invest",
+    "partner_link": "https://example.com/prod_063",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Acorns Invest",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Automated micro-investing with round-ups.",
+    "benefits": [
+      "Invest spare change",
+      "Diversified portfolios",
+      "Automatic rebalancing"
+    ],
+    "typical_apy_or_fee": "$3/month",
+    "min_income": 5304,
+    "max_credit_utilization": 0.43,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_064",
+    "partner_name": "Acorns Invest",
+    "partner_link": "https://example.com/prod_064",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Personal Capital",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Comprehensive personal finance app.",
+    "benefits": [
+      "Track investments and spending",
+      "Retirement planning tools",
+      "Net worth tracking"
+    ],
+    "typical_apy_or_fee": "Free",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_065",
+    "partner_name": "Personal Capital",
+    "partner_link": "https://example.com/prod_065",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Citi Simplicity Card",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "No late fees or penalty rates.",
+    "benefits": [
+      "0% intro APR for 21 months",
+      "No annual fee",
+      "No late fees"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 21mo",
+    "min_income": 2500,
+    "max_credit_utilization": 0.6,
+    "min_credit_score": 690,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_066",
+    "partner_name": "Citi Simplicity",
+    "partner_link": "https://example.com/prod_066",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
   },
   {
     "product_name": "Wells Fargo Reflect Card",
@@ -480,140 +1962,2004 @@
     "benefits": [
       "0% intro APR for up to 21 months",
       "No annual fee",
-      "Flexibility to pay over time"
+      "Access to cell phone protection"
     ],
     "typical_apy_or_fee": "0% intro APR for 21mo",
-    "min_income": 3000,
-    "max_credit_utilization": 0.85,
-    "requires_no_existing_savings": true,
-    "requires_no_existing_investment": true,
-    "min_credit_score": 670,
+    "min_income": 1500,
+    "max_credit_utilization": 0.65,
+    "min_credit_score": 680,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_017",
+    "product_id": "prod_067",
     "partner_name": "Wells Fargo",
-    "partner_link": "https://example.com/prod_017",
+    "partner_link": "https://example.com/prod_067",
     "commission_rate": 0.0,
     "priority": 2,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
-  },
-  {
-    "product_name": "Vanguard Target Retirement Fund",
-    "product_type": "investment_account",
-    "category": "retirement_plan",
-    "persona_targets": [
-      "wealth_builder"
-    ],
-    "short_description": "Set and forget your retirement savings.",
-    "benefits": [
-      "Low expense ratios",
-      "Diversified investments",
-      "Automatic rebalancing"
-    ],
-    "typical_apy_or_fee": "0.15% expense ratio",
-    "min_income": 5000,
-    "max_credit_utilization": 1.0,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
     "requires_no_existing_savings": false,
-    "requires_no_existing_investment": false,
-    "min_credit_score": null,
-    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_018",
-    "partner_name": "Vanguard Target",
-    "partner_link": "https://example.com/prod_018",
-    "commission_rate": 0.0,
-    "priority": 2,
-    "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "requires_no_existing_investment": false
   },
   {
-    "product_name": "Simple Subscription Tracker",
-    "product_type": "app",
-    "category": "subscription_manager",
+    "product_name": "Empower Personal Cash",
+    "product_type": "savings_account",
+    "category": "hysa",
     "persona_targets": [
-      "subscription_heavy"
+      "savings_builder"
     ],
-    "short_description": "Track and optimize your subscriptions.",
+    "short_description": "High-yield savings with financial coaching.",
     "benefits": [
-      "Identify redundant subscriptions",
-      "Simplify subscription management",
-      "Receive alerts for renewals"
+      "4.25% APY",
+      "No minimum balance",
+      "Financial coaching included"
     ],
-    "typical_apy_or_fee": "$2.99/month",
+    "typical_apy_or_fee": "4.25% APY",
     "min_income": 0,
     "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_068",
+    "partner_name": "Empower Personal",
+    "partner_link": "https://example.com/prod_068",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
     "requires_no_existing_savings": true,
-    "requires_no_existing_investment": true,
-    "min_credit_score": null,
-    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_019",
-    "partner_name": "Simple Subscription",
-    "partner_link": "https://example.com/prod_019",
-    "commission_rate": 0.0,
-    "priority": 2,
-    "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "requires_no_existing_investment": false
   },
   {
-    "product_name": "Digital Nomad Fund",
-    "product_type": "investment_account",
-    "category": "robo_advisor",
+    "product_name": "Rocket Mortgage Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
     "persona_targets": [
-      "variable_income",
-      "wealth_builder"
+      "variable_income"
     ],
-    "short_description": "Invest with a lifestyle-focused portfolio.",
+    "short_description": "Quick approval loans for gig workers.",
     "benefits": [
-      "Flexible contribution plans",
-      "Lifestyle-aligned investments",
-      "Low management fees"
+      "Fast approval process",
+      "No prepayment penalties",
+      "Flexible loan amounts"
     ],
-    "typical_apy_or_fee": "0.3% advisory fee",
-    "min_income": 5000,
-    "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": false,
-    "requires_no_existing_investment": false,
-    "min_credit_score": null,
+    "typical_apy_or_fee": "5.99% - 24.99% APR",
+    "min_income": 3000,
+    "max_credit_utilization": 0.7,
+    "min_credit_score": 640,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_020",
-    "partner_name": "Digital Nomad",
-    "partner_link": "https://example.com/prod_020",
+    "product_id": "prod_069",
+    "partner_name": "Rocket Mortgage",
+    "partner_link": "https://example.com/prod_069",
     "commission_rate": 0.0,
     "priority": 2,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
   },
   {
-    "product_name": "Bank of America Custom Savings",
+    "product_name": "Capital One Quicksilver",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Unlimited 1.5% cash back with balance transfer option.",
+    "benefits": [
+      "0% intro APR for 15 months",
+      "Unlimited 1.5% cash back",
+      "No annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 15mo",
+    "min_income": 2000,
+    "max_credit_utilization": 0.7,
+    "min_credit_score": 670,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_070",
+    "partner_name": "Capital One",
+    "partner_link": "https://example.com/prod_070",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Sofi Checking & Savings",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder"
+    ],
+    "short_description": "Earn high interest with no account fees.",
+    "benefits": [
+      "4.2% APY",
+      "No account fees",
+      "Early direct deposit access"
+    ],
+    "typical_apy_or_fee": "4.2% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_071",
+    "partner_name": "Sofi",
+    "partner_link": "https://example.com/prod_071",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Tally Credit Card Manager",
+    "product_type": "app",
+    "category": "debt_consolidation",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Automated credit card management and debt consolidation.",
+    "benefits": [
+      "Lower interest rates",
+      "Automated payments",
+      "Improved credit score"
+    ],
+    "typical_apy_or_fee": "7.9% - 29.9% APR",
+    "min_income": 2500,
+    "max_credit_utilization": 0.8,
+    "min_credit_score": 650,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_072",
+    "partner_name": "Tally Credit",
+    "partner_link": "https://example.com/prod_072",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Chime High Yield Savings",
     "product_type": "savings_account",
     "category": "hysa",
     "persona_targets": [
       "savings_builder",
       "variable_income"
     ],
-    "short_description": "High-yield savings with customization options.",
+    "short_description": "Automatic savings with high APY.",
     "benefits": [
-      "Competitive interest rates",
-      "No monthly maintenance fees",
-      "Custom savings goals"
+      "4.0% APY",
+      "Automatic round-ups",
+      "No fees or minimum balance"
+    ],
+    "typical_apy_or_fee": "4.0% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_073",
+    "partner_name": "Chime High",
+    "partner_link": "https://example.com/prod_073",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Betterment Investing",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Smart investing with automated tools.",
+    "benefits": [
+      "0.25% annual advisory fee",
+      "Tax-efficient portfolios",
+      "Automated rebalancing"
+    ],
+    "typical_apy_or_fee": "0.25% advisory fee",
+    "min_income": 5000,
+    "max_credit_utilization": 0.5,
+    "min_credit_score": 652,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_074",
+    "partner_name": "Betterment Investing",
+    "partner_link": "https://example.com/prod_074",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Credible Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "high_utilization",
+      "variable_income"
+    ],
+    "short_description": "Compare personal loans for best rates.",
+    "benefits": [
+      "Compare multiple lenders",
+      "No impact on credit score",
+      "Personalized loan offers"
+    ],
+    "typical_apy_or_fee": "4.99% - 35.99% APR",
+    "min_income": 2500,
+    "max_credit_utilization": 0.7,
+    "min_credit_score": 620,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_075",
+    "partner_name": "Credible Personal",
+    "partner_link": "https://example.com/prod_075",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "N26 Online Banking",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "variable_income"
+    ],
+    "short_description": "Mobile banking with high-yield savings.",
+    "benefits": [
+      "3.5% APY",
+      "Instant notifications",
+      "No hidden fees"
     ],
     "typical_apy_or_fee": "3.5% APY",
     "min_income": 0,
     "max_credit_utilization": 1.0,
-    "requires_no_existing_savings": false,
-    "requires_no_existing_investment": true,
     "min_credit_score": null,
     "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
-    "product_id": "prod_021",
-    "partner_name": "Bank of",
-    "partner_link": "https://example.com/prod_021",
+    "product_id": "prod_076",
+    "partner_name": "N26 Online",
+    "partner_link": "https://example.com/prod_076",
     "commission_rate": 0.0,
     "priority": 2,
     "active": true,
-    "created_at": "2025-11-07T00:00:00Z",
-    "updated_at": "2025-11-07T00:00:00Z"
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Payoff Loan",
+    "product_type": "service",
+    "category": "debt_consolidation",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Consolidate high-interest credit card debt.",
+    "benefits": [
+      "Lower fixed rates",
+      "No hidden fees",
+      "Transparent lending process"
+    ],
+    "typical_apy_or_fee": "5.99% - 24.99% APR",
+    "min_income": 2500,
+    "max_credit_utilization": 0.75,
+    "min_credit_score": 640,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_077",
+    "partner_name": "Payoff Loan",
+    "partner_link": "https://example.com/prod_077",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Stash Invest",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Beginner-friendly investing with advice.",
+    "benefits": [
+      "Fractional shares",
+      "Custom investment plans",
+      "Financial education resources"
+    ],
+    "typical_apy_or_fee": "$1/month",
+    "min_income": 9127,
+    "max_credit_utilization": 0.37,
+    "min_credit_score": 656,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_078",
+    "partner_name": "Stash Invest",
+    "partner_link": "https://example.com/prod_078",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Credit Karma Money Spend",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "variable_income"
+    ],
+    "short_description": "Free checking with savings features.",
+    "benefits": [
+      "No fees or minimums",
+      "Cash rewards program",
+      "Free credit score tracking"
+    ],
+    "typical_apy_or_fee": "2.5% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_079",
+    "partner_name": "Credit Karma",
+    "partner_link": "https://example.com/prod_079",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "TD Ameritrade Essential Portfolios",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Automated investment service with low fees.",
+    "benefits": [
+      "0.30% annual advisory fee",
+      "Diversified ETFs",
+      "Automatic portfolio rebalancing"
+    ],
+    "typical_apy_or_fee": "0.30% advisory fee",
+    "min_income": 5655,
+    "max_credit_utilization": 0.37,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_080",
+    "partner_name": "TD Ameritrade",
+    "partner_link": "https://example.com/prod_080",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Chase Freedom Unlimited",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization",
+      "savings_builder"
+    ],
+    "short_description": "0% APR on balance transfers for 15 months.",
+    "benefits": [
+      "0% intro APR for 15 months on balance transfers",
+      "No annual fee",
+      "Earn 1.5% cashback on every purchase"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 15 months",
+    "min_income": 2000,
+    "max_credit_utilization": 0.6,
+    "min_credit_score": 670,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_081",
+    "partner_name": "Chase Freedom",
+    "partner_link": "https://example.com/prod_081",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Ally Online Savings",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Competitive APY with no monthly fees.",
+    "benefits": [
+      "4.5% APY",
+      "No monthly maintenance fees",
+      "Easy online access and transfers"
+    ],
+    "typical_apy_or_fee": "4.5% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_082",
+    "partner_name": "Ally Online",
+    "partner_link": "https://example.com/prod_082",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "YNAB Budgeting App",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "subscription_heavy"
+    ],
+    "short_description": "Manage your budget with proactive planning.",
+    "benefits": [
+      "Track spending in real-time",
+      "Plan for irregular income",
+      "Reduce unnecessary subscriptions"
+    ],
+    "typical_apy_or_fee": "$11.99/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_083",
+    "partner_name": "YNAB Budgeting",
+    "partner_link": "https://example.com/prod_083",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Rocket Money Subscription Manager",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy"
+    ],
+    "short_description": "Easily manage and cancel subscriptions.",
+    "benefits": [
+      "Identify unused subscriptions",
+      "Cancel with one click",
+      "Track recurring expenses"
+    ],
+    "typical_apy_or_fee": "$5/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_084",
+    "partner_name": "Rocket Money",
+    "partner_link": "https://example.com/prod_084",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Wealthfront Investment Account",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Automated investing with low fees.",
+    "benefits": [
+      "0.25% advisory fee",
+      "Automated rebalancing",
+      "Tax-loss harvesting"
+    ],
+    "typical_apy_or_fee": "0.25% advisory fee",
+    "min_income": 7728,
+    "max_credit_utilization": 0.33,
+    "min_credit_score": 671,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_085",
+    "partner_name": "Wealthfront Investment",
+    "partner_link": "https://example.com/prod_085",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "LendingClub Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "high_utilization",
+      "variable_income"
+    ],
+    "short_description": "Flexible personal loans up to $40,000.",
+    "benefits": [
+      "Fixed rates as low as 6.95% APR",
+      "Loans up to $40,000",
+      "No prepayment penalties"
+    ],
+    "typical_apy_or_fee": "6.95% APR",
+    "min_income": 1500,
+    "max_credit_utilization": 0.8,
+    "min_credit_score": 600,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_086",
+    "partner_name": "LendingClub Personal",
+    "partner_link": "https://example.com/prod_086",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "SoFi Money",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "variable_income"
+    ],
+    "short_description": "High-yield checking and savings account.",
+    "benefits": [
+      "3.5% APY",
+      "No account fees",
+      "Overdraft coverage"
+    ],
+    "typical_apy_or_fee": "3.5% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_087",
+    "partner_name": "SoFi Money",
+    "partner_link": "https://example.com/prod_087",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Marcus by Goldman Sachs Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "No-fee personal loans up to $30,000.",
+    "benefits": [
+      "Fixed APR rates",
+      "No fees",
+      "Flexible loan terms"
+    ],
+    "typical_apy_or_fee": "5.99% APR",
+    "min_income": 2500,
+    "max_credit_utilization": 0.7,
+    "min_credit_score": 660,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_088",
+    "partner_name": "Marcus by",
+    "partner_link": "https://example.com/prod_088",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Betterment Checking",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Checking account with cash back rewards.",
+    "benefits": [
+      "No fees",
+      "Cash back rewards",
+      "FDIC insured up to $1M"
+    ],
+    "typical_apy_or_fee": "2.5% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_089",
+    "partner_name": "Betterment",
+    "partner_link": "https://example.com/prod_089",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Capital One SavorOne",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization",
+      "subscription_heavy"
+    ],
+    "short_description": "Earn cash back on dining and entertainment.",
+    "benefits": [
+      "3% cash back on dining",
+      "0% intro APR for 15 months",
+      "No annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 15 months",
+    "min_income": 2000,
+    "max_credit_utilization": 0.65,
+    "min_credit_score": 700,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_090",
+    "partner_name": "Capital One",
+    "partner_link": "https://example.com/prod_090",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "TIAA Personal Portfolio",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Personalized investment advice and management.",
+    "benefits": [
+      "0.3% annual fee",
+      "Automated portfolio management",
+      "Access to financial advisors"
+    ],
+    "typical_apy_or_fee": "0.3% annual fee",
+    "min_income": 6333,
+    "max_credit_utilization": 0.31,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_091",
+    "partner_name": "TIAA Personal",
+    "partner_link": "https://example.com/prod_091",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Mint Budget Planner",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "savings_builder"
+    ],
+    "short_description": "Track your spending and build budgets effortlessly.",
+    "benefits": [
+      "Free budgeting tools",
+      "Expense categorization",
+      "Alerts for bills and fees"
+    ],
+    "typical_apy_or_fee": "Free",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_092",
+    "partner_name": "Mint Budget",
+    "partner_link": "https://example.com/prod_092",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Fidelity Cash Management",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "High-yield cash management account.",
+    "benefits": [
+      "1.9% APY",
+      "No fees or minimums",
+      "ATM fee reimbursement"
+    ],
+    "typical_apy_or_fee": "1.9% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_093",
+    "partner_name": "Fidelity Cash",
+    "partner_link": "https://example.com/prod_093",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Acorns Invest",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Micro-investing app for building wealth.",
+    "benefits": [
+      "Automated round-ups",
+      "Low fee structure",
+      "Diverse portfolio options"
+    ],
+    "typical_apy_or_fee": "$3/month",
+    "min_income": 7435,
+    "max_credit_utilization": 0.39,
+    "min_credit_score": 662,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_094",
+    "partner_name": "Acorns Invest",
+    "partner_link": "https://example.com/prod_094",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Discover it Balance Transfer",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "0% intro APR for 18 months on balance transfers.",
+    "benefits": [
+      "0% intro APR for 18 months",
+      "Earn 5% cash back on rotating categories",
+      "No annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 18 months",
+    "min_income": 2500,
+    "max_credit_utilization": 0.7,
+    "min_credit_score": 680,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_095",
+    "partner_name": "Discover it",
+    "partner_link": "https://example.com/prod_095",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Quicken Simplifi",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "subscription_heavy"
+    ],
+    "short_description": "Simple budgeting tool to manage finances.",
+    "benefits": [
+      "Customizable budgets",
+      "Track subscriptions",
+      "Real-time alerts"
+    ],
+    "typical_apy_or_fee": "$3.99/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_096",
+    "partner_name": "Quicken Simplifi",
+    "partner_link": "https://example.com/prod_096",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Experian Boost",
+    "product_type": "service",
+    "category": "credit_builder",
+    "persona_targets": [
+      "high_utilization",
+      "savings_builder"
+    ],
+    "short_description": "Boost your credit score instantly.",
+    "benefits": [
+      "Use utility payments to boost score",
+      "Free service",
+      "Immediate results"
+    ],
+    "typical_apy_or_fee": "Free",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_097",
+    "partner_name": "Experian Boost",
+    "partner_link": "https://example.com/prod_097",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Vanguard Personal Advisor Services",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Professional financial advice and management.",
+    "benefits": [
+      "0.3% advisory fee",
+      "Customized financial plans",
+      "Access to Vanguard funds"
+    ],
+    "typical_apy_or_fee": "0.3% advisory fee",
+    "min_income": 5000,
+    "max_credit_utilization": 0.42,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_098",
+    "partner_name": "Vanguard Personal",
+    "partner_link": "https://example.com/prod_098",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Truebill Subscription Manager",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy"
+    ],
+    "short_description": "Manage subscriptions and track spending.",
+    "benefits": [
+      "Cancel subscriptions with ease",
+      "Identify subscription spending",
+      "Customizable budget alerts"
+    ],
+    "typical_apy_or_fee": "$3/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_099",
+    "partner_name": "Truebill Subscription",
+    "partner_link": "https://example.com/prod_099",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Ellevest Digital",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Investing platform designed for women.",
+    "benefits": [
+      "0.25% annual fee",
+      "Goal-driven investment plans",
+      "Diversity-focused portfolios"
+    ],
+    "typical_apy_or_fee": "0.25% annual fee",
+    "min_income": 5588,
+    "max_credit_utilization": 0.31,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_100",
+    "partner_name": "Ellevest Digital",
+    "partner_link": "https://example.com/prod_100",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Tally Credit Card Manager",
+    "product_type": "app",
+    "category": "debt_consolidation",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Simplify and manage credit card payments.",
+    "benefits": [
+      "Automated payments",
+      "Lower interest rates",
+      "Pay down debt faster"
+    ],
+    "typical_apy_or_fee": "Variable APR",
+    "min_income": 2500,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 660,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_101",
+    "partner_name": "Tally Credit",
+    "partner_link": "https://example.com/prod_101",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "PenFed Power Cash Rewards",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Earn cash back on all purchases.",
+    "benefits": [
+      "1.5% cash back on purchases",
+      "0% intro APR for 12 months",
+      "No annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 12 months",
+    "min_income": 2000,
+    "max_credit_utilization": 0.75,
+    "min_credit_score": 670,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_102",
+    "partner_name": "PenFed Power",
+    "partner_link": "https://example.com/prod_102",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Empower Personal Dashboard",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "wealth_builder"
+    ],
+    "short_description": "Track spending and manage investments.",
+    "benefits": [
+      "Real-time net worth tracking",
+      "Expense categorization",
+      "Investment performance analysis"
+    ],
+    "typical_apy_or_fee": "$8/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_103",
+    "partner_name": "Empower Personal",
+    "partner_link": "https://example.com/prod_103",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Chime Credit Builder",
+    "product_type": "service",
+    "category": "credit_builder",
+    "persona_targets": [
+      "high_utilization",
+      "savings_builder"
+    ],
+    "short_description": "Build credit with no interest or fees.",
+    "benefits": [
+      "No interest or annual fees",
+      "Automated payments",
+      "Helps improve credit score"
+    ],
+    "typical_apy_or_fee": "No fees",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_104",
+    "partner_name": "Chime Credit",
+    "partner_link": "https://example.com/prod_104",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Apex Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "variable_income",
+      "high_utilization"
+    ],
+    "short_description": "Flexible personal loans for various needs.",
+    "benefits": [
+      "Competitive APR rates",
+      "Flexible repayment terms",
+      "Quick approval process"
+    ],
+    "typical_apy_or_fee": "7.5% APR",
+    "min_income": 2000,
+    "max_credit_utilization": 0.8,
+    "min_credit_score": 640,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_105",
+    "partner_name": "Apex Personal",
+    "partner_link": "https://example.com/prod_105",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Robinhood Gold",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Advanced investing with margin and research.",
+    "benefits": [
+      "Access to margin investing",
+      "Level II market data",
+      "Professional research reports"
+    ],
+    "typical_apy_or_fee": "$5/month",
+    "min_income": 8321,
+    "max_credit_utilization": 0.34,
+    "min_credit_score": 672,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_106",
+    "partner_name": "Robinhood Gold",
+    "partner_link": "https://example.com/prod_106",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Aspiration Spend & Save",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "variable_income"
+    ],
+    "short_description": "High-interest checking with ethical banking.",
+    "benefits": [
+      "Up to 3.0% APY",
+      "No monthly fees",
+      "Carbon-offset purchases"
+    ],
+    "typical_apy_or_fee": "3.0% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_107",
+    "partner_name": "Aspiration Spend",
+    "partner_link": "https://example.com/prod_107",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Aspiration Spend & Save",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "variable_income"
+    ],
+    "short_description": "Eco-friendly high-yield savings account.",
+    "benefits": [
+      "Up to 5.00% APY",
+      "No monthly fees",
+      "Carbon offset on purchases"
+    ],
+    "typical_apy_or_fee": "Up to 5.00% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_108",
+    "partner_name": "Aspiration Spend",
+    "partner_link": "https://example.com/prod_108",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Truebill Subscription Manager",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy"
+    ],
+    "short_description": "Track and manage all your subscriptions.",
+    "benefits": [
+      "Cancel unwanted subscriptions",
+      "Track spending easily",
+      "Automated budget reminders"
+    ],
+    "typical_apy_or_fee": "$3/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_109",
+    "partner_name": "Truebill Subscription",
+    "partner_link": "https://example.com/prod_109",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Quicken Premier",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "savings_builder"
+    ],
+    "short_description": "Comprehensive budgeting tool for freelancers.",
+    "benefits": [
+      "Detailed income/expense tracking",
+      "Customizable reports",
+      "Bill tracking and reminders"
+    ],
+    "typical_apy_or_fee": "$60/year",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_110",
+    "partner_name": "Quicken Premier",
+    "partner_link": "https://example.com/prod_110",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Wealthfront Cash Account",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "wealth_builder",
+      "savings_builder"
+    ],
+    "short_description": "High-yield cash account with no fees.",
+    "benefits": [
+      "4.30% APY",
+      "No account fees",
+      "FDIC insured up to $1M"
+    ],
+    "typical_apy_or_fee": "4.30% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_111",
+    "partner_name": "Wealthfront Cash",
+    "partner_link": "https://example.com/prod_111",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Marcus Personal Loan",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "high_utilization",
+      "savings_builder"
+    ],
+    "short_description": "No-fee personal loans for debt consolidation.",
+    "benefits": [
+      "Fixed rates from 6.99% APR",
+      "No fees",
+      "Flexible payment terms"
+    ],
+    "typical_apy_or_fee": "From 6.99% APR",
+    "min_income": 2000,
+    "max_credit_utilization": 0.8,
+    "min_credit_score": 660,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_112",
+    "partner_name": "Marcus Personal",
+    "partner_link": "https://example.com/prod_112",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Acorns Invest",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder",
+      "savings_builder"
+    ],
+    "short_description": "Micro-investing app for beginners.",
+    "benefits": [
+      "Automatic round-ups",
+      "Diversified portfolios",
+      "Low fees"
+    ],
+    "typical_apy_or_fee": "$3/month",
+    "min_income": 7120,
+    "max_credit_utilization": 0.33,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_113",
+    "partner_name": "Acorns Invest",
+    "partner_link": "https://example.com/prod_113",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "SoFi Credit Builder Card",
+    "product_type": "credit_card",
+    "category": "credit_builder",
+    "persona_targets": [
+      "high_utilization",
+      "savings_builder"
+    ],
+    "short_description": "Credit builder card with no fees.",
+    "benefits": [
+      "No annual fee",
+      "Build credit with responsible use",
+      "Report to 3 major bureaus"
+    ],
+    "typical_apy_or_fee": "No annual fee",
+    "min_income": 1500,
+    "max_credit_utilization": 0.7,
+    "min_credit_score": 580,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_114",
+    "partner_name": "SoFi Credit",
+    "partner_link": "https://example.com/prod_114",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Chime High-Yield Savings",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "savings_builder",
+      "variable_income"
+    ],
+    "short_description": "No-fee savings account with a solid APY.",
+    "benefits": [
+      "2.00% APY",
+      "No fees",
+      "Automatic savings features"
+    ],
+    "typical_apy_or_fee": "2.00% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_115",
+    "partner_name": "Chime",
+    "partner_link": "https://example.com/prod_115",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Fidelity Go",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Robo-advisor with no minimum investment.",
+    "benefits": [
+      "Professional portfolio management",
+      "Low advisory fees",
+      "No minimum to start"
+    ],
+    "typical_apy_or_fee": "0.35% advisory fee",
+    "min_income": 9240,
+    "max_credit_utilization": 0.31,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_116",
+    "partner_name": "Fidelity Go",
+    "partner_link": "https://example.com/prod_116",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Rocket Money Premium",
+    "product_type": "app",
+    "category": "subscription_manager",
+    "persona_targets": [
+      "subscription_heavy",
+      "variable_income"
+    ],
+    "short_description": "Premium tool to manage subscriptions and expenses.",
+    "benefits": [
+      "Cancel unwanted subscriptions",
+      "Track spending trends",
+      "Custom budget alerts"
+    ],
+    "typical_apy_or_fee": "$5/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_117",
+    "partner_name": "Rocket Money",
+    "partner_link": "https://example.com/prod_117",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Mint Budgeting App",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "savings_builder"
+    ],
+    "short_description": "Free budgeting app for tracking expenses.",
+    "benefits": [
+      "Free to use",
+      "Link all accounts",
+      "Customizable alerts"
+    ],
+    "typical_apy_or_fee": "Free",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_118",
+    "partner_name": "Mint Budgeting",
+    "partner_link": "https://example.com/prod_118",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Discover Balance Transfer Card",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "0% APR for balance transfers.",
+    "benefits": [
+      "0% intro APR for 18 months",
+      "No annual fee",
+      "Cashback on purchases"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 18 months",
+    "min_income": 2000,
+    "max_credit_utilization": 0.81,
+    "min_credit_score": 670,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_119",
+    "partner_name": "Discover Balance",
+    "partner_link": "https://example.com/prod_119",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Personal Capital",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Financial planning and wealth management app.",
+    "benefits": [
+      "Free budgeting tools",
+      "Investment tracking",
+      "Retirement planner"
+    ],
+    "typical_apy_or_fee": "Free",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_120",
+    "partner_name": "Personal Capital",
+    "partner_link": "https://example.com/prod_120",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Marcus High-Yield CDs",
+    "product_type": "savings_account",
+    "category": "hysa",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "High-yield CDs for long-term savers.",
+    "benefits": [
+      "Flexible terms",
+      "Competitive rates",
+      "FDIC insured"
+    ],
+    "typical_apy_or_fee": "Up to 5.10% APY",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_121",
+    "partner_name": "Marcus",
+    "partner_link": "https://example.com/prod_121",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": true,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Ally Invest Managed Portfolios",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "wealth_builder"
+    ],
+    "short_description": "Automated investing with no advisory fee.",
+    "benefits": [
+      "No advisory fee",
+      "Tax-optimized portfolios",
+      "Low initial investment"
+    ],
+    "typical_apy_or_fee": "No advisory fee",
+    "min_income": 8358,
+    "max_credit_utilization": 0.39,
+    "min_credit_score": 652,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_122",
+    "partner_name": "Ally Invest",
+    "partner_link": "https://example.com/prod_122",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Tally Credit Card Payoff",
+    "product_type": "service",
+    "category": "debt_consolidation",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "Automated credit card payoff app.",
+    "benefits": [
+      "Lower interest rates",
+      "Automated payments",
+      "Credit score monitoring"
+    ],
+    "typical_apy_or_fee": "Varies by credit",
+    "min_income": 2500,
+    "max_credit_utilization": 0.95,
+    "min_credit_score": 650,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_123",
+    "partner_name": "Tally Credit",
+    "partner_link": "https://example.com/prod_123",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Zeta Joint Budgeting",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income"
+    ],
+    "short_description": "Budgeting app for couples and families.",
+    "benefits": [
+      "Joint account management",
+      "Bill tracking",
+      "Custom goals"
+    ],
+    "typical_apy_or_fee": "Free",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_124",
+    "partner_name": "Zeta Joint",
+    "partner_link": "https://example.com/prod_124",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "YNAB (You Need A Budget)",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "savings_builder"
+    ],
+    "short_description": "Proactive budgeting app for financial control.",
+    "benefits": [
+      "Real-time expense tracking",
+      "Goal setting",
+      "Debt payoff assistance"
+    ],
+    "typical_apy_or_fee": "$11.99/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_125",
+    "partner_name": "YNAB (You",
+    "partner_link": "https://example.com/prod_125",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Betterment Smart Saver",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Cash management account for savers.",
+    "benefits": [
+      "High-yield cash account",
+      "Low risk",
+      "Automatic deposits"
+    ],
+    "typical_apy_or_fee": "0.25% advisory fee",
+    "min_income": 9608,
+    "max_credit_utilization": 0.47,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_126",
+    "partner_name": "Betterment Smart",
+    "partner_link": "https://example.com/prod_126",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Citi Simplicity Card",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization"
+    ],
+    "short_description": "No late fees, no penalty rate card.",
+    "benefits": [
+      "0% intro APR for 21 months",
+      "No late fees",
+      "No penalty APR"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 21 months",
+    "min_income": 2500,
+    "max_credit_utilization": 0.85,
+    "min_credit_score": 700,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_127",
+    "partner_name": "Citi Simplicity",
+    "partner_link": "https://example.com/prod_127",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Simple Banking App",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "variable_income",
+      "savings_builder"
+    ],
+    "short_description": "All-in-one banking and budgeting app.",
+    "benefits": [
+      "No account fees",
+      "Built-in budgeting tools",
+      "Goal setting"
+    ],
+    "typical_apy_or_fee": "Free",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_128",
+    "partner_name": "Simple Banking",
+    "partner_link": "https://example.com/prod_128",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Stash Invest",
+    "product_type": "investment_account",
+    "category": "robo_advisor",
+    "persona_targets": [
+      "savings_builder",
+      "wealth_builder"
+    ],
+    "short_description": "Beginner-friendly investing app.",
+    "benefits": [
+      "Fractional shares",
+      "No minimum balance",
+      "Educational resources"
+    ],
+    "typical_apy_or_fee": "$1/month",
+    "min_income": 5022,
+    "max_credit_utilization": 0.44,
+    "min_credit_score": 651,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_129",
+    "partner_name": "Stash Invest",
+    "partner_link": "https://example.com/prod_129",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": true
+  },
+  {
+    "product_name": "Upstart Personal Loans",
+    "product_type": "service",
+    "category": "personal_loan",
+    "persona_targets": [
+      "high_utilization",
+      "savings_builder"
+    ],
+    "short_description": "AI-driven personal loans without fees.",
+    "benefits": [
+      "Quick approval",
+      "No fees",
+      "Flexible payment terms"
+    ],
+    "typical_apy_or_fee": "From 5.99% APR",
+    "min_income": 2500,
+    "max_credit_utilization": 0.75,
+    "min_credit_score": 620,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_130",
+    "partner_name": "Upstart Personal",
+    "partner_link": "https://example.com/prod_130",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Prism Bill Tracker",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "subscription_heavy",
+      "variable_income"
+    ],
+    "short_description": "Manage and pay bills in one place.",
+    "benefits": [
+      "Syncs with bank accounts",
+      "Real-time bill tracking",
+      "Payment reminders"
+    ],
+    "typical_apy_or_fee": "Free",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_131",
+    "partner_name": "Prism Bill",
+    "partner_link": "https://example.com/prod_131",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "American Express Blue Cash Everyday",
+    "product_type": "credit_card",
+    "category": "balance_transfer",
+    "persona_targets": [
+      "high_utilization",
+      "subscription_heavy"
+    ],
+    "short_description": "Cashback card with balance transfer offer.",
+    "benefits": [
+      "0% intro APR for 15 months",
+      "3% cashback on groceries",
+      "No annual fee"
+    ],
+    "typical_apy_or_fee": "0% intro APR for 15 months",
+    "min_income": 3000,
+    "max_credit_utilization": 0.8,
+    "min_credit_score": 690,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_132",
+    "partner_name": "American Express",
+    "partner_link": "https://example.com/prod_132",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Ava Credit Builder",
+    "product_type": "credit_card",
+    "category": "credit_builder",
+    "persona_targets": [
+      "high_utilization",
+      "savings_builder"
+    ],
+    "short_description": "Secured card to help build credit.",
+    "benefits": [
+      "No annual fee",
+      "Build credit history",
+      "Low security deposit"
+    ],
+    "typical_apy_or_fee": "No annual fee",
+    "min_income": 1500,
+    "max_credit_utilization": 0.7,
+    "min_credit_score": 550,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_133",
+    "partner_name": "Ava Credit",
+    "partner_link": "https://example.com/prod_133",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
+  },
+  {
+    "product_name": "Digit Savings App",
+    "product_type": "app",
+    "category": "budgeting_app",
+    "persona_targets": [
+      "savings_builder",
+      "variable_income"
+    ],
+    "short_description": "Automated savings app for busy savers.",
+    "benefits": [
+      "Automatic savings",
+      "No overdraft fees",
+      "Custom savings goals"
+    ],
+    "typical_apy_or_fee": "$5/month",
+    "min_income": 0,
+    "max_credit_utilization": 1.0,
+    "min_credit_score": null,
+    "disclosure": "This is educational content, not financial advice. Product terms, rates, and availability subject to change. SpendSense may receive compensation from partners. Consult a licensed financial advisor for personalized guidance.",
+    "product_id": "prod_134",
+    "partner_name": "Digit",
+    "partner_link": "https://example.com/prod_134",
+    "commission_rate": 0.0,
+    "priority": 2,
+    "active": true,
+    "created_at": "2025-01-15T00:00:00Z",
+    "updated_at": "2025-01-15T00:00:00Z",
+    "requires_no_existing_savings": false,
+    "requires_no_existing_investment": false
   }
 ]

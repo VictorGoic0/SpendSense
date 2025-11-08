@@ -381,6 +381,7 @@ def match_products(
             "typical_apy_or_fee": product.typical_apy_or_fee,
             "partner_name": product.partner_name,
             "partner_link": product.partner_link,
+            "disclosure": product.disclosure,
             "relevance_score": relevance_score,
             "rationale": rationale,
         }
@@ -411,13 +412,6 @@ def match_products(
         f"Matched {len(top_products)} eligible products for user {user_id} "
         f"(persona: {base_persona})"
     )
-    
-    # Log matched products and scores
-    for match in top_products:
-        logger.debug(
-            f"  - {match['product_name']} ({match['category']}): "
-            f"score={match['relevance_score']:.2f}"
-        )
     
     return top_products
 
