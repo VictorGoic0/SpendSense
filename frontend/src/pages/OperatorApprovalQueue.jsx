@@ -7,6 +7,7 @@ import {
   rejectRecommendation,
 } from "@src/lib/apiService";
 import RecommendationCard from "@src/components/RecommendationCard";
+import ProductRecommendationCard from "@src/components/ProductRecommendationCard";
 import { Button } from "@src/components/ui/button";
 import { Card, CardContent } from "@src/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@src/components/ui/alert";
@@ -366,18 +367,37 @@ export default function OperatorApprovalQueue() {
       {/* Recommendations List */}
       {!loading && recommendations.length > 0 && (
         <div className="space-y-4">
-          {recommendations.map((recommendation) => (
-            <RecommendationCard
-              key={recommendation.recommendation_id}
-              recommendation={recommendation}
-              onApprove={handleApprove}
-              onReject={handleRejectClick}
-              onOverride={handleOverrideClick}
-              onSelect={handleSelect}
-              isSelected={selectedIds.has(recommendation.recommendation_id)}
-              isLoading={actionLoading[recommendation.recommendation_id]}
-            />
-          ))}
+          {recommendations.map((recommendation) => {
+            const isProduct = recommendation.content_type === 'partner_offer';
+            
+            if (isProduct) {
+              return (
+                <ProductRecommendationCard
+                  key={recommendation.recommendation_id}
+                  recommendation={recommendation}
+                  onApprove={handleApprove}
+                  onReject={handleRejectClick}
+                  onOverride={handleOverrideClick}
+                  onSelect={handleSelect}
+                  isSelected={selectedIds.has(recommendation.recommendation_id)}
+                  isLoading={actionLoading[recommendation.recommendation_id]}
+                />
+              );
+            }
+            
+            return (
+              <RecommendationCard
+                key={recommendation.recommendation_id}
+                recommendation={recommendation}
+                onApprove={handleApprove}
+                onReject={handleRejectClick}
+                onOverride={handleOverrideClick}
+                onSelect={handleSelect}
+                isSelected={selectedIds.has(recommendation.recommendation_id)}
+                isLoading={actionLoading[recommendation.recommendation_id]}
+              />
+            );
+          })}
         </div>
       )}
 

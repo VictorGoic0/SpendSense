@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getUser, getConsent, getRecommendations, updateConsent } from '../lib/apiService';
 import ConsentToggle from '../components/ConsentToggle';
 import UserRecommendationCard from '../components/UserRecommendationCard';
+import UserProductRecommendationCard from '../components/UserProductRecommendationCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { Button } from '../components/ui/button';
@@ -133,6 +134,14 @@ export default function UserDashboard() {
   const consentStatus = consent?.consent_status || false;
   const hasRecommendations = recommendations.length > 0;
 
+  // Separate educational and product recommendations
+  const educationalRecs = recommendations.filter(
+    (rec) => !rec.content_type || rec.content_type === 'education'
+  );
+  const productRecs = recommendations.filter(
+    (rec) => rec.content_type === 'partner_offer'
+  );
+
   return (
     <div className="px-4 py-6 sm:px-0 max-w-6xl mx-auto">
       {/* Page Header */}
@@ -198,7 +207,7 @@ export default function UserDashboard() {
 
       {/* Recommendations Section */}
       {consentStatus && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
@@ -226,14 +235,67 @@ export default function UserDashboard() {
 
           {/* Recommendations List */}
           {hasRecommendations ? (
-            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-              {recommendations.slice(0, 5).map((recommendation) => (
-                <UserRecommendationCard
-                  key={recommendation.recommendation_id}
-                  recommendation={recommendation}
-                />
-              ))}
-            </div>
+            <>
+              {/* Educational Recommendations */}
+              {educationalRecs.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    Educational Recommendations
+                  </h3>
+                  <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+                    {educationalRecs.map((recommendation) => (
+                      <UserRecommendationCard
+                        key={recommendation.recommendation_id}
+                        recommendation={recommendation}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Product Recommendations */}
+              {productRecs.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    Product Recommendations
+                  </h3>
+                  <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+                    {productRecs.map((recommendation) => (
+                      <UserProductRecommendationCard
+                        key={recommendation.recommendation_id}
+                        recommendation={recommendation}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Empty State (shouldn't happen if hasRecommendations is true) */}
+              {educationalRecs.length === 0 && productRecs.length === 0 && (
+                <Card className="border-2 border-dashed border-gray-300">
+                  <CardHeader>
+                    <div className="flex items-center gap-3 mb-2">
+                      <Sparkles className="h-6 w-6 text-blue-600" />
+                      <CardTitle className="text-xl">Recommendations Coming Soon</CardTitle>
+                    </div>
+                    <CardDescription>
+                      We're preparing personalized recommendations for you
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <p className="text-gray-700">
+                        Our team is analyzing your financial data and preparing personalized recommendations. 
+                        This process typically takes a few hours.
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Check back soon, or we'll notify you when your recommendations are ready!
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </>
           ) : (
             <Card className="border-2 border-dashed border-gray-300">
               <CardHeader>

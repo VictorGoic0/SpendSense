@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 import ReactMarkdown from 'react-markdown';
+import { ExternalLink, Check } from 'lucide-react';
 
 /**
  * Helper function to get persona display name
@@ -64,33 +66,49 @@ const truncateText = (text, maxLength = 150) => {
 };
 
 /**
- * UserRecommendationCard Component
- * Displays a recommendation in the user dashboard (read-only)
+ * UserProductRecommendationCard Component
+ * Displays a product recommendation in the user dashboard (read-only)
+ * Designed as a taller card for side-by-side display
  * 
  * @param {Object} props
- * @param {Object} props.recommendation - Recommendation object
+ * @param {Object} props.recommendation - Recommendation object with product data
  */
-export default function UserRecommendationCard({ recommendation }) {
+export default function UserProductRecommendationCard({ recommendation }) {
   const {
-    title,
-    content,
+    product_name,
+    partner_name,
+    short_description,
+    benefits,
+    typical_apy_or_fee,
+    partner_link,
+    disclosure,
     rationale,
     persona_type,
     generated_at,
   } = recommendation;
 
-  const [contentExpanded, setContentExpanded] = useState(false);
   const [rationaleExpanded, setRationaleExpanded] = useState(false);
 
-  const contentPreview = truncateText(content, 150);
+  // Parse benefits if it's a string
+  let benefitsList = [];
+  if (benefits) {
+    if (Array.isArray(benefits)) {
+      benefitsList = benefits;
+    } else if (typeof benefits === 'string') {
+      try {
+        benefitsList = JSON.parse(benefits || '[]');
+      } catch (e) {
+        console.error('Error parsing benefits:', e);
+        benefitsList = [];
+      }
+    }
+  }
+
   const rationalePreview = truncateText(rationale, 150);
-  
-  // Check if content/rationale is actually truncated
-  const isContentTruncated = typeof content === 'string' && content.length > 150;
   const isRationaleTruncated = typeof rationale === 'string' && rationale.length > 150;
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-md transition-shadow bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200">
       <CardHeader className="relative pb-6 pt-6">
         {/* Persona badge in top right */}
         {persona_type && (
@@ -105,9 +123,20 @@ export default function UserRecommendationCard({ recommendation }) {
         )}
         {/* Centered content */}
         <div className="text-center pt-2">
+          <Badge
+            variant="outline"
+            className="bg-purple-100 text-purple-800 border-purple-200 mb-2"
+          >
+            Partner Offer
+          </Badge>
           <CardTitle className="text-xl font-bold text-gray-900">
-            {title}
+            {product_name || 'Product Recommendation'}
           </CardTitle>
+          {partner_name && (
+            <p className="text-sm text-gray-600 mt-1">
+              by {partner_name}
+            </p>
+          )}
           {generated_at && (
             <p className="text-xs text-gray-500 mt-2">
               {formatDate(generated_at)}
@@ -117,26 +146,52 @@ export default function UserRecommendationCard({ recommendation }) {
       </CardHeader>
       
       <CardContent className="space-y-4">
-        {/* Content */}
-        <div>
-          <h4 className="text-sm font-semibold text-gray-700 mb-2">Recommendation</h4>
-          <div className="text-sm text-gray-700 prose prose-sm max-w-none">
-            <ReactMarkdown>
-              {contentExpanded || !isContentTruncated 
-                ? (typeof content === 'string' ? content : '') 
-                : contentPreview}
-            </ReactMarkdown>
+        {/* Short Description */}
+        {short_description && (
+          <div>
+            <p className="text-sm text-gray-700">
+              {short_description}
+            </p>
           </div>
-          {isContentTruncated && (
-            <button
-              onClick={() => setContentExpanded(!contentExpanded)}
-              className="text-sm text-blue-600 hover:text-blue-800 hover:underline mt-2"
-            >
-              {contentExpanded ? 'Show less' : 'Show more'}
-            </button>
-          )}
-        </div>
-        
+        )}
+
+        {/* APY or Fee */}
+        {typical_apy_or_fee && (
+          <div className="bg-white rounded-lg p-3 border border-blue-200">
+            <p className="text-sm font-semibold text-gray-700 mb-1">Rate/Fee</p>
+            <p className="text-lg font-bold text-blue-600">
+              {typical_apy_or_fee}
+            </p>
+          </div>
+        )}
+
+        {/* Benefits List */}
+        {benefitsList && benefitsList.length > 0 && (
+          <div className="bg-white rounded-lg p-4 border border-blue-200">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Key Benefits</h4>
+            <ul className="space-y-2">
+              {benefitsList.map((benefit, index) => (
+                <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                  <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span>{benefit}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Learn More Button */}
+        {partner_link && (
+          <Button
+            variant="default"
+            className="w-full"
+            onClick={() => window.open(partner_link, '_blank', 'noopener,noreferrer')}
+          >
+            Learn More
+            <ExternalLink className="h-4 w-4 ml-2" />
+          </Button>
+        )}
+
         {/* Rationale */}
         {rationale && (
           <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
@@ -156,6 +211,15 @@ export default function UserRecommendationCard({ recommendation }) {
                 {rationaleExpanded ? 'Show less' : 'Show more'}
               </button>
             )}
+          </div>
+        )}
+
+        {/* Disclosure */}
+        {disclosure && (
+          <div className="pt-2 border-t border-gray-200">
+            <p className="text-xs text-gray-500 italic">
+              {disclosure}
+            </p>
           </div>
         )}
       </CardContent>

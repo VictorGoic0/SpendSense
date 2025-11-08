@@ -10,6 +10,7 @@ import { Skeleton } from '../components/ui/skeleton';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import ReactMarkdown from 'react-markdown';
+import { Check } from 'lucide-react';
 
 const SIGNAL_TYPES = ['subscriptions', 'savings', 'credit', 'income'];
 
@@ -247,16 +248,50 @@ export default function OperatorUserDetail() {
               <div className="space-y-4">
                 {recommendations.map((rec) => {
                   const isExpanded = expandedContent.has(rec.recommendation_id);
-                  const content = typeof rec.content === 'string' ? rec.content : '';
-                  const isTruncated = content.length > 200;
+                  const isProduct = rec.content_type === 'partner_offer';
+                  
+                  // For products, show short_description initially
+                  // For education, show content
+                  const initialContent = isProduct 
+                    ? (rec.short_description || '')
+                    : (typeof rec.content === 'string' ? rec.content : '');
+                  
+                  const isTruncated = initialContent.length > 200;
                   const displayContent = isExpanded || !isTruncated 
-                    ? content 
-                    : content.substring(0, 200) + '...';
+                    ? initialContent 
+                    : initialContent.substring(0, 200) + '...';
+                  
+                  // Parse benefits if it's a product
+                  let benefitsList = [];
+                  if (isProduct && rec.benefits) {
+                    if (Array.isArray(rec.benefits)) {
+                      benefitsList = rec.benefits;
+                    } else if (typeof rec.benefits === 'string') {
+                      try {
+                        benefitsList = JSON.parse(rec.benefits || '[]');
+                      } catch (e) {
+                        console.error('Error parsing benefits:', e);
+                        benefitsList = [];
+                      }
+                    }
+                  }
                   
                   return (
                     <div key={rec.recommendation_id} className="border rounded-lg p-4">
                       <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold text-gray-900">{rec.title}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-semibold text-gray-900">
+                            {isProduct ? (rec.product_name || rec.title) : rec.title}
+                          </h4>
+                          {isProduct && (
+                            <Badge
+                              variant="outline"
+                              className="bg-purple-100 text-purple-800 border-purple-200"
+                            >
+                              Partner Offer
+                            </Badge>
+                          )}
+                        </div>
                         <Badge
                           variant="outline"
                           className={
@@ -270,10 +305,48 @@ export default function OperatorUserDetail() {
                           {rec.status?.replace('_', ' ')}
                         </Badge>
                       </div>
+                      
+                      {/* Initial content (short_description for products, content for education) */}
                       <div className="text-sm text-gray-600">
                         <ReactMarkdown>{displayContent}</ReactMarkdown>
                       </div>
-                      {isTruncated && (
+                      
+                      {/* Expanded product details */}
+                      {isProduct && isExpanded && (
+                        <div className="mt-4 space-y-3 pt-3 border-t">
+                          {rec.partner_name && (
+                            <p className="text-sm text-gray-600">
+                              <span className="font-semibold">Partner:</span> {rec.partner_name}
+                            </p>
+                          )}
+                          {rec.typical_apy_or_fee && (
+                            <p className="text-sm text-gray-600">
+                              <span className="font-semibold">Rate/Fee:</span> {rec.typical_apy_or_fee}
+                            </p>
+                          )}
+                          {benefitsList && benefitsList.length > 0 && (
+                            <div>
+                              <p className="text-sm font-semibold text-gray-700 mb-2">Benefits:</p>
+                              <ul className="space-y-1">
+                                {benefitsList.map((benefit, index) => (
+                                  <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
+                                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>{benefit}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {rec.disclosure && (
+                            <p className="text-xs text-gray-500 italic mt-2">
+                              {rec.disclosure}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                      
+                      {/* Show more/less button */}
+                      {(isTruncated || (isProduct && !isExpanded)) && (
                         <button
                           onClick={() => {
                             const newExpanded = new Set(expandedContent);
@@ -289,6 +362,17 @@ export default function OperatorUserDetail() {
                           {isExpanded ? 'Show less' : 'Show more'}
                         </button>
                       )}
+                      
+                      {/* Rationale */}
+                      {rec.rationale && (
+                        <div className="mt-3 pt-3 border-t">
+                          <p className="text-xs font-semibold text-gray-700 mb-1">Rationale:</p>
+                          <p className="text-sm text-gray-600">
+                            <ReactMarkdown>{rec.rationale}</ReactMarkdown>
+                          </p>
+                        </div>
+                      )}
+                      
                       {rec.generated_at && (
                         <p className="text-xs text-gray-500 mt-2">
                           Generated: {new Date(rec.generated_at).toLocaleDateString()}

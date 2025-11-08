@@ -137,97 +137,96 @@
 
 ## PR #43: Frontend - Product Recommendation Display
 
-**Goal**: Update frontend to display product recommendations with benefits, partner links, and disclosure text.
+**Goal**: Create separate card components for product recommendations to avoid layout issues. Different cards for Approval Queue, User Dashboard, and Operator Dashboard.
 
-### Update RecommendationCard Component
-- [ ] 1. Open `frontend/src/components/RecommendationCard.jsx`
-- [ ] 2. Add content_type detection logic:
-  - [ ] 3. Check if recommendation.content_type === 'partner_offer'
-  - [ ] 4. Render different layouts based on content_type
-- [ ] 5. **For education type (existing logic)**:
-  - [ ] 6. Display title
-  - [ ] 7. Display markdown content
-  - [ ] 8. Display rationale
-  - [ ] 9. Keep existing styling
-- [ ] 10. **For partner_offer type (new logic)**:
-  - [ ] 11. Display "Partner Offer" badge (Badge component, variant="secondary")
-  - [ ] 12. Display product_name as title
-  - [ ] 13. Display partner_name as subtitle
-  - [ ] 14. Display short_description
-  - [ ] 15. Display benefits as bulleted list:
-    - [ ] 16. Use Card with light blue/purple background
-    - [ ] 17. Add checkmark icon (✓) before each benefit
-    - [ ] 18. Style with medium font weight
-  - [ ] 19. Display typical_apy_or_fee prominently (if present)
-  - [ ] 20. Add "Learn More" button:
-    - [ ] 21. Link to partner_link
-    - [ ] 22. Open in new tab (target="_blank", rel="noopener noreferrer")
-    - [ ] 23. Style with primary color
-    - [ ] 24. Add external link icon
-  - [ ] 25. Display disclosure text:
-    - [ ] 26. Small font size (text-xs)
-    - [ ] 27. Muted color (text-gray-500)
-    - [ ] 28. Italic style
-    - [ ] 29. Bottom of card
-  - [ ] 30. Add light blue/purple background to entire card (distinguish from education)
-  - [ ] 31. Display rationale (common for both types)
+### Create ProductRecommendationCard for Approval Queue
+- [x] 1. Create `frontend/src/components/ProductRecommendationCard.jsx` (for approval queue)
+- [x] 2. Base it on RecommendationCard structure
+- [x] 3. Display product_name instead of title in header
+- [x] 4. Display product_name in "Content:" section (instead of markdown content)
+- [x] 5. Display rationale in "Rationale:" section (same as education)
+- [x] 6. Keep all approval workflow buttons (Approve, Reject, Override)
+- [x] 7. Keep checkbox for selection
+- [x] 8. Keep status badges and user info
+- [x] 9. Add "Partner Offer" badge to distinguish from education
 
-### Styling Updates
-- [ ] 32. Add CSS classes for product cards:
-  - [ ] 33. `.product-card` with light blue background
-  - [ ] 34. `.product-benefits-list` with checkmark styling
-  - [ ] 35. `.product-disclosure` for small print
-  - [ ] 36. `.partner-badge` for "Partner Offer" badge
-- [ ] 37. Ensure responsive design (mobile-friendly)
-- [ ] 38. Test dark mode compatibility (if applicable)
+### Create ProductRecommendationCard for User Dashboard
+- [x] 10. Create `frontend/src/components/UserProductRecommendationCard.jsx`
+- [x] 11. Design as taller card for side-by-side display
+- [x] 12. Display "Partner Offer" badge at top
+- [x] 13. Display product_name as main title
+- [x] 14. Display partner_name as subtitle
+- [x] 15. Display short_description
+- [x] 16. Display benefits as bulleted list with checkmarks (✓)
+- [x] 17. Display typical_apy_or_fee prominently (if present)
+- [x] 18. Add "Learn More" button:
+    - [x] 19. Link to partner_link
+    - [x] 20. Open in new tab (target="_blank", rel="noopener noreferrer")
+    - [x] 21. Add external link icon
+- [x] 22. Display disclosure text at bottom (small, muted, italic)
+- [x] 23. Display rationale in blue box (same style as education)
+- [x] 24. Use light blue/purple background to distinguish from education
+- [x] 25. Make card taller to accommodate all product info
 
 ### Update UserDashboard
-- [ ] 39. Open `frontend/src/pages/UserDashboard.jsx`
-- [ ] 40. No major changes needed (RecommendationCard handles everything)
-- [ ] 41. Verify recommendations list displays mix naturally
-- [ ] 42. Test with sample data containing both types
+- [x] 26. Open `frontend/src/pages/UserDashboard.jsx`
+- [x] 27. Separate educational and product recommendations
+- [x] 28. Display educational recommendations in existing grid layout
+- [x] 29. Create separate section for product recommendations
+- [x] 30. Display product cards side-by-side in grid (2 columns on desktop)
+- [x] 31. Use UserProductRecommendationCard for products
+- [x] 32. Use UserRecommendationCard for education (no changes)
+- [x] 33. Add section headers: "Educational Recommendations" and "Product Recommendations"
 
 ### Update OperatorUserDetail
-- [ ] 43. Open `frontend/src/pages/OperatorUserDetail.jsx`
-- [ ] 44. Update recommendations table to show content_type column
-- [ ] 45. For partner_offer rows:
-  - [ ] 46. Display product_name instead of title
-  - [ ] 47. Add "Product" badge or icon
-  - [ ] 48. Show partner_name in additional column
-- [ ] 49. Add filter dropdown (optional):
-  - [ ] 50. "All Recommendations"
-  - [ ] 51. "Educational Only"
-  - [ ] 52. "Products Only"
-  - [ ] 53. Filter state management
-  - [ ] 54. Apply filter to displayed recommendations
-- [ ] 55. Verify approval workflow works for product recommendations
+- [x] 34. Open `frontend/src/pages/OperatorUserDetail.jsx`
+- [x] 35. Keep same card width and layout structure
+- [x] 36. Detect content_type for each recommendation
+- [x] 37. For partner_offer recommendations:
+  - [x] 38. Display product_name instead of title
+  - [x] 39. Display short_description instead of content
+  - [x] 40. Handle "Show more" for products:
+    - [x] 41. Show short_description initially
+    - [x] 42. On expand, show full product details (benefits, APY, partner info)
+    - [x] 43. May need to show structured data (benefits list) instead of just text
+- [x] 44. Add "Partner Offer" badge for product recommendations
+- [x] 45. Keep rationale display the same for both types
+
+### Update Approval Queue
+- [x] 46. Open `frontend/src/pages/OperatorApprovalQueue.jsx`
+- [x] 47. Detect content_type for each recommendation
+- [x] 48. Conditionally render ProductRecommendationCard for partner_offer
+- [x] 49. Conditionally render RecommendationCard for education
+- [x] 50. Ensure approval workflow works for both types
 
 ### API Integration
-- [ ] 56. Update `frontend/src/lib/api.js` if needed
-- [ ] 57. Ensure recommendation fetch includes all product fields
-- [ ] 58. Parse benefits and persona_targets as arrays
-- [ ] 59. Handle missing optional fields gracefully
+- [ ] 51. Update `frontend/src/lib/api.js` if needed
+- [ ] 52. Ensure recommendation fetch includes all product fields
+- [ ] 53. Parse benefits and persona_targets as arrays
+- [ ] 54. Handle missing optional fields gracefully
 
 ### Testing Frontend Display
-- [ ] 60. Start backend server
-- [ ] 61. Start frontend dev server
-- [ ] 62. Generate recommendations for test user (with products)
-- [ ] 63. Navigate to User Dashboard
-- [ ] 64. Verify product cards display correctly:
-  - [ ] 65. "Partner Offer" badge visible
-  - [ ] 66. Product name and description shown
-  - [ ] 67. Benefits list formatted nicely with checkmarks
-  - [ ] 68. "Learn More" button present and links correctly
-  - [ ] 69. Disclosure text visible at bottom
-  - [ ] 70. Light blue background distinguishes from education cards
-- [ ] 71. Verify educational cards still display correctly (no regression)
-- [ ] 72. Click "Learn More" button, verify new tab opens
-- [ ] 73. Test on mobile viewport (responsive)
-- [ ] 74. Navigate to Operator User Detail
-- [ ] 75. Verify product recommendations shown in table
-- [ ] 76. Verify content_type column correct
-- [ ] 77. Test filter dropdown (if implemented)
-- [ ] 78. Test approval workflow for product recommendation
+- [ ] 55. Start backend server
+- [ ] 56. Start frontend dev server
+- [ ] 57. Generate recommendations for test user (with products)
+- [ ] 58. Navigate to User Dashboard
+- [ ] 59. Verify product cards display correctly:
+  - [ ] 60. "Partner Offer" badge visible
+  - [ ] 61. Product name and description shown
+  - [ ] 62. Benefits list formatted nicely with checkmarks
+  - [ ] 63. "Learn More" button present and links correctly
+  - [ ] 64. Disclosure text visible at bottom
+  - [ ] 65. Cards displayed side-by-side in separate section
+  - [ ] 66. Taller cards accommodate all product info
+- [ ] 67. Verify educational cards still display correctly (no regression)
+- [ ] 68. Click "Learn More" button, verify new tab opens
+- [ ] 69. Test on mobile viewport (responsive)
+- [ ] 70. Navigate to Operator User Detail
+- [ ] 71. Verify product recommendations shown with product_name
+- [ ] 72. Verify "Show more" works for product structured data
+- [ ] 73. Navigate to Approval Queue
+- [ ] 74. Verify product recommendations show product_name in Content section
+- [ ] 75. Test approval workflow for product recommendation
 
 ---
 
