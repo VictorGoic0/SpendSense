@@ -185,6 +185,17 @@ User Dashboard (React UI)
   - `filter_eligible_products()`: Batch filters product matches by eligibility
   - Integrated into product matching flow (products filtered after scoring)
   - Test script: `scripts/test_product_eligibility.py` with comprehensive coverage
+- ✅ Product management API (PR #44 Complete)
+  - Router file: `backend/app/routers/products.py`
+  - GET `/products/` - List products with filtering (active_only, category, persona_type) and pagination (skip, limit)
+  - GET `/products/{product_id}` - Get single product by ID (404 if not found)
+  - POST `/products/` - Create new product (generates prod_XXX product_id, converts lists to JSON, returns 201)
+  - PUT `/products/{product_id}` - Update existing product (updates all fields, updates updated_at, returns 404 if not found)
+  - DELETE `/products/{product_id}` - Deactivate product (soft delete: sets active=False, returns 204 No Content)
+  - JSON field parsing: Helper function `_parse_json_fields()` parses persona_targets and benefits from JSON strings
+  - Error handling: 404 for not found, 500 for server errors, comprehensive logging
+  - Router registered in `backend/app/main.py` with tag="products"
+  - OpenAPI documentation: All endpoints documented with FastAPI auto-generated docs
 
 ### 9. Evaluation Harness (`eval/`)
 - ✅ Metrics computation script (PR #28 Complete)
@@ -417,6 +428,11 @@ User Dashboard (React UI)
   - GET /operator/review - Get approval queue (all non-approved recommendations) (PR #26 Complete)
   - POST /consent - Update user consent status (grant/revoke) (PR #27 Complete)
   - GET /consent/{user_id} - Get user consent status and history (PR #27 Complete)
+  - GET /products - List products with filtering and pagination (PR #44 Complete)
+  - GET /products/{product_id} - Get single product by ID (PR #44 Complete)
+  - POST /products - Create new product (PR #44 Complete)
+  - PUT /products/{product_id} - Update existing product (PR #44 Complete)
+  - DELETE /products/{product_id} - Deactivate product (soft delete) (PR #44 Complete)
 
 ### Frontend Constants & Enums Pattern
 - **Centralized Enums**: All enum values defined in `frontend/src/constants/enums.js`

@@ -200,33 +200,33 @@
 - [x] 50. Ensure approval workflow works for both types
 
 ### API Integration
-- [ ] 51. Update `frontend/src/lib/api.js` if needed
-- [ ] 52. Ensure recommendation fetch includes all product fields
-- [ ] 53. Parse benefits and persona_targets as arrays
-- [ ] 54. Handle missing optional fields gracefully
+- [x] 51. Update `frontend/src/lib/api.js` if needed
+- [x] 52. Ensure recommendation fetch includes all product fields
+- [x] 53. Parse benefits and persona_targets as arrays
+- [x] 54. Handle missing optional fields gracefully
 
 ### Testing Frontend Display
-- [ ] 55. Start backend server
-- [ ] 56. Start frontend dev server
-- [ ] 57. Generate recommendations for test user (with products)
-- [ ] 58. Navigate to User Dashboard
-- [ ] 59. Verify product cards display correctly:
-  - [ ] 60. "Partner Offer" badge visible
-  - [ ] 61. Product name and description shown
-  - [ ] 62. Benefits list formatted nicely with checkmarks
-  - [ ] 63. "Learn More" button present and links correctly
-  - [ ] 64. Disclosure text visible at bottom
-  - [ ] 65. Cards displayed side-by-side in separate section
-  - [ ] 66. Taller cards accommodate all product info
-- [ ] 67. Verify educational cards still display correctly (no regression)
-- [ ] 68. Click "Learn More" button, verify new tab opens
-- [ ] 69. Test on mobile viewport (responsive)
-- [ ] 70. Navigate to Operator User Detail
-- [ ] 71. Verify product recommendations shown with product_name
-- [ ] 72. Verify "Show more" works for product structured data
-- [ ] 73. Navigate to Approval Queue
-- [ ] 74. Verify product recommendations show product_name in Content section
-- [ ] 75. Test approval workflow for product recommendation
+- [x] 55. Start backend server
+- [x] 56. Start frontend dev server
+- [x] 57. Generate recommendations for test user (with products)
+- [x] 58. Navigate to User Dashboard
+- [x] 59. Verify product cards display correctly:
+  - [x] 60. "Partner Offer" badge visible
+  - [x] 61. Product name and description shown
+  - [x] 62. Benefits list formatted nicely with checkmarks
+  - [x] 63. "Learn More" button present and links correctly
+  - [x] 64. Disclosure text visible at bottom
+  - [x] 65. Cards displayed side-by-side in separate section
+  - [x] 66. Taller cards accommodate all product info
+- [x] 67. Verify educational cards still display correctly (no regression)
+- [x] 68. Click "Learn More" button, verify new tab opens
+- [x] 69. Test on mobile viewport (responsive)
+- [x] 70. Navigate to Operator User Detail
+- [x] 71. Verify product recommendations shown with product_name
+- [x] 72. Verify "Show more" works for product structured data
+- [x] 73. Navigate to Approval Queue
+- [x] 74. Verify product recommendations show product_name in Content section
+- [x] 75. Test approval workflow for product recommendation
 
 ---
 
@@ -235,77 +235,77 @@
 **Goal**: Add operator-facing API endpoints to manage product catalog (CRUD operations).
 
 ### Products Router
-- [ ] 1. Create `backend/app/routers/products.py`
-- [ ] 2. Create APIRouter with prefix="/products"
-- [ ] 3. Import ProductOffer model and schemas
-- [ ] 4. Import database dependency
+- [x] 1. Create `backend/app/routers/products.py`
+- [x] 2. Create APIRouter with prefix="/products"
+- [x] 3. Import ProductOffer model and schemas
+- [x] 4. Import database dependency
 
 ### List Products Endpoint
-- [ ] 5. Create `GET /` endpoint:
-  - [ ] 6. Accept query parameters: active_only (bool), category (str), persona_type (str)
-  - [ ] 7. Query product_offers table with filters
-  - [ ] 8. Parse JSON fields (persona_targets, benefits)
-  - [ ] 9. Return list of ProductOfferResponse
-  - [ ] 10. Add pagination (skip, limit)
-- [ ] 11. Add OpenAPI documentation and examples
+- [x] 5. Create `GET /` endpoint:
+  - [x] 6. Accept query parameters: active_only (bool), category (str), persona_type (str)
+  - [x] 7. Query product_offers table with filters
+  - [x] 8. Parse JSON fields (persona_targets, benefits)
+  - [x] 9. Return list of ProductOfferResponse
+  - [x] 10. Add pagination (skip, limit)
+- [x] 11. Add OpenAPI documentation and examples
 
 ### Get Single Product Endpoint
-- [ ] 12. Create `GET /{product_id}` endpoint:
-  - [ ] 13. Query product by product_id
-  - [ ] 14. Return 404 if not found
-  - [ ] 15. Parse JSON fields
-  - [ ] 16. Return ProductOfferResponse
+- [x] 12. Create `GET /{product_id}` endpoint:
+  - [x] 13. Query product by product_id
+  - [x] 14. Return 404 if not found
+  - [x] 15. Parse JSON fields
+  - [x] 16. Return ProductOfferResponse
 
 ### Create Product Endpoint
-- [ ] 17. Create `POST /` endpoint:
-  - [ ] 18. Accept ProductOfferBase in request body
-  - [ ] 19. Generate product_id (prod_XXX format)
-  - [ ] 20. Convert persona_targets to JSON string
-  - [ ] 21. Convert benefits to JSON string
-  - [ ] 22. Create ProductOffer model instance
-  - [ ] 23. Save to database
-  - [ ] 24. Return 201 with created product
+- [x] 17. Create `POST /` endpoint:
+  - [x] 18. Accept ProductOfferBase in request body
+  - [x] 19. Generate product_id (prod_XXX format)
+  - [x] 20. Convert persona_targets to JSON string
+  - [x] 21. Convert benefits to JSON string
+  - [x] 22. Create ProductOffer model instance
+  - [x] 23. Save to database
+  - [x] 24. Return 201 with created product
 
 ### Update Product Endpoint
-- [ ] 25. Create `PUT /{product_id}` endpoint:
-  - [ ] 26. Accept ProductOfferBase in request body
-  - [ ] 27. Query existing product by product_id
-  - [ ] 28. Return 404 if not found
-  - [ ] 29. Update fields from request body
-  - [ ] 30. Update updated_at timestamp
-  - [ ] 31. Commit changes
-  - [ ] 32. Return updated ProductOfferResponse
+- [x] 25. Create `PUT /{product_id}` endpoint:
+  - [x] 26. Accept ProductOfferBase in request body
+  - [x] 27. Query existing product by product_id
+  - [x] 28. Return 404 if not found
+  - [x] 29. Update fields from request body
+  - [x] 30. Update updated_at timestamp
+  - [x] 31. Commit changes
+  - [x] 32. Return updated ProductOfferResponse
 
 ### Deactivate Product Endpoint
-- [ ] 33. Create `DELETE /{product_id}` endpoint:
-  - [ ] 34. Query product by product_id
-  - [ ] 35. Return 404 if not found
-  - [ ] 36. Set active = False (soft delete)
-  - [ ] 37. Update updated_at timestamp
-  - [ ] 38. Commit changes
-  - [ ] 39. Return 204 No Content
+- [x] 33. Create `DELETE /{product_id}` endpoint:
+  - [x] 34. Query product by product_id
+  - [x] 35. Return 404 if not found
+  - [x] 36. Set active = False (soft delete)
+  - [x] 37. Update updated_at timestamp
+  - [x] 38. Commit changes
+  - [x] 39. Return 204 No Content
 
 ### Router Registration
-- [ ] 40. Update `backend/app/main.py`
-- [ ] 41. Import products router
-- [ ] 42. Include router with tag="products"
+- [x] 40. Update `backend/app/main.py`
+- [x] 41. Import products router
+- [x] 42. Include router with tag="products"
 
 ### Testing Product API
-- [ ] 43. Start backend server
-- [ ] 44. Open Swagger UI at /docs
-- [ ] 45. Test GET /products (list all)
-- [ ] 46. Verify all products returned
-- [ ] 47. Test GET /products?category=balance_transfer
-- [ ] 48. Verify filtered results
-- [ ] 49. Test GET /products/{product_id}
-- [ ] 50. Verify single product returned
-- [ ] 51. Test POST /products with new product data
-- [ ] 52. Verify product created
-- [ ] 53. Test PUT /products/{product_id} with updated data
-- [ ] 54. Verify product updated
-- [ ] 55. Test DELETE /products/{product_id}
-- [ ] 56. Verify product deactivated (active=False)
-- [ ] 57. Test error cases (invalid product_id, missing fields)
+- [x] 43. Start backend server
+- [x] 44. Open Swagger UI at /docs
+- [x] 45. Test GET /products (list all)
+- [x] 46. Verify all products returned
+- [x] 47. Test GET /products?category=balance_transfer
+- [x] 48. Verify filtered results
+- [x] 49. Test GET /products/{product_id}
+- [x] 50. Verify single product returned
+- [x] 51. Test POST /products with new product data
+- [x] 52. Verify product created
+- [x] 53. Test PUT /products/{product_id} with updated data
+- [x] 54. Verify product updated
+- [x] 55. Test DELETE /products/{product_id}
+- [x] 56. Verify product deactivated (active=False)
+- [x] 57. Test error cases (invalid product_id, missing fields)
 
 ---
 

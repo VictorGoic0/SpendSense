@@ -531,6 +531,41 @@
       - Numeric eligibility fields set deterministically based on category
     - Database schema updates: Added "loan" product_type, made content nullable
     - Migration consolidation: Added `apply_migrations()` to database.py, removed temporary scripts
+- ✅ **PR #44 Complete: Product Management API (all 57 tasks finished)**
+  - Created `backend/app/routers/products.py` with full CRUD endpoints:
+    - GET `/products/` - List products with filtering (active_only, category, persona_type) and pagination (skip, limit)
+    - GET `/products/{product_id}` - Get single product by ID (404 if not found)
+    - POST `/products/` - Create new product (generates prod_XXX product_id, converts lists to JSON, returns 201)
+    - PUT `/products/{product_id}` - Update existing product (updates all fields, updates updated_at, returns 404 if not found)
+    - DELETE `/products/{product_id}` - Deactivate product (soft delete: sets active=False, returns 204 No Content)
+  - JSON field parsing: Helper function `_parse_json_fields()` parses persona_targets and benefits from JSON strings
+  - Error handling: 404 for not found, 500 for server errors, comprehensive logging for all operations
+  - Router registered in `backend/app/main.py` with tag="products"
+  - OpenAPI documentation: All endpoints documented with FastAPI auto-generated docs at `/docs`
+  - All 57 tasks completed (router creation, CRUD endpoints, router registration, testing)
+- ✅ **PR #43 Complete: Frontend Product Recommendation Display (all 75 tasks finished)**
+  - Created separate card components for product recommendations to avoid layout issues:
+    - `ProductRecommendationCard.jsx` for Approval Queue: Displays product_name instead of content, keeps all approval workflow buttons
+    - `UserProductRecommendationCard.jsx` for User Dashboard: Taller card with full product details (benefits, APY, partner link, disclosure)
+  - Updated UserDashboard:
+    - Separates educational and product recommendations into distinct sections
+    - Educational recommendations in existing grid layout
+    - Product recommendations in separate section with side-by-side 2-column grid
+    - Section headers: "Educational Recommendations" and "Product Recommendations"
+  - Updated OperatorUserDetail:
+    - Detects content_type for each recommendation
+    - For products: Shows product_name and short_description initially
+    - "Show more" expands to show full product details (benefits list, APY, partner info, disclosure)
+    - Handles structured data (benefits list) with proper JSON parsing and error handling
+  - Updated OperatorApprovalQueue:
+    - Conditionally renders ProductRecommendationCard for partner_offer recommendations
+    - Conditionally renders RecommendationCard for education recommendations
+    - Approval workflow works for both types
+  - Card styling improvements:
+    - Persona badge positioned in top right corner with absolute positioning
+    - All other content centered in card headers
+    - Increased padding for better spacing
+    - Product cards have light blue/purple gradient background to distinguish from education
 - ✅ **PR #40 Complete: Product Matching Service (all 91 tasks finished)**
   - Created `backend/app/services/product_matcher.py` service file
   - Helper functions: `get_account_types()`, `has_hysa()`, `has_investment_account()`
@@ -585,13 +620,15 @@
   - All 54 tasks completed
 
 ### In Progress
-- 🔄 **Product Catalog Feature (PR #38-45)** - PR #38-42 Complete, PR #43-45 Next
+- 🔄 **Product Catalog Feature (PR #38-45)** - PR #38-44 Complete, PR #45 Next
   - ✅ PR #38: Database schema, product generation, catalog created (21 products)
   - ✅ PR #39: Product ingestion via API endpoint (consistent with other data)
   - ✅ PR #40: Product matching service (persona + signal based scoring, rationale generation, top 3 products)
   - ✅ PR #41: Eligibility filtering (income, utilization, existing accounts, category-specific rules)
   - ✅ PR #42: Hybrid recommendation engine + product data normalization (combined educational + product recommendations, ~150 products with deterministic eligibility rules)
-  - 🔄 PR #43-45: Frontend display, product management API, unit tests
+  - ✅ PR #43: Frontend product recommendation display (separate card components, dashboard updates, styling improvements)
+  - ✅ PR #44: Product management API (full CRUD endpoints for operator-facing product catalog management)
+  - 🔄 PR #45: Unit tests & documentation
 - 🔄 **Article Catalog Feature (PR #46-51)** - Planning complete, ready for implementation
   - Comprehensive 275+ task breakdown created in tasks-12.md
   - 6 PRs planned: Database schema + article generation, article seeding + vector population, article matching service, hybrid engine integration, frontend display, unit tests & documentation
