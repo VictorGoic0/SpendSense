@@ -282,75 +282,75 @@
 **Goal**: Add eligibility checking to guardrails service to filter out products users don't qualify for.
 
 ### Eligibility Checker Function
-- [ ] 1. Update `backend/app/services/guardrails.py`
-- [ ] 2. Import ProductOffer model and product-related types
-- [ ] 3. Create `check_product_eligibility(db, user_id: str, product: ProductOffer, features: UserFeature) -> tuple[bool, str]` function:
-- [ ] 4. Query user's accounts for account type checking
-- [ ] 5. **Check income requirement**:
-  - [ ] 6. If product.min_income > 0
-  - [ ] 7. Calculate user's monthly income from features
-  - [ ] 8. If user income < min_income: return (False, "Income below minimum requirement")
-- [ ] 9. **Check credit utilization requirement**:
-  - [ ] 10. If product.max_credit_utilization < 1.0
-  - [ ] 11. Get user's avg_utilization from features
-  - [ ] 12. If avg_utilization > max_credit_utilization: return (False, "Credit utilization too high")
-- [ ] 13. **Check existing savings requirement**:
-  - [ ] 14. If product.requires_no_existing_savings = True
-  - [ ] 15. Check if user has any savings accounts
-  - [ ] 16. If has savings: return (False, "Already has savings account")
-- [ ] 17. **Check existing investment requirement**:
-  - [ ] 18. If product.requires_no_existing_investment = True
-  - [ ] 19. Check if user has any investment accounts
-  - [ ] 20. If has investment: return (False, "Already has investment account")
-- [ ] 21. **Check category-specific rules**:
-  - [ ] 22. If category = "balance_transfer":
-    - [ ] 23. Require avg_utilization >= 0.3 (only show if meaningful balance to transfer)
-    - [ ] 24. If below threshold: return (False, "Balance transfer not beneficial at current utilization")
-- [ ] 25. If all checks pass: return (True, "Eligible")
-- [ ] 26. Add logging for eligibility failures
+- [x] 1. Update `backend/app/services/guardrails.py`
+- [x] 2. Import ProductOffer model and product-related types
+- [x] 3. Create `check_product_eligibility(db, user_id: str, product: ProductOffer, features: UserFeature) -> tuple[bool, str]` function:
+- [x] 4. Query user's accounts for account type checking
+- [x] 5. **Check income requirement**:
+  - [x] 6. If product.min_income > 0
+  - [x] 7. Calculate user's monthly income from features
+  - [x] 8. If user income < min_income: return (False, "Income below minimum requirement")
+- [x] 9. **Check credit utilization requirement**:
+  - [x] 10. If product.max_credit_utilization < 1.0
+  - [x] 11. Get user's avg_utilization from features
+  - [x] 12. If avg_utilization > max_credit_utilization: return (False, "Credit utilization too high")
+- [x] 13. **Check existing savings requirement**:
+  - [x] 14. If product.requires_no_existing_savings = True
+  - [x] 15. Check if user has any savings accounts
+  - [x] 16. If has savings: return (False, "Already has savings account")
+- [x] 17. **Check existing investment requirement**:
+  - [x] 18. If product.requires_no_existing_investment = True
+  - [x] 19. Check if user has any investment accounts
+  - [x] 20. If has investment: return (False, "Already has investment account")
+- [x] 21. **Check category-specific rules**:
+  - [x] 22. If category = "balance_transfer":
+    - [x] 23. Require avg_utilization >= 0.3 (only show if meaningful balance to transfer)
+    - [x] 24. If below threshold: return (False, "Balance transfer not beneficial at current utilization")
+- [x] 25. If all checks pass: return (True, "Eligible")
+- [x] 26. Add logging for eligibility failures
 
 ### Batch Eligibility Checking
-- [ ] 27. Create `filter_eligible_products(db, user_id: str, products: list[dict], features: UserFeature) -> list[dict]` function:
-- [ ] 28. Accept list of product matches with scores
-- [ ] 29. For each product:
-  - [ ] 30. Run eligibility check
-  - [ ] 31. If eligible, keep in list
-  - [ ] 32. If not eligible, log reason and skip
-- [ ] 33. Return filtered list of eligible products
-- [ ] 34. Add summary logging (X of Y products eligible)
+- [x] 27. Create `filter_eligible_products(db, user_id: str, products: list[dict], features: UserFeature) -> list[dict]` function:
+- [x] 28. Accept list of product matches with scores
+- [x] 29. For each product:
+  - [x] 30. Run eligibility check
+  - [x] 31. If eligible, keep in list
+  - [x] 32. If not eligible, log reason and skip
+- [x] 33. Return filtered list of eligible products
+- [x] 34. Add summary logging (X of Y products eligible)
 
 ### Integration with Product Matcher
-- [ ] 35. Update `product_matcher.py` to use eligibility filtering
-- [ ] 36. In `match_products()` function:
-  - [ ] 37. After scoring and sorting products
-  - [ ] 38. Before returning results
-  - [ ] 39. Call `filter_eligible_products()`
-  - [ ] 40. Return only eligible products
+- [x] 35. Update `product_matcher.py` to use eligibility filtering
+- [x] 36. In `match_products()` function:
+  - [x] 37. After scoring and sorting products
+  - [x] 38. Before returning results
+  - [x] 39. Call `filter_eligible_products()`
+  - [x] 40. Return only eligible products
 
 ### Testing Eligibility Logic
-- [ ] 41. Create `scripts/test_product_eligibility.py`
-- [ ] 42. Test income requirement:
-  - [ ] 43. Create user with income $3000/mo
-  - [ ] 44. Test with product requiring min_income $5000
-  - [ ] 45. Verify not eligible
-  - [ ] 46. Test with product requiring min_income $2000
-  - [ ] 47. Verify eligible
-- [ ] 48. Test credit utilization requirement:
-  - [ ] 49. Create user with 90% utilization
-  - [ ] 50. Test with balance transfer card max_utilization 85%
-  - [ ] 51. Verify not eligible
-- [ ] 52. Test existing account requirements:
-  - [ ] 53. Create user with savings account
-  - [ ] 54. Test with HYSA requiring no existing savings
-  - [ ] 55. Verify not eligible
-  - [ ] 56. Create user without savings account
-  - [ ] 57. Verify eligible
-- [ ] 58. Test category-specific rules:
-  - [ ] 59. Create user with 20% utilization
-  - [ ] 60. Test with balance transfer card
-  - [ ] 61. Verify not eligible (utilization too low for balance transfer)
-- [ ] 62. Test full flow: match + filter
-  - [ ] 63. Generate product matches for test user
-  - [ ] 64. Apply eligibility filtering
-  - [ ] 65. Verify only appropriate products remain
-- [ ] 66. Print detailed eligibility results for manual review
+- [x] 41. Create `scripts/test_product_eligibility.py`
+- [x] 42. Test income requirement:
+  - [x] 43. Create user with income $3000/mo
+  - [x] 44. Test with product requiring min_income $5000
+  - [x] 45. Verify not eligible
+  - [x] 46. Test with product requiring min_income $2000
+  - [x] 47. Verify eligible
+- [x] 48. Test credit utilization requirement:
+  - [x] 49. Create user with 90% utilization
+  - [x] 50. Test with balance transfer card max_utilization 85%
+  - [x] 51. Verify not eligible
+- [x] 52. Test existing account requirements:
+  - [x] 53. Create user with savings account
+  - [x] 54. Test with HYSA requiring no existing savings
+  - [x] 55. Verify not eligible
+  - [x] 56. Create user without savings account
+  - [x] 57. Verify eligible
+- [x] 58. Test category-specific rules:
+  - [x] 59. Create user with 20% utilization
+  - [x] 60. Test with balance transfer card
+  - [x] 61. Verify not eligible (utilization too low for balance transfer)
+- [x] 62. Test full flow: match + filter
+  - [x] 63. Generate product matches for test user
+  - [x] 64. Apply eligibility filtering
+  - [x] 65. Verify only appropriate products remain
+- [x] 66. Print detailed eligibility results for manual review

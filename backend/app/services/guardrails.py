@@ -15,7 +15,7 @@ from typing import Dict, Any, List, Optional
 import logging
 import json
 
-from app.models import User, UserFeature, Account
+from app.models import User, UserFeature, Account, ProductOffer
 
 logger = logging.getLogger(__name__)
 
@@ -275,6 +275,143 @@ def check_account_exists(db: Session, user_id: str, account_type: str) -> bool:
         logger.info(f"User {user_id} does not have any {account_type} accounts")
     
     return has_account
+
+
+# ============================================================================
+# Product Eligibility Checking
+# ============================================================================
+
+def check_product_eligibility(
+    db: Session,
+    user_id: str,
+    product: ProductOffer,
+    features: UserFeature
+) -> tuple[bool, str]:
+    """
+    Check if user is eligible for a product based on eligibility criteria.
+    
+    Checks:
+    - Income requirement (min_income)
+    - Credit utilization requirement (max_credit_utilization)
+    - Existing savings requirement (requires_no_existing_savings)
+    - Existing investment requirement (requires_no_existing_investment)
+    - Category-specific rules (e.g., balance_transfer requires meaningful utilization)
+    
+    Args:
+        db: Database session
+        user_id: User ID to check
+        product: ProductOffer model instance
+        features: UserFeature model instance (30d window)
+    
+    Returns:
+        Tuple of (is_eligible: bool, reason: str)
+        - If eligible: (True, "Eligible")
+        - If not eligible: (False, reason_string)
+    """
+    # Query user's accounts for account type checking
+    accounts = db.query(Account).filter(
+        Account.user_id == user_id
+    ).all()
+    
+    # Check income requirement
+    if product.min_income and product.min_income > 0:
+        user_monthly_income = features.avg_monthly_income or 0.0
+        if user_monthly_income < product.min_income:
+            reason = f"Income below minimum requirement (${user_monthly_income:.2f} < ${product.min_income:.2f})"
+            logger.info(f"Product {product.product_id} eligibility failed for user {user_id}: {reason}")
+            return (False, reason)
+    
+    # Check credit utilization requirement
+    if product.max_credit_utilization and product.max_credit_utilization < 1.0:
+        user_avg_utilization = features.avg_utilization or 0.0
+        if user_avg_utilization > product.max_credit_utilization:
+            reason = f"Credit utilization too high ({user_avg_utilization:.1%} > {product.max_credit_utilization:.1%})"
+            logger.info(f"Product {product.product_id} eligibility failed for user {user_id}: {reason}")
+            return (False, reason)
+    
+    # Check existing savings requirement
+    if product.requires_no_existing_savings:
+        savings_types = {"savings", "money market", "cash management", "HSA"}
+        has_savings = any(acc.type in savings_types for acc in accounts)
+        if has_savings:
+            reason = "Already has savings account"
+            logger.info(f"Product {product.product_id} eligibility failed for user {user_id}: {reason}")
+            return (False, reason)
+    
+    # Check existing investment requirement
+    if product.requires_no_existing_investment:
+        has_investment = any(acc.type == "investment" for acc in accounts)
+        if has_investment:
+            reason = "Already has investment account"
+            logger.info(f"Product {product.product_id} eligibility failed for user {user_id}: {reason}")
+            return (False, reason)
+    
+    # Check category-specific rules
+    if product.category == "balance_transfer":
+        # Require avg_utilization >= 0.3 (only show if meaningful balance to transfer)
+        user_avg_utilization = features.avg_utilization or 0.0
+        if user_avg_utilization < 0.3:
+            reason = f"Balance transfer not beneficial at current utilization ({user_avg_utilization:.1%} < 30%)"
+            logger.info(f"Product {product.product_id} eligibility failed for user {user_id}: {reason}")
+            return (False, reason)
+    
+    # All checks passed
+    logger.debug(f"Product {product.product_id} eligibility passed for user {user_id}")
+    return (True, "Eligible")
+
+
+def filter_eligible_products(
+    db: Session,
+    user_id: str,
+    products: List[Dict[str, Any]],
+    features: UserFeature
+) -> List[Dict[str, Any]]:
+    """
+    Filter list of product matches to only include eligible products.
+    
+    Args:
+        db: Database session
+        user_id: User ID to filter products for
+        products: List of product match dictionaries (from match_products)
+        features: UserFeature model instance (30d window)
+    
+    Returns:
+        Filtered list of eligible products
+    """
+    eligible_products = []
+    
+    for product_match in products:
+        # Get product_id from match dict
+        product_id = product_match.get("product_id")
+        if not product_id:
+            logger.warning(f"Product match missing product_id, skipping")
+            continue
+        
+        # Query ProductOffer from database
+        product = db.query(ProductOffer).filter(
+            ProductOffer.product_id == product_id
+        ).first()
+        
+        if not product:
+            logger.warning(f"Product {product_id} not found in database, skipping")
+            continue
+        
+        # Check eligibility
+        is_eligible, reason = check_product_eligibility(db, user_id, product, features)
+        
+        if is_eligible:
+            eligible_products.append(product_match)
+        else:
+            logger.debug(
+                f"Product {product_id} ({product.product_name}) filtered: {reason}"
+            )
+    
+    logger.info(
+        f"Filtered {len(products)} products to {len(eligible_products)} eligible "
+        f"products for user {user_id}"
+    )
+    
+    return eligible_products
 
 
 # ============================================================================

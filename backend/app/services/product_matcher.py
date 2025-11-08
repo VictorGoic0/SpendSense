@@ -12,6 +12,7 @@ import logging
 import json
 
 from app.models import ProductOffer, UserFeature, Account
+from app.services.guardrails import filter_eligible_products
 
 logger = logging.getLogger(__name__)
 
@@ -400,11 +401,14 @@ def match_products(
     # Sort by relevance score descending
     filtered_matches.sort(key=lambda x: x["relevance_score"], reverse=True)
     
-    # Return top 3 products
-    top_products = filtered_matches[:3]
+    # Apply eligibility filtering
+    eligible_matches = filter_eligible_products(db, user_id, filtered_matches, features)
+    
+    # Return top 3 eligible products
+    top_products = eligible_matches[:3]
     
     logger.info(
-        f"Matched {len(top_products)} products for user {user_id} "
+        f"Matched {len(top_products)} eligible products for user {user_id} "
         f"(persona: {base_persona})"
     )
     

@@ -515,6 +515,14 @@
     - Responsive layout
   - All 44 tasks completed (7 backend + 37 frontend)
 - ✅ **PR #28 Complete: Evaluation Script - Metrics Computation (all 54 tasks finished)**
+- ✅ **PR #40 Complete: Product Matching Service (all 91 tasks finished)**
+  - Created `backend/app/services/product_matcher.py` service file
+  - Helper functions: `get_account_types()`, `has_hysa()`, `has_investment_account()`
+  - Relevance scoring: `calculate_relevance_score()` with category-specific rules for all 5 product categories
+  - Rationale generation: `generate_product_rationale()` with personalized explanations citing specific user data
+  - Main matching function: `match_products()` - Filters by persona, scores products, generates rationales, returns top 3
+  - Test script: `scripts/test_product_matching.py` with comprehensive coverage for all 5 personas and edge cases
+  - All 91 tasks completed (service setup, scoring logic, rationale generation, main function, helper functions, testing)
 - ✅ **PR #38 Complete: Database Schema & Product Catalog Generation (all 64 tasks finished)**
 - ✅ **PR #39 Complete: Product Ingestion via API (all tasks finished)**
   - Added products support to `/ingest/` endpoint for consistency
@@ -553,10 +561,10 @@
   - All 54 tasks completed
 
 ### In Progress
-- 🔄 **Product Catalog Feature (PR #38-45)** - PR #38-39 Complete, PR #40 Next
+- 🔄 **Product Catalog Feature (PR #38-45)** - PR #38-40 Complete, PR #41 Next
   - ✅ PR #38: Database schema, product generation, catalog created (21 products)
   - ✅ PR #39: Product ingestion via API endpoint (consistent with other data)
-  - 🔄 PR #40: Product matching service (persona + signal based scoring)
+  - ✅ PR #40: Product matching service (persona + signal based scoring, rationale generation, top 3 products)
   - 🔄 PR #41: Eligibility filtering (income, utilization, existing accounts)
   - 🔄 PR #42-45: Hybrid recommendation engine, frontend display, product management API, unit tests
 - 🔄 **Article Catalog Feature (PR #46-51)** - Planning complete, ready for implementation
@@ -653,8 +661,9 @@
 - **Data Loaded**: 75 users, 272 accounts, 15,590 transactions, 92 liabilities
 - **Features Computed**: 142 feature records (71 users × 2 windows: 30d and 180d)
 - **Personas Assigned**: 142 persona records (71 users × 2 windows: 30d and 180d)
-- **Product Catalog**: Schema ready, 21 products generated in JSON, can be ingested via `/ingest/` endpoint
-- **Next**: Product matching service (PR #40)
+- **Product Catalog**: Schema ready, 21 products generated in JSON, ingested via `/ingest/` endpoint
+- **Product Matching**: Service complete (`backend/app/services/product_matcher.py`), matches products to users based on persona and signals
+- **Next**: Eligibility filtering (PR #41)
 
 ### Data Generation
 - **Status**: ✅ Complete and tested
