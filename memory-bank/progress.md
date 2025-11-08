@@ -516,6 +516,13 @@
   - All 44 tasks completed (7 backend + 37 frontend)
 - ✅ **PR #28 Complete: Evaluation Script - Metrics Computation (all 54 tasks finished)**
 - ✅ **PR #38 Complete: Database Schema & Product Catalog Generation (all 64 tasks finished)**
+- ✅ **PR #39 Complete: Product Ingestion via API (all tasks finished)**
+  - Added products support to `/ingest/` endpoint for consistency
+  - Created product schemas (ProductCreate, ProductResponse)
+  - Updated ingestion endpoint to handle products with JSON conversion
+  - Created `scripts/test_ingest_products.py` for API-based ingestion
+  - Removed direct seeding scripts (seed_product_catalog.py, test_product_seeding.py)
+  - Products now follow same ingestion pattern as all other data
   - Created `ProductOffer` model in `backend/app/models.py` with all required fields (product_id, product_name, product_type, category, persona_targets, eligibility criteria, content fields, business fields, timestamps, indexes)
   - Product generation script (`scripts/generate_product_catalog.py`) enhanced and tested:
     - Loads `.env` from backend folder automatically
@@ -546,9 +553,9 @@
   - All 54 tasks completed
 
 ### In Progress
-- 🔄 **Product Catalog Feature (PR #38-45)** - PR #38 Complete, PR #39 Next
+- 🔄 **Product Catalog Feature (PR #38-45)** - PR #38-39 Complete, PR #40 Next
   - ✅ PR #38: Database schema, product generation, catalog created (21 products)
-  - 🔄 PR #39: Product seeding script to load catalog into database
+  - ✅ PR #39: Product ingestion via API endpoint (consistent with other data)
   - 🔄 PR #40: Product matching service (persona + signal based scoring)
   - 🔄 PR #41: Eligibility filtering (income, utilization, existing accounts)
   - 🔄 PR #42-45: Hybrid recommendation engine, frontend display, product management API, unit tests
@@ -646,8 +653,8 @@
 - **Data Loaded**: 75 users, 272 accounts, 15,590 transactions, 92 liabilities
 - **Features Computed**: 142 feature records (71 users × 2 windows: 30d and 180d)
 - **Personas Assigned**: 142 persona records (71 users × 2 windows: 30d and 180d)
-- **Product Catalog**: Schema ready, 21 products generated in JSON (ready for seeding in PR #39)
-- **Next**: Product seeding (PR #39)
+- **Product Catalog**: Schema ready, 21 products generated in JSON, can be ingested via `/ingest/` endpoint
+- **Next**: Product matching service (PR #40)
 
 ### Data Generation
 - **Status**: ✅ Complete and tested

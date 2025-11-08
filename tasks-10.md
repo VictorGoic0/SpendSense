@@ -173,107 +173,107 @@
 **Goal**: Implement service to match users to relevant products based on persona and financial signals.
 
 ### Product Matching Service Setup
-- [ ] 1. Create `backend/app/services/product_matcher.py`
-- [ ] 2. Import database models (ProductOffer, UserFeature, Account)
-- [ ] 3. Import json module for parsing JSON fields
-- [ ] 4. Import typing for type hints
-- [ ] 5. Add logging setup
+- [x] 1. Create `backend/app/services/product_matcher.py`
+- [x] 2. Import database models (ProductOffer, UserFeature, Account)
+- [x] 3. Import json module for parsing JSON fields
+- [x] 4. Import typing for type hints
+- [x] 5. Add logging setup
 
 ### Relevance Scoring Logic
-- [ ] 6. Create `calculate_relevance_score(product: ProductOffer, features: UserFeature, accounts: list) -> float` function:
-- [ ] 7. Initialize base score = 0.5
-- [ ] 8. Add scoring rules for balance_transfer products:
-  - [ ] 9. If avg_utilization > 0.5: score += 0.3
-  - [ ] 10. If interest_charges_present: score += 0.2
-  - [ ] 11. If avg_utilization > 0.7: score += 0.2 (bonus for very high)
-- [ ] 12. Add scoring rules for hysa (high-yield savings account) products:
-  - [ ] 13. If net_savings_inflow > 0 and emergency_fund_months < 3: score += 0.4
-  - [ ] 14. If savings_growth_rate > 0.02: score += 0.2
-  - [ ] 15. If has existing HYSA: score -= 0.5 (penalize)
-- [ ] 16. Add scoring rules for budgeting_app products:
-  - [ ] 17. If income_variability > 0.3: score += 0.3
-  - [ ] 18. If financial_buffer_days < 30: score += 0.3
-  - [ ] 19. If avg_monthly_expenses_volatility > 0.25: score += 0.2
-- [ ] 20. Add scoring rules for subscription_manager products:
-  - [ ] 21. If recurring_merchants >= 5: score += 0.4
-  - [ ] 22. If subscription_spend_share > 0.2: score += 0.3
-- [ ] 23. Add scoring rules for robo_advisor / investment products:
-  - [ ] 24. If monthly_income > 5000 and avg_utilization < 0.3: score += 0.4
-  - [ ] 25. If emergency_fund_months >= 3: score += 0.3
-  - [ ] 26. If has existing investment account: score -= 0.4 (penalize)
-- [ ] 27. Clamp score to range [0.0, 1.0]
-- [ ] 28. Return relevance score
+- [x] 6. Create `calculate_relevance_score(product: ProductOffer, features: UserFeature, accounts: list) -> float` function:
+- [x] 7. Initialize base score = 0.5
+- [x] 8. Add scoring rules for balance_transfer products:
+  - [x] 9. If avg_utilization > 0.5: score += 0.3
+  - [x] 10. If interest_charges_present: score += 0.2
+  - [x] 11. If avg_utilization > 0.7: score += 0.2 (bonus for very high)
+- [x] 12. Add scoring rules for hysa (high-yield savings account) products:
+  - [x] 13. If net_savings_inflow > 0 and emergency_fund_months < 3: score += 0.4
+  - [x] 14. If savings_growth_rate > 0.02: score += 0.2
+  - [x] 15. If has existing HYSA: score -= 0.5 (penalize)
+- [x] 16. Add scoring rules for budgeting_app products:
+  - [x] 17. If income_variability > 0.3: score += 0.3
+  - [x] 18. If financial_buffer_days < 30: score += 0.3
+  - [x] 19. If avg_monthly_expenses_volatility > 0.25: score += 0.2
+- [x] 20. Add scoring rules for subscription_manager products:
+  - [x] 21. If recurring_merchants >= 5: score += 0.4
+  - [x] 22. If subscription_spend_share > 0.2: score += 0.3
+- [x] 23. Add scoring rules for robo_advisor / investment products:
+  - [x] 24. If monthly_income > 5000 and avg_utilization < 0.3: score += 0.4
+  - [x] 25. If emergency_fund_months >= 3: score += 0.3
+  - [x] 26. If has existing investment account: score -= 0.4 (penalize)
+- [x] 27. Clamp score to range [0.0, 1.0]
+- [x] 28. Return relevance score
 
 ### Product Rationale Generation
-- [ ] 29. Create `generate_product_rationale(product: ProductOffer, features: UserFeature) -> str` function:
-- [ ] 30. Use product category to determine rationale template
-- [ ] 31. For balance_transfer products:
-  - [ ] 32. Calculate estimated monthly interest savings
-  - [ ] 33. Format: "With your credit utilization at {util}%, this card could save you ${savings}/month in interest."
-- [ ] 34. For hysa products:
-  - [ ] 35. Calculate annual interest earnings based on current savings
-  - [ ] 36. Format: "Your ${amount}/month savings in a HYSA earning {apy} could generate ${earnings} extra per year."
-- [ ] 37. For budgeting_app products:
-  - [ ] 38. Cite income variability or buffer days
-  - [ ] 39. Format: "With variable income and only {buffer_days} days of buffer, this app helps manage irregular cash flow."
-- [ ] 40. For subscription_manager products:
-  - [ ] 41. Cite number of recurring merchants
-  - [ ] 42. Format: "You have {count} recurring subscriptions totaling ${amount}/month - this tool can help identify savings."
-- [ ] 43. For investment products:
-  - [ ] 44. Cite income and existing emergency fund
-  - [ ] 45. Format: "With ${income}/month income and {months} months emergency fund, you're ready to start investing."
-- [ ] 46. Return rationale string
+- [x] 29. Create `generate_product_rationale(product: ProductOffer, features: UserFeature) -> str` function:
+- [x] 30. Use product category to determine rationale template
+- [x] 31. For balance_transfer products:
+  - [x] 32. Calculate estimated monthly interest savings
+  - [x] 33. Format: "With your credit utilization at {util}%, this card could save you ${savings}/month in interest."
+- [x] 34. For hysa products:
+  - [x] 35. Calculate annual interest earnings based on current savings
+  - [x] 36. Format: "Your ${amount}/month savings in a HYSA earning {apy} could generate ${earnings} extra per year."
+- [x] 37. For budgeting_app products:
+  - [x] 38. Cite income variability or buffer days
+  - [x] 39. Format: "With variable income and only {buffer_days} days of buffer, this app helps manage irregular cash flow."
+- [x] 40. For subscription_manager products:
+  - [x] 41. Cite number of recurring merchants
+  - [x] 42. Format: "You have {count} recurring subscriptions totaling ${amount}/month - this tool can help identify savings."
+- [x] 43. For investment products:
+  - [x] 44. Cite income and existing emergency fund
+  - [x] 45. Format: "With ${income}/month income and {months} months emergency fund, you're ready to start investing."
+- [x] 46. Return rationale string
 
 ### Main Product Matching Function
-- [ ] 47. Create `match_products(db, user_id: str, persona_type: str, features: UserFeature) -> list[dict]` function:
-- [ ] 48. Parse persona_type (handle both 30d and 180d versions)
-- [ ] 49. Query active products where persona_targets contains user's persona:
-  - [ ] 50. Filter by active=True
-  - [ ] 51. Parse persona_targets JSON field
-  - [ ] 52. Check if user's persona in target list
-- [ ] 53. Query user's accounts for eligibility checks
-- [ ] 54. For each candidate product:
-  - [ ] 55. Calculate relevance score
-  - [ ] 56. Generate rationale
-  - [ ] 57. Create result dict with product data + score + rationale
-- [ ] 58. Filter out products with relevance_score < 0.5 (too low)
-- [ ] 59. Sort products by relevance_score descending
-- [ ] 60. Return top 3 products
-- [ ] 61. Add logging for matched products and scores
+- [x] 47. Create `match_products(db, user_id: str, persona_type: str, features: UserFeature) -> list[dict]` function:
+- [x] 48. Parse persona_type (handle both 30d and 180d versions)
+- [x] 49. Query active products where persona_targets contains user's persona:
+  - [x] 50. Filter by active=True
+  - [x] 51. Parse persona_targets JSON field
+  - [x] 52. Check if user's persona in target list
+- [x] 53. Query user's accounts for eligibility checks
+- [x] 54. For each candidate product:
+  - [x] 55. Calculate relevance score
+  - [x] 56. Generate rationale
+  - [x] 57. Create result dict with product data + score + rationale
+- [x] 58. Filter out products with relevance_score < 0.5 (too low)
+- [x] 59. Sort products by relevance_score descending
+- [x] 60. Return top 3 products
+- [x] 61. Add logging for matched products and scores
 
 ### Helper Functions
-- [ ] 62. Create `get_account_types(accounts: list) -> set[str]` function:
-  - [ ] 63. Extract account_type from each account
-  - [ ] 64. Return set of unique account types
-- [ ] 65. Create `has_hysa(accounts: list) -> bool` function:
-  - [ ] 66. Check if any account has type 'savings' with high interest indicator
-  - [ ] 67. Return boolean
-- [ ] 68. Create `has_investment_account(accounts: list) -> bool` function:
-  - [ ] 69. Check if any account has type 'investment'
-  - [ ] 70. Return boolean
+- [x] 62. Create `get_account_types(accounts: list) -> set[str]` function:
+  - [x] 63. Extract account_type from each account
+  - [x] 64. Return set of unique account types
+- [x] 65. Create `has_hysa(accounts: list) -> bool` function:
+  - [x] 66. Check if any account has type 'savings' with high interest indicator
+  - [x] 67. Return boolean
+- [x] 68. Create `has_investment_account(accounts: list) -> bool` function:
+  - [x] 69. Check if any account has type 'investment'
+  - [x] 70. Return boolean
 
 ### Testing Product Matching
-- [ ] 71. Create `scripts/test_product_matching.py`
-- [ ] 72. Test with high_utilization user:
-  - [ ] 73. Query user with high utilization from database
-  - [ ] 74. Call match_products()
-  - [ ] 75. Verify balance transfer cards ranked high
-  - [ ] 76. Verify relevance scores make sense
-  - [ ] 77. Print matched products and scores
-- [ ] 78. Test with savings_builder user:
-  - [ ] 79. Query user with savings activity
-  - [ ] 80. Call match_products()
-  - [ ] 81. Verify HYSA products ranked high
-  - [ ] 82. Print results
-- [ ] 83. Test with variable_income user:
-  - [ ] 84. Verify budgeting apps ranked high
-- [ ] 85. Test with subscription_heavy user:
-  - [ ] 86. Verify subscription managers ranked high
-- [ ] 87. Test with wealth_builder user:
-  - [ ] 88. Verify investment products ranked high
-- [ ] 89. Verify rationale text is specific and cites user data
-- [ ] 90. Test edge case: user with no matching products
-- [ ] 91. Test edge case: all products have low relevance scores
+- [x] 71. Create `scripts/test_product_matching.py`
+- [x] 72. Test with high_utilization user:
+  - [x] 73. Query user with high utilization from database
+  - [x] 74. Call match_products()
+  - [x] 75. Verify balance transfer cards ranked high
+  - [x] 76. Verify relevance scores make sense
+  - [x] 77. Print matched products and scores
+- [x] 78. Test with savings_builder user:
+  - [x] 79. Query user with savings activity
+  - [x] 80. Call match_products()
+  - [x] 81. Verify HYSA products ranked high
+  - [x] 82. Print results
+- [x] 83. Test with variable_income user:
+  - [x] 84. Verify budgeting apps ranked high
+- [x] 85. Test with subscription_heavy user:
+  - [x] 86. Verify subscription managers ranked high
+- [x] 87. Test with wealth_builder user:
+  - [x] 88. Verify investment products ranked high
+- [x] 89. Verify rationale text is specific and cites user data
+- [x] 90. Test edge case: user with no matching products
+- [x] 91. Test edge case: all products have low relevance scores
 
 ---
 

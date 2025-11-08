@@ -27,8 +27,10 @@ User Dashboard (React UI)
 
 ### 1. Data Ingestion Module (`ingest/`)
 - Validates synthetic Plaid-style JSON
-- Populates 4 core tables: users, accounts, transactions, liabilities
+- Populates 5 core tables: users, accounts, transactions, liabilities, products
 - Idempotent ingestion (can re-run safely)
+- Processing order: Users → Accounts → Transactions → Liabilities → Products
+- Transactions processed in batches of 1000 for performance
 
 ### 2. Feature Engineering Pipeline (`features/`)
 - Computes 30-day and 180-day behavioral signals
@@ -149,13 +151,25 @@ User Dashboard (React UI)
     - Categories: balance_transfer, hysa, budgeting_app, subscription_manager, robo_advisor, investment_account, retirement_plan, debt_consolidation
     - All products include disclosures, benefits, eligibility criteria, partner information
   - Schema documentation: `docs/PRODUCT_SCHEMA.md` with complete field descriptions and JSON format
-- 🔄 Product seeding (PR #39 - Next)
-  - Script to load products from JSON into database
-  - Distribution statistics and validation
-- 🔄 Product matching service (PR #40 - Planned)
-  - Persona-based matching with relevance scoring
-  - Signal-based scoring (utilization, savings, income, subscriptions)
-- 🔄 Eligibility filtering (PR #41 - Planned)
+- ✅ Product ingestion via API (PR #39 Complete)
+  - Products ingested through `/ingest/` endpoint (same as users, accounts, transactions, liabilities)
+  - `ProductCreate` and `ProductResponse` schemas added to `backend/app/schemas.py`
+  - Ingestion endpoint converts `persona_targets` and `benefits` lists to JSON strings
+  - Test script: `scripts/test_ingest_products.py` for API-based ingestion
+  - All product data follows consistent API ingestion pattern
+- ✅ Product matching service (PR #40 Complete)
+  - Service file: `backend/app/services/product_matcher.py`
+  - Helper functions: `get_account_types()`, `has_hysa()`, `has_investment_account()`
+  - Relevance scoring: `calculate_relevance_score()` with category-specific rules
+    - Balance transfer: High utilization + interest charges
+    - HYSA: Savings activity + low emergency fund (penalizes existing HYSA)
+    - Budgeting apps: Income variability + low buffer
+    - Subscription managers: High recurring merchants + spend share
+    - Investment products: High income + low utilization + good emergency fund (penalizes existing investment)
+  - Rationale generation: `generate_product_rationale()` with personalized explanations citing user data
+  - Main matching: `match_products()` - Filters by persona, scores products, generates rationales, returns top 3
+  - Test script: `scripts/test_product_matching.py` with comprehensive coverage for all personas
+- 🔄 Eligibility filtering (PR #41 - Next)
   - Income requirements, credit utilization limits, existing account checks
   - Category-specific rules (e.g., balance transfer requires min 30% utilization)
 
@@ -368,7 +382,7 @@ User Dashboard (React UI)
   - POST /features/compute/{user_id} - Compute features for user
   - POST /personas/{user_id}/assign - Assign persona for user (with optional window_days parameter)
   - GET /personas/{user_id} - Get personas for user (with optional window filter)
-  - POST /ingest - Bulk data ingestion
+  - POST /ingest - Bulk data ingestion (users, accounts, transactions, liabilities, products)
   - POST /recommendations/generate/{user_id} - Generate recommendations for user
   - GET /recommendations/{user_id} - Get recommendations for user (with optional status and window_days filters)
   - POST /recommendations/{recommendation_id}/approve - Approve a recommendation (PR #23 Complete)

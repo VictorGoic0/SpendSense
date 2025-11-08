@@ -375,10 +375,6 @@
 
 ---
 
-**End of Tasks - Part 12**
-
-**End of Tasks - Part 10**
-
 ## Project Complete! 🎉
 
 You now have a fully functional SpendSense MVP with:

@@ -1,10 +1,52 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: Product Catalog Feature - PR #38 Complete, PR #39 Next
+**Status**: Product Catalog Feature - PR #38-40 Complete, PR #41 Next (Eligibility Filtering)
 
 ## Recent Changes
+- ✅ **PR #40 Complete: Product Matching Service (all 91 tasks finished)**
+  - Created `backend/app/services/product_matcher.py` service file
+  - Helper functions: `get_account_types()`, `has_hysa()`, `has_investment_account()`
+  - Relevance scoring: `calculate_relevance_score()` function with category-specific rules:
+    - Balance transfer: High utilization (>0.5: +0.3, >0.7: +0.2 bonus), interest charges (+0.2)
+    - HYSA: Savings activity (net_inflow > 0 and emergency_fund < 3 months: +0.4), growth rate (+0.2), penalizes existing HYSA (-0.5)
+    - Budgeting apps: Income variability (>0.3: +0.3), low buffer (<30 days: +0.3), expense volatility (+0.2)
+    - Subscription managers: High recurring merchants (>=5: +0.4), high spend share (>0.2: +0.3)
+    - Investment products: High income (>$5k/mo) + low utilization (<0.3: +0.4), good emergency fund (>=3 months: +0.3), penalizes existing investment (-0.4)
+  - Rationale generation: `generate_product_rationale()` function with category-specific templates:
+    - Balance transfer: Cites utilization % and estimated monthly interest savings
+    - HYSA: Cites monthly savings amount, APY, and annual interest earnings
+    - Budgeting apps: Cites income variability or buffer days
+    - Subscription managers: Cites recurring merchant count and monthly spend
+    - Investment products: Cites monthly income and emergency fund months
+  - Main matching function: `match_products()` function:
+    - Parses persona_type (handles 30d/180d suffixes)
+    - Queries active products where persona_targets contains user's persona
+    - Calculates relevance scores for each candidate product
+    - Generates personalized rationales citing user data
+    - Filters products with relevance_score >= 0.5
+    - Sorts by score descending, returns top 3 products
+    - Comprehensive logging for matched products and scores
+  - Test script created (`scripts/test_product_matching.py`):
+    - Tests all 5 persona types (high_utilization, savings_builder, variable_income, subscription_heavy, wealth_builder)
+    - Verifies category-specific products ranked high for each persona
+    - Tests edge cases (no matching products, low relevance scores)
+    - Verifies rationale specificity (cites specific user data with numbers/percentages)
+    - Comprehensive test coverage for all matching scenarios
+  - All 91 tasks completed (service setup, scoring logic, rationale generation, main function, helper functions, testing)
 - ✅ **PR #38 Complete: Database Schema & Product Catalog Generation (all 64 tasks finished)**
+- ✅ **PR #39 Complete: Product Ingestion via API (all tasks finished)**
+  - Added products support to `/ingest/` endpoint for consistency with other data ingestion
+  - Created `ProductCreate` and `ProductResponse` schemas in `backend/app/schemas.py`
+  - Updated `IngestRequest` to include `products: List[ProductCreate]`
+  - Updated ingestion endpoint (`backend/app/routers/ingest.py`) to handle products:
+    - Converts `persona_targets` and `benefits` lists to JSON strings
+    - Bulk inserts products into database
+    - Includes products count in `IngestResponse`
+  - Created `scripts/test_ingest_products.py` for API-based product ingestion
+  - Removed direct database seeding scripts (`seed_product_catalog.py`, `test_product_seeding.py`)
+  - Updated README.md to document API-based ingestion workflow
+  - Products now follow same ingestion pattern as users, accounts, transactions, liabilities
   - Created `ProductOffer` model in `backend/app/models.py` with all required fields:
     - Core fields: product_id, product_name, product_type, category, persona_targets (JSON)
     - Eligibility criteria: min_income, max_credit_utilization, requires_no_existing_savings/investment, min_credit_score
@@ -686,8 +728,8 @@
    - **Note**: Articles are placeholders, will replace with real content later
 2. **Product Catalog Implementation** - PR #38-45: Add product recommendations alongside educational content
    - ✅ **PR #38 Complete**: Database schema, product generation, catalog created (21 products)
-   - 🔄 **PR #39 Next**: Product seeding script to load catalog into database
-   - 🔄 **PR #40**: Product matching service (persona + signal based scoring)
+   - ✅ **PR #39 Complete**: Product ingestion via API endpoint (consistent with other data)
+   - ✅ **PR #40 Complete**: Product matching service (persona + signal based scoring, rationale generation, top 3 products)
    - 🔄 **PR #41**: Eligibility filtering (income, utilization, existing accounts)
    - 🔄 **PR #42-45**: Hybrid recommendation engine, frontend display, product management API, unit tests
    - **PAUSED AWS tasks** - No AWS access currently, implementing features instead
