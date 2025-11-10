@@ -115,60 +115,60 @@
 ## PR #29: Parquet Export & S3 Integration
 
 ### S3 Setup
-- [ ] 1. Create S3 bucket via AWS console or CLI
-- [ ] 2. Name: `spendsense-analytics-{random-suffix}`
-- [ ] 3. Set bucket to private (block public access)
-- [ ] 4. Create IAM policy for bucket access
-- [ ] 5. Add policy to user/role credentials
-- [ ] 6. Test bucket access with boto3
+- [x] 1. Create S3 bucket via AWS console or CLI
+- [x] 2. Name: `spendsense-analytics-goico`
+- [x] 3. Set bucket to private (block public access) - Already configured by default
+- [x] 4. Create IAM policy for bucket access (using existing credentials)
+- [x] 5. Add policy to user/role credentials (using existing credentials)
+- [x] 6. Test bucket access with boto3
 
 ### Dependencies
-- [ ] 7. Add `boto3==1.29.7` to requirements.txt
-- [ ] 8. Add `pyarrow==14.0.1` to requirements.txt
-- [ ] 9. Install: `pip install boto3 pyarrow`
-- [ ] 10. Add AWS credentials to .env file:
+- [x] 7. Add `boto3==1.29.7` to requirements.txt
+- [x] 8. Add `pyarrow==14.0.1` to requirements.txt
+- [x] 9. Install: `pip install boto3 pyarrow`
+- [x] 10. Add AWS credentials to .env file:
     - AWS_ACCESS_KEY_ID
     - AWS_SECRET_ACCESS_KEY
     - AWS_DEFAULT_REGION
     - S3_BUCKET_NAME
 
 ### Export User Features Function
-- [ ] 11. In evaluate.py, create `export_user_features_to_parquet(db, window_days: int, run_id: str) -> str`:
-- [ ] 12. Query all user_features for specified window_days
-- [ ] 13. Convert to pandas DataFrame using pd.read_sql()
-- [ ] 14. Define output path: `/tmp/user_features_{window_days}d_{run_id}.parquet`
-- [ ] 15. Export to parquet: `df.to_parquet(output_path)`
-- [ ] 16. Return local file path
+- [x] 11. In evaluate.py, create `export_user_features_to_parquet(db, window_days: int, run_id: str) -> str`:
+- [x] 12. Query all user_features for specified window_days
+- [x] 13. Convert to pandas DataFrame using pd.read_sql()
+- [x] 14. Define output path: `/tmp/user_features_{window_days}d_{run_id}.parquet`
+- [x] 15. Export to parquet: `df.to_parquet(output_path)`
+- [x] 16. Return local file path
 
 ### Upload to S3 Function
-- [ ] 17. Create `upload_to_s3(local_path: str, s3_key: str, bucket_name: str) -> str`:
-- [ ] 18. Create boto3 S3 client
-- [ ] 19. Upload file: `s3.upload_file(local_path, bucket_name, s3_key)`
-- [ ] 20. Generate pre-signed URL:
+- [x] 17. Create `upload_to_s3(local_path: str, s3_key: str, bucket_name: str) -> str`:
+- [x] 18. Create boto3 S3 client
+- [x] 19. Upload file: `s3.upload_file(local_path, bucket_name, s3_key)`
+- [x] 20. Generate pre-signed URL:
     - Expiry: 604800 seconds (7 days)
     - Method: get_object
-- [ ] 21. Return pre-signed URL
-- [ ] 22. Add error handling for S3 operations
+- [x] 21. Return pre-signed URL
+- [x] 22. Add error handling for S3 operations
 
 ### Export Evaluation Results
-- [ ] 23. Create `export_evaluation_results_to_parquet(db, run_id: str) -> str`:
-- [ ] 24. Query evaluation_metrics table for run_id
-- [ ] 25. Convert to pandas DataFrame
-- [ ] 26. Export to parquet: `/tmp/evaluation_{run_id}.parquet`
-- [ ] 27. Return local file path
+- [x] 23. Create `export_evaluation_results_to_parquet(db, run_id: str) -> str`:
+- [x] 24. Query evaluation_metrics table for run_id
+- [x] 25. Convert to pandas DataFrame
+- [x] 26. Export to parquet: `/tmp/evaluation_{run_id}.parquet`
+- [x] 27. Return local file path
 
 ### Integrate Exports into Evaluation
-- [ ] 28. Update run_evaluation() function:
-- [ ] 29. After saving metrics to DB, export user features (30d)
-- [ ] 30. Export user features (180d)
-- [ ] 31. Export evaluation results
-- [ ] 32. Upload all 3 files to S3
-- [ ] 33. Store S3 URLs in dict
-- [ ] 34. Return (run_id, metrics_dict, s3_urls_dict)
+- [x] 28. Update run_evaluation() function:
+- [x] 29. After saving metrics to DB, export user features (30d)
+- [x] 30. Export user features (180d)
+- [x] 31. Export evaluation results
+- [x] 32. Upload all 3 files to S3
+- [x] 33. Store S3 URLs in dict
+- [x] 34. Return (run_id, metrics_dict, s3_urls_dict)
 
 ### Generate Evaluation Report JSON
-- [ ] 35. Create `generate_evaluation_report(run_id: str, metrics: dict, s3_urls: dict) -> None`:
-- [ ] 36. Combine all data into report dict:
+- [x] 35. Create `generate_evaluation_report(run_id: str, metrics: dict, s3_urls: dict) -> None`:
+- [x] 36. Combine all data into report dict:
     - run_id
     - timestamp
     - metrics
@@ -176,17 +176,17 @@
     - recommendation_status
     - parquet_exports (S3 keys)
     - download_urls (pre-signed URLs)
-- [ ] 37. Write to file: `evaluation_report_{run_id}.json`
-- [ ] 38. Save in root directory
-- [ ] 39. Print success message with file location
+- [x] 37. Write to file: `evaluation_report_{run_id}.json`
+- [x] 38. Save in root directory
+- [x] 39. Print success message with file location
 
 ### Testing Parquet Export
-- [ ] 40. Run evaluation script with S3 integration
-- [ ] 41. Verify 3 parquet files created in /tmp
-- [ ] 42. Verify files uploaded to S3 (check console)
-- [ ] 43. Verify pre-signed URLs work (try downloading)
-- [ ] 44. Verify JSON report created with all data
-- [ ] 45. Open parquet files in pandas to verify data
+- [x] 40. Run evaluation script with S3 integration
+- [x] 41. Verify 3 parquet files created in /tmp
+- [x] 42. Verify files uploaded to S3 (check console)
+- [x] 43. Verify pre-signed URLs work (try downloading)
+- [x] 44. Verify JSON report created with all data
+- [x] 45. Open parquet files in pandas to verify data
 
 ---
 

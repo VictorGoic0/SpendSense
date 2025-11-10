@@ -10,6 +10,7 @@ Computes system performance metrics:
 """
 
 import sys
+import os
 from pathlib import Path
 from datetime import datetime, timedelta
 import json
@@ -19,6 +20,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 import pandas as pd
 import numpy as np
+import boto3
+from botocore.exceptions import ClientError, NoCredentialsError
 from sqlalchemy import create_engine, func, or_
 from sqlalchemy.orm import sessionmaker
 
@@ -262,15 +265,177 @@ def get_recommendation_status_breakdown(db) -> dict:
 
 
 # ============================================================================
+# Parquet Export Functions
+# ============================================================================
+
+def export_user_features_to_parquet(db, window_days: int, run_id: str) -> str:
+    """
+    Export user features to parquet format.
+    
+    Args:
+        db: Database session
+        window_days: Time window (30 or 180)
+        run_id: Evaluation run identifier
+    
+    Returns:
+        Local file path to parquet file
+    """
+    # Query all user_features for specified window_days
+    query = db.query(UserFeature).filter(
+        UserFeature.window_days == window_days
+    )
+    
+    # Convert to pandas DataFrame using pd.read_sql()
+    df = pd.read_sql(query.statement, db.bind)
+    
+    # Define output path: /tmp/user_features_{window_days}d_{run_id}.parquet
+    output_path = f"/tmp/user_features_{window_days}d_{run_id}.parquet"
+    
+    # Export to parquet: df.to_parquet(output_path)
+    df.to_parquet(output_path, index=False)
+    
+    return output_path
+
+
+def export_evaluation_results_to_parquet(db, run_id: str) -> str:
+    """
+    Export evaluation results to parquet format.
+    
+    Args:
+        db: Database session
+        run_id: Evaluation run identifier
+    
+    Returns:
+        Local file path to parquet file
+    """
+    # Query evaluation_metrics table for run_id
+    query = db.query(EvaluationMetric).filter(
+        EvaluationMetric.run_id == run_id
+    )
+    
+    # Convert to pandas DataFrame
+    df = pd.read_sql(query.statement, db.bind)
+    
+    # Export to parquet: /tmp/evaluation_{run_id}.parquet
+    output_path = f"/tmp/evaluation_{run_id}.parquet"
+    df.to_parquet(output_path, index=False)
+    
+    return output_path
+
+
+# ============================================================================
+# S3 Upload Functions
+# ============================================================================
+
+def upload_to_s3(local_path: str, s3_key: str, bucket_name: str) -> str:
+    """
+    Upload file to S3 and generate pre-signed URL.
+    
+    Args:
+        local_path: Path to local file
+        s3_key: S3 object key (path in bucket)
+        bucket_name: S3 bucket name
+    
+    Returns:
+        Pre-signed URL for downloading the file
+    
+    Raises:
+        NoCredentialsError: If AWS credentials are not configured
+        ClientError: If S3 operation fails
+    """
+    try:
+        # Create boto3 S3 client
+        s3_client = boto3.client('s3')
+        
+        # Upload file: s3.upload_file(local_path, bucket_name, s3_key)
+        s3_client.upload_file(local_path, bucket_name, s3_key)
+        
+        # Generate pre-signed URL:
+        # Expiry: 604800 seconds (7 days)
+        # Method: get_object
+        presigned_url = s3_client.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': bucket_name, 'Key': s3_key},
+            ExpiresIn=604800  # 7 days
+        )
+        
+        return presigned_url
+        
+    except NoCredentialsError:
+        raise RuntimeError(
+            "AWS credentials not found. Please configure AWS credentials using "
+            "'aws configure' or set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY "
+            "environment variables."
+        )
+    except ClientError as e:
+        error_code = e.response.get('Error', {}).get('Code', 'Unknown')
+        error_message = e.response.get('Error', {}).get('Message', str(e))
+        raise RuntimeError(
+            f"Failed to upload to S3: {error_code} - {error_message}. "
+            f"Check bucket name '{bucket_name}' and IAM permissions."
+        )
+
+
+# ============================================================================
+# Evaluation Report Generation
+# ============================================================================
+
+def generate_evaluation_report(run_id: str, metrics: dict, s3_urls: dict) -> str:
+    """
+    Generate evaluation report JSON file.
+    
+    Args:
+        run_id: Evaluation run identifier
+        metrics: Metrics dictionary
+        s3_urls: Dictionary with S3 keys and pre-signed URLs
+    
+    Returns:
+        Path to generated report file
+    """
+    # Combine all data into report dict:
+    report = {
+        "run_id": run_id,
+        "timestamp": metrics.get("timestamp", datetime.now().isoformat()),
+        "metrics": {
+            "coverage": metrics.get("coverage", {}),
+            "explainability": metrics.get("explainability", {}),
+            "latency": metrics.get("latency", {}),
+            "auditability": metrics.get("auditability", {})
+        },
+        "persona_distribution": {
+            "30d": metrics.get("persona_distribution_30d", {}),
+            "180d": metrics.get("persona_distribution_180d", {})
+        },
+        "recommendation_status": metrics.get("recommendation_status_breakdown", {}),
+        "parquet_exports": {
+            key: key for key in s3_urls.keys()  # S3 keys
+        },
+        "download_urls": s3_urls  # Pre-signed URLs
+    }
+    
+    # Write to file: evaluation_report_{run_id}.json
+    # Save in root directory
+    root_dir = Path(__file__).parent.parent
+    report_path = root_dir / f"evaluation_report_{run_id}.json"
+    
+    with open(report_path, 'w') as f:
+        json.dump(report, f, indent=2)
+    
+    print(f"✅ Evaluation report saved: {report_path}")
+    
+    return str(report_path)
+
+
+# ============================================================================
 # Main Evaluation Function
 # ============================================================================
 
-def run_evaluation() -> tuple[str, dict]:
+def run_evaluation() -> tuple[str, dict, dict]:
     """
     Run complete evaluation and compute all metrics.
     
     Returns:
-        Tuple of (run_id, metrics_dict)
+        Tuple of (run_id, metrics_dict, s3_urls_dict)
     """
     # Generate run_id with timestamp format: eval_YYYYMMDD_HHMMSS
     run_id = f"eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -373,7 +538,45 @@ def run_evaluation() -> tuple[str, dict]:
         print("✅ Evaluation complete!")
         print("=" * 80)
         
-        return (run_id, metrics)
+        # Export to parquet and upload to S3
+        print()
+        print("Exporting data to Parquet and uploading to S3...")
+        print("-" * 80)
+        
+        # Get S3 bucket name from environment or use default
+        bucket_name = os.getenv('S3_BUCKET_NAME', 'spendsense-analytics-goico')
+        
+        s3_urls = {}
+        
+        try:
+            # Export user features (30d)
+            print("Exporting user features (30d)...")
+            features_30d_path = export_user_features_to_parquet(db, window_days=30, run_id=run_id)
+            s3_key_30d = f"features/user_features_30d_{run_id}.parquet"
+            presigned_url_30d = upload_to_s3(features_30d_path, s3_key_30d, bucket_name)
+            s3_urls[s3_key_30d] = presigned_url_30d
+            print(f"  ✅ Uploaded: {s3_key_30d}")
+            
+            # Export user features (180d)
+            print("Exporting user features (180d)...")
+            features_180d_path = export_user_features_to_parquet(db, window_days=180, run_id=run_id)
+            s3_key_180d = f"features/user_features_180d_{run_id}.parquet"
+            presigned_url_180d = upload_to_s3(features_180d_path, s3_key_180d, bucket_name)
+            s3_urls[s3_key_180d] = presigned_url_180d
+            print(f"  ✅ Uploaded: {s3_key_180d}")
+            
+            # Note: Evaluation results export will happen in main() after metrics are saved
+            print()
+            print("✅ User features uploaded to S3 successfully!")
+            print()
+            
+        except Exception as e:
+            print(f"\n❌ Error during S3 export: {e}")
+            import traceback
+            traceback.print_exc()
+            raise
+        
+        return (run_id, metrics, s3_urls)
         
     except Exception as e:
         print(f"\n❌ Error during evaluation: {e}")
@@ -453,14 +656,37 @@ def main():
     db = SessionLocal()
     
     try:
-        # Run evaluation
-        run_id, metrics = run_evaluation()
+        # Run evaluation (this will export to parquet and upload to S3)
+        run_id, metrics, s3_urls = run_evaluation()
         
-        # Save to database
+        # Save to database (must be done before exporting evaluation results)
         print()
         print("Saving metrics to database...")
         metric_record = save_evaluation_metrics(db, run_id, metrics)
         print(f"✅ Metrics saved with metric_id: {metric_record.metric_id}")
+        print()
+        
+        # Export evaluation results now that metrics are saved
+        print("Exporting evaluation results...")
+        bucket_name = os.getenv('S3_BUCKET_NAME', 'spendsense-analytics-goico')
+        eval_path = export_evaluation_results_to_parquet(db, run_id=run_id)
+        s3_key_eval = f"eval/evaluation_{run_id}.parquet"
+        presigned_url_eval = upload_to_s3(eval_path, s3_key_eval, bucket_name)
+        s3_urls[s3_key_eval] = presigned_url_eval
+        print(f"  ✅ Uploaded: {s3_key_eval}")
+        print()
+        
+        # Generate evaluation report
+        print("Generating evaluation report...")
+        report_path = generate_evaluation_report(run_id, metrics, s3_urls)
+        print()
+        
+        print("=" * 80)
+        print("🎉 Evaluation complete with S3 exports!")
+        print("=" * 80)
+        print(f"Run ID: {run_id}")
+        print(f"Report: {report_path}")
+        print(f"S3 Bucket: {bucket_name}")
         print()
         
     except Exception as e:

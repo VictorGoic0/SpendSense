@@ -47,7 +47,7 @@ Built for an AI engineering fellowship with emphasis on:
 - ✅ Operator approval workflow - **COMPLETE**
 - ✅ React UI (operator + user views) - **COMPLETE**
 - ✅ Evaluation metrics - **COMPLETE**
-- ⏳ Parquet exports to S3 (PR #29)
+- ✅ Parquet exports to S3 (PR #29) - **COMPLETE**
 - ⏳ AWS Lambda deployment
 
 **In Scope (Performance Optimization):**
