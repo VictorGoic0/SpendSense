@@ -1,9 +1,33 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #44 Complete - Product Management API
+**Status**: PR #30 Complete - Evaluation API Endpoint
 
 ## Recent Changes
+- ✅ **PR #30 Complete: Evaluation API Endpoint (all 34 tasks finished)**
+  - Created `backend/app/routers/evaluation.py` with 4 endpoints:
+    - POST `/evaluate/` - Runs evaluation, computes all metrics, saves to DB, exports to S3, returns metrics with download URLs
+    - GET `/evaluate/latest` - Returns most recent evaluation metrics
+    - GET `/evaluate/history` - Returns evaluation history with optional limit parameter
+    - GET `/evaluate/exports/latest` - Lists latest S3 exports with pre-signed URLs
+  - Added `EvaluationRequest` schema to `backend/app/schemas.py` for optional run_id in request body
+  - Created `run_evaluation_with_db()` function that adapts evaluation script functions to work with FastAPI dependency injection
+  - Router registered in `backend/app/main.py`
+  - All endpoints tested and verified via Swagger UI
+  - All 34 tasks completed (router creation, endpoints, router registration, testing)
+- ✅ **PR #29 Complete: Parquet Export & S3 Integration (all 45 tasks finished)**
+  - Dependencies added: boto3==1.29.7, pyarrow==14.0.1 to requirements.txt
+  - S3 bucket created: `spendsense-analytics-goico` in us-east-2 region
+  - Parquet export functions:
+    - `export_user_features_to_parquet()`: Exports user features for 30d/180d windows
+    - `export_evaluation_results_to_parquet()`: Exports evaluation metrics
+  - S3 upload function: `upload_to_s3()` with error handling for missing credentials
+  - Evaluation report generation: `generate_evaluation_report()` creates JSON with metrics and S3 URLs
+  - Integration: Updated `run_evaluation()` and `main()` to export and upload all 3 files (30d features, 180d features, evaluation results)
+  - File organization: `features/` prefix for user features, `eval/` prefix for evaluation results
+  - Pre-signed URLs: 7-day expiry for secure downloads
+  - Testing: All files verified, S3 uploads working, parquet files readable with pandas
+  - All 45 tasks completed (S3 setup, dependencies, export functions, upload functions, integration, testing)
 - ✅ **PR #44 Complete: Product Management API (all 57 tasks finished)**
   - Created `backend/app/routers/products.py` with full CRUD endpoints:
     - GET `/products/` - List products with filtering (active_only, category, persona_type) and pagination (skip, limit)
@@ -824,8 +848,8 @@
    - ✅ **PR #41 Complete**: Eligibility filtering (income, utilization, existing accounts, category-specific rules)
    - 🔄 **PR #42-45**: Hybrid recommendation engine, frontend display, product management API, unit tests
    - **PAUSED AWS tasks** - No AWS access currently, implementing features instead
-2. **Parquet Export & S3 Integration** - PR #29: Export user features and evaluation results to Parquet, upload to S3 (PAUSED - no AWS access)
-3. **Evaluation API Endpoint** - PR #30: Create API endpoints for running evaluations and retrieving metrics
+2. ✅ **Parquet Export & S3 Integration** - PR #29: Export user features and evaluation results to Parquet, upload to S3 (COMPLETE)
+3. ✅ **Evaluation API Endpoint** - PR #30: Create API endpoints for running evaluations and retrieving metrics (COMPLETE)
 4. **Redis Caching Layer** - PR #31: Implement multi-tier Redis caching for all DB queries and API responses
 5. **PostgreSQL Migration** - PR #32: Migrate from SQLite to PostgreSQL (AWS RDS) for production (PAUSED - no AWS access)
 6. **Scale Synthetic Data** - PR #33: Generate 500-1,000 users with recommendations (prerequisite for vector DB)
@@ -907,7 +931,7 @@
 - Backend ↔ Feature Detection: Service module complete with all 4 signal types (PR #6, #7, #8, #9 complete)
 - Backend ↔ Feature API: Features and profile endpoints created (PR #10 complete)
 - Backend ↔ OpenAI: API key management via environment variables
-- Backend ↔ AWS: S3 bucket setup pending
+- Backend ↔ AWS: S3 bucket created (`spendsense-analytics-goico`), parquet exports working
 - Data Generation ↔ Database: ✅ Complete - All synthetic data ingested successfully
 
 ## Current Blockers
@@ -917,7 +941,7 @@ None - Ready to proceed with PR #21 (Recommendation Generation Endpoint)
 1. ✅ Python venv upgraded to 3.11.9 - Complete
 2. ✅ All feature detection signals complete - Complete (PR #6-9)
 3. ✅ Feature computation endpoint complete - Complete (PR #10)
-4. Are AWS credentials configured for S3 exports?
+4. ✅ AWS credentials configured for S3 exports - Complete (PR #29)
 5. Should we implement persona assignment before or after frontend setup?
 
 ## Workflow Notes
@@ -949,7 +973,8 @@ None - Ready to proceed with PR #21 (Recommendation Generation Endpoint)
 - PR #26 complete (all 51 tasks checked off - Frontend Approval Queue Page)
 - PR #27 complete (all 44 tasks checked off - User Dashboard & Consent)
 - PR #28 complete (all 54 tasks checked off - Evaluation Script - Metrics Computation)
-- Following tasks-7.md structure (PR #29 next - Parquet Export & S3 Integration)
+- PR #29 complete (all 45 tasks checked off - Parquet Export & S3 Integration)
+- Following tasks-7.md structure (PR #30 next - Evaluation API Endpoint)
 - Synthetic data generation produces JSON files that can be reused as seeds
 - Data includes realistic persona patterns for testing feature detection
 - All AI recommendations require operator approval before user visibility

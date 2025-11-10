@@ -210,8 +210,17 @@ User Dashboard (React UI)
   - Database persistence: `save_evaluation_metrics()` saves metrics to evaluation_metrics table
   - Dependencies: pandas==2.1.4, numpy==1.26.2
   - Output: Formatted console output with all metrics, distributions, and breakdowns
-- SQLite table for dashboard display (evaluation_metrics table)
-- Parquet export to S3 for deep analysis (PR #29 - Next)
+- ✅ Parquet export to S3 (PR #29 Complete)
+  - `export_user_features_to_parquet()`: Exports user features for 30d/180d windows to Parquet format
+  - `export_evaluation_results_to_parquet()`: Exports evaluation metrics to Parquet format
+  - `upload_to_s3()`: Uploads files to S3 and generates 7-day pre-signed URLs
+  - S3 bucket: `spendsense-analytics-goico` (us-east-2 region)
+  - File organization: `features/` prefix for user features, `eval/` prefix for evaluation results
+  - Error handling: Clear error messages for missing AWS credentials or S3 failures
+  - `generate_evaluation_report()`: Creates JSON report with metrics and S3 download URLs
+  - Dependencies: boto3==1.29.7, pyarrow==14.0.1
+  - Integration: Exports run automatically after metrics computation
+  - Output: 3 Parquet files (30d features, 180d features, evaluation results) + JSON report with pre-signed URLs
 
 ## Database Schema (11 Tables)
 
@@ -433,6 +442,10 @@ User Dashboard (React UI)
   - POST /products - Create new product (PR #44 Complete)
   - PUT /products/{product_id} - Update existing product (PR #44 Complete)
   - DELETE /products/{product_id} - Deactivate product (soft delete) (PR #44 Complete)
+  - POST /evaluate/ - Run evaluation, compute metrics, export to S3 (PR #30 Complete)
+  - GET /evaluate/latest - Get most recent evaluation metrics (PR #30 Complete)
+  - GET /evaluate/history - Get evaluation history with optional limit (PR #30 Complete)
+  - GET /evaluate/exports/latest - List latest S3 exports with pre-signed URLs (PR #30 Complete)
 
 ### Frontend Constants & Enums Pattern
 - **Centralized Enums**: All enum values defined in `frontend/src/constants/enums.js`
@@ -470,8 +483,16 @@ User Dashboard (React UI)
   - Test script validates quality and language
 
 ### Backend → AWS
-- S3 for Parquet exports
+- S3 for Parquet exports (PR #29 Complete)
+  - Bucket: `spendsense-analytics-goico` in us-east-2 region
+  - Organized folder structure: `features/` and `eval/` prefixes
+  - Pre-signed URLs with 7-day expiry (604800 seconds)
+  - Error handling for missing credentials and S3 failures
+- Evaluation API endpoints (PR #30 Complete)
+  - Router: `backend/app/routers/evaluation.py`
+  - Imports evaluation functions from `scripts/evaluate.py`
+  - Adapts evaluation script to work with FastAPI dependency injection
+  - All endpoints tested and verified via Swagger UI
 - Lambda for serverless deployment
 - SAM for Infrastructure as Code
-- Pre-signed URLs for secure downloads
 

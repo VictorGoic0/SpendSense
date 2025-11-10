@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import init_db, Base
 from app import models  # Import models to register them with Base
-from app.routers import ingest, features, profile, users, operator, personas, recommendations, consent, products
+from app.routers import ingest, features, profile, users, operator, personas, recommendations, consent, products, evaluation
 import logging
 
 # Configure logging
@@ -44,6 +44,7 @@ app.include_router(personas.router)
 app.include_router(recommendations.router)
 app.include_router(consent.router)
 app.include_router(products.router)
+app.include_router(evaluation.router)
 
 
 @app.get("/")

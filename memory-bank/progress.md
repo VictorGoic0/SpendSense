@@ -618,8 +618,42 @@
   - Dependencies added: pandas==2.1.4, numpy==1.26.2 to requirements.txt and installed in venv
   - Script tested: Successfully runs, computes all metrics, saves to database, prints formatted output
   - All 54 tasks completed
+- ✅ **PR #29 Complete: Parquet Export & S3 Integration (all 45 tasks finished)**
+- ✅ **PR #30 Complete: Evaluation API Endpoint (all 34 tasks finished)**
+  - Created `backend/app/routers/evaluation.py` with evaluation router
+  - POST `/evaluate/` endpoint: Runs evaluation, computes metrics, saves to DB, exports to S3, returns results
+  - GET `/evaluate/latest` endpoint: Returns most recent evaluation metrics
+  - GET `/evaluate/history` endpoint: Returns evaluation history with optional limit
+  - GET `/evaluate/exports/latest` endpoint: Lists latest S3 exports with pre-signed URLs
+  - Added `EvaluationRequest` schema for optional run_id in request body
+  - Router registered in main.py
+  - All endpoints tested and verified via Swagger UI
+  - All 34 tasks completed (router creation, endpoints, router registration, testing)
+  - Dependencies added: boto3==1.29.7, pyarrow==14.0.1 to requirements.txt and installed
+  - S3 bucket created: `spendsense-analytics-goico` in us-east-2 region via AWS CLI
+  - Public access blocked: Verified bucket security settings
+  - Parquet export functions:
+    - `export_user_features_to_parquet()`: Exports user features for specified window_days to `/tmp/user_features_{window_days}d_{run_id}.parquet`
+    - Uses pd.read_sql() to convert query results to DataFrame
+    - Exports to Parquet format with index=False
+  - S3 upload function: `upload_to_s3()`:
+    - Creates boto3 S3 client (uses AWS CLI credentials automatically)
+    - Uploads file to S3 with organized folder structure (`features/` and `eval/` prefixes)
+    - Generates pre-signed URLs with 7-day expiry (604800 seconds)
+    - Error handling: Clear error messages for missing credentials (NoCredentialsError) and S3 failures (ClientError)
+  - Evaluation results export: `export_evaluation_results_to_parquet()` exports evaluation metrics after they're saved to database
+  - Integration: Updated `run_evaluation()` to export and upload user features (30d and 180d), updated `main()` to export evaluation results after saving to DB
+  - Evaluation report generation: `generate_evaluation_report()` creates JSON file in project root with:
+    - run_id, timestamp, metrics, persona_distribution, recommendation_status
+    - parquet_exports (S3 keys) and download_urls (pre-signed URLs)
+  - Testing: All 3 parquet files created, uploaded to S3, verified in S3 console, pre-signed URLs work, JSON report created, parquet files readable with pandas
+  - All 45 tasks completed (S3 setup, dependencies, export functions, upload functions, integration, report generation, testing)
 
 ### In Progress
+- 🔄 **Evaluation System (PR #28-30)** - PR #28-30 Complete
+  - ✅ PR #28: Evaluation script with metrics computation (coverage, explainability, latency, auditability)
+  - ✅ PR #29: Parquet export & S3 integration (user features, evaluation results)
+  - ✅ PR #30: Evaluation API endpoints (POST /evaluate/, GET /evaluate/latest, GET /evaluate/history, GET /evaluate/exports/latest)
 - 🔄 **Product Catalog Feature (PR #38-45)** - PR #38-44 Complete, PR #45 Next
   - ✅ PR #38: Database schema, product generation, catalog created (21 products)
   - ✅ PR #39: Product ingestion via API endpoint (consistent with other data)
@@ -639,8 +673,6 @@
   - Expected cost: ~$0.30-0.50 for one-time LLM-generated article catalog
 
 ### Not Started
-- ⏳ Parquet export & S3 integration (PR #29) - **PAUSED: No AWS access**
-- ⏳ Evaluation API endpoints (PR #30)
 - ⏳ Redis caching layer (PR #31)
 - ⏳ PostgreSQL migration (PR #32) - **PAUSED: No AWS access**
 - ⏳ Scale synthetic data to 500-1,000 users (PR #33)
@@ -683,12 +715,13 @@
 - [x] Recommendations visible and testable in UI - **PR #26 Complete (approval queue page)**
 - [x] Approval workflow functional in UI (approve/reject/override) - **PR #26 Complete**
 - [x] Evaluation script outputs metrics - **PR #28 Complete**
-- [ ] Parquet export to S3 (PR #29)
+- [x] Parquet export to S3 (PR #29) - **PR #29 Complete**
+- [x] Evaluation API endpoints (PR #30) - **PR #30 Complete**
 - [ ] Metrics displayed in operator dashboard (PR #31)
 
 ### Day 3+ (Performance Optimization & Deployment)
-- [ ] Parquet export & S3 integration (PR #29)
-- [ ] Evaluation API endpoints (PR #30)
+- [x] Parquet export & S3 integration (PR #29) - **PR #29 Complete**
+- [x] Evaluation API endpoints (PR #30) - **PR #30 Complete**
 - [ ] Redis caching layer (PR #31) - **Quick win for repeated queries**
 - [ ] PostgreSQL migration (PR #32) - **Production-grade database**
 - [ ] Scale synthetic data to 500-1,000 users (PR #33) - **Prerequisite for vector DB**
@@ -852,5 +885,5 @@
   - Verified and working in development
 
 ## Next Milestone
-**Parquet Export & S3 Integration**: Export user features and evaluation results to Parquet format, upload to S3 with pre-signed URLs
+**Frontend Metrics Display**: Add metrics display to operator dashboard (PR #31)
 

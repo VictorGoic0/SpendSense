@@ -193,62 +193,62 @@
 ## PR #30: Evaluation API Endpoint
 
 ### Evaluation Router
-- [ ] 1. Create `backend/app/routers/evaluation.py`
-- [ ] 2. Create APIRouter with prefix="/evaluate"
-- [ ] 3. Import evaluation functions from scripts (refactor to service if needed)
+- [x] 1. Create `backend/app/routers/evaluation.py`
+- [x] 2. Create APIRouter with prefix="/evaluate"
+- [x] 3. Import evaluation functions from scripts (refactor to service if needed)
 
 ### Evaluate Endpoint
-- [ ] 4. Create POST `/` endpoint:
-- [ ] 5. Accept optional run_id in request body
-- [ ] 6. If no run_id provided, generate one
-- [ ] 7. Get database session
-- [ ] 8. Call evaluation functions:
+- [x] 4. Create POST `/` endpoint:
+- [x] 5. Accept optional run_id in request body
+- [x] 6. If no run_id provided, generate one
+- [x] 7. Get database session
+- [x] 8. Call evaluation functions:
    - compute_coverage_metrics()
    - compute_explainability_metrics()
    - compute_latency_metrics()
    - compute_auditability_metrics()
-- [ ] 9. Save metrics to database
-- [ ] 10. Export to parquet and upload to S3
-- [ ] 11. Return response with:
+- [x] 9. Save metrics to database
+- [x] 10. Export to parquet and upload to S3
+- [x] 11. Return response with:
     - run_id
     - metrics
     - parquet_exports (S3 keys)
     - download_urls (pre-signed URLs)
 
 ### Get Latest Evaluation Endpoint
-- [ ] 12. Create GET `/latest` endpoint:
-- [ ] 13. Query evaluation_metrics table
-- [ ] 14. Order by timestamp descending
-- [ ] 15. Limit to 1 (most recent)
-- [ ] 16. Return evaluation metrics
+- [x] 12. Create GET `/latest` endpoint:
+- [x] 13. Query evaluation_metrics table
+- [x] 14. Order by timestamp descending
+- [x] 15. Limit to 1 (most recent)
+- [x] 16. Return evaluation metrics
 
 ### Get Evaluation History Endpoint
-- [ ] 17. Create GET `/history` endpoint:
-- [ ] 18. Accept optional limit parameter (default: 10)
-- [ ] 19. Query evaluation_metrics table
-- [ ] 20. Order by timestamp descending
-- [ ] 21. Return list of evaluation runs
+- [x] 17. Create GET `/history` endpoint:
+- [x] 18. Accept optional limit parameter (default: 10)
+- [x] 19. Query evaluation_metrics table
+- [x] 20. Order by timestamp descending
+- [x] 21. Return list of evaluation runs
 
 ### Exports List Endpoint
-- [ ] 22. Create GET `/exports/latest` endpoint:
-- [ ] 23. List files in S3 bucket (features/ and eval/ prefixes)
-- [ ] 24. Get last 10 files sorted by date
-- [ ] 25. For each file:
+- [x] 22. Create GET `/exports/latest` endpoint:
+- [x] 23. List files in S3 bucket (features/ and eval/ prefixes)
+- [x] 24. Get last 10 files sorted by date
+- [x] 25. For each file:
     - Get file name and size
     - Generate pre-signed URL
-- [ ] 26. Return list of exports with download URLs
+- [x] 26. Return list of exports with download URLs
 
 ### Router Registration
-- [ ] 27. Import evaluation router in main.py
-- [ ] 28. Include router in FastAPI app
+- [x] 27. Import evaluation router in main.py
+- [x] 28. Include router in FastAPI app
 
 ### Testing Evaluation API
-- [ ] 29. Test POST /evaluate via Swagger UI
-- [ ] 30. Verify metrics returned
-- [ ] 31. Verify S3 URLs work
-- [ ] 32. Test GET /latest endpoint
-- [ ] 33. Test GET /exports/latest endpoint
-- [ ] 34. Verify all endpoints return correct data
+- [x] 29. Test POST /evaluate via Swagger UI
+- [x] 30. Verify metrics returned
+- [x] 31. Verify S3 URLs work
+- [x] 32. Test GET /latest endpoint
+- [x] 33. Test GET /exports/latest endpoint
+- [x] 34. Verify all endpoints return correct data
 
 ---
 

@@ -416,3 +416,12 @@ class ConsentResponse(BaseModel):
     consent_granted_at: Optional[str] = None
     consent_revoked_at: Optional[str] = None
     history: List[ConsentHistoryItem] = Field(default_factory=list)
+
+
+# ============================================================================
+# Evaluation Schemas
+# ============================================================================
+
+class EvaluationRequest(BaseModel):
+    """Schema for evaluation request"""
+    run_id: Optional[str] = None

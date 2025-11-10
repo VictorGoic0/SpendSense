@@ -47,8 +47,8 @@
 
 ### Analytics
 - **Pandas** - Data processing
-- **PyArrow** - Parquet file format
-- **Boto3** - AWS SDK for S3 operations
+- **PyArrow** - Parquet file format (v14.0.1)
+- **Boto3** - AWS SDK for S3 operations (v1.29.7)
 
 ### Development Tools
 - **Faker** - Synthetic data generation
@@ -88,8 +88,8 @@ OPENAI_API_KEY=sk-...
 DATABASE_URL=sqlite:///./spendsense.db
 AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
-AWS_DEFAULT_REGION=us-east-1
-S3_BUCKET_NAME=spendsense-analytics
+AWS_DEFAULT_REGION=us-east-2
+S3_BUCKET_NAME=spendsense-analytics-goico
 ```
 
 ### Database Configuration
@@ -113,8 +113,8 @@ openai==2.7.1
 pandas==2.1.4
 numpy==1.26.2
 pyarrow==14.0.1
-faker==20.1.0
 boto3==1.29.7
+faker==20.1.0
 pytest==7.4.3
 httpx==0.25.2
 mangum==0.17.0
@@ -179,9 +179,12 @@ psycopg2-binary==latest (TBD in PR #32 for PostgreSQL)
 - ANY method on `/{proxy+}` path
 
 ### S3 Bucket
-- Bucket name: `spendsense-analytics-{suffix}`
+- Bucket name: `spendsense-analytics-goico`
+- Region: `us-east-2`
 - Pre-signed URLs with 7-day expiry
 - Parquet files stored in `features/` and `eval/` prefixes
+- Public access blocked by default
+- Uses AWS CLI credentials (or environment variables)
 
 ### Platform Compatibility
 - **AWS Lambda**: Fully compatible (Python 3.11 runtime)
