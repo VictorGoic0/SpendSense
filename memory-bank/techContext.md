@@ -40,10 +40,22 @@
 
 ### Infrastructure
 - **AWS Lambda** - Serverless compute
+  - Runtime: Python 3.11
+  - Memory: 512MB
+  - Timeout: 30 seconds
+  - Handler: `app.main.handler` (via Mangum adapter)
 - **AWS API Gateway** - REST API
+  - Events: Root path (`/`) and proxy path (`/{proxy+}`)
+  - Method: ANY
 - **AWS SAM** - Infrastructure as Code
+  - Template: `template.yaml` in root directory
+  - Transform: AWS::Serverless-2016-10-31
+  - Parameters: OpenAI API key, Environment (dev/staging/prod)
+  - Outputs: API URL, S3 bucket info, Lambda ARN
 - **AWS S3** - Parquet file storage
-- **Mangum** - ASGI adapter for Lambda
+  - Bucket: `spendsense-analytics-goico` (existing, referenced in template)
+  - Region: us-east-2
+- **Mangum** - ASGI adapter for Lambda (to be added in PR #33)
 
 ### Analytics
 - **Pandas** - Data processing
@@ -90,7 +102,16 @@ AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
 AWS_DEFAULT_REGION=us-east-2
 S3_BUCKET_NAME=spendsense-analytics-goico
+ENVIRONMENT=dev  # Optional: dev/staging/prod (defaults to dev in Lambda)
 ```
+
+### Lambda Environment Variables
+The SAM template sets these environment variables for the Lambda function:
+- `OPENAI_API_KEY` - From SAM parameter (NoEcho: true)
+- `S3_BUCKET_NAME` - `spendsense-analytics-goico` (existing bucket)
+- `DATABASE_URL` - `sqlite:///tmp/spendsense.db` (Lambda /tmp directory)
+- `AWS_REGION` - `us-east-2`
+- `ENVIRONMENT` - From SAM parameter (defaults to 'dev', can be dev/staging/prod)
 
 ### Database Configuration
 - **SQLite with WAL Mode**: Enabled Write-Ahead Logging for concurrent access

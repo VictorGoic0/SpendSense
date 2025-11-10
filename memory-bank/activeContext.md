@@ -4,6 +4,32 @@
 **Status**: PR #32 Complete - AWS SAM Template & Lambda Configuration
 
 ## Recent Changes
+- ✅ **PR #32 Complete: AWS SAM Template & Lambda Configuration (all 28 tasks finished)**
+  - Created `template.yaml` in root directory with AWS SAM structure
+  - Configured Lambda function (SpendSenseAPI) with:
+    - Handler: `app.main.handler` (will be created in PR #33 with Mangum)
+    - CodeUri: `backend/`
+    - Timeout: 30 seconds, Memory: 512MB, Runtime: python3.11
+    - API Gateway events: Root path (`/`) and proxy path (`/{proxy+}`) with ANY method
+  - Environment variables configured:
+    - `OPENAI_API_KEY` (from parameter)
+    - `S3_BUCKET_NAME` (existing bucket: `spendsense-analytics-goico`)
+    - `DATABASE_URL` (sqlite:///tmp/spendsense.db for Lambda)
+    - `AWS_REGION` (us-east-2)
+    - `ENVIRONMENT` (from parameter, defaults to 'dev')
+  - IAM role (SpendSenseLambdaRole) with:
+    - S3 permissions (GetObject, PutObject, ListBucket) for existing analytics bucket
+    - CloudWatch Logs permissions (via AWSLambdaBasicExecutionRole managed policy)
+  - Parameters:
+    - `OpenAIApiKey` (String, NoEcho: true)
+    - `Environment` (String, Default: dev, AllowedValues: dev/staging/prod)
+  - Outputs:
+    - `ApiUrl` (API Gateway endpoint URL)
+    - `S3BucketName` and `S3BucketArn` (existing bucket references)
+    - `LambdaFunctionArn` and `LambdaFunctionName`
+  - Note: Using existing S3 bucket (`spendsense-analytics-goico`) instead of creating new one
+  - Template structure validated and ready for PR #33 (Mangum adapter)
+  - All 28 tasks completed (template creation, Lambda config, IAM role, parameters, outputs, validation)
 - ✅ **PR #31 Complete: Frontend - Metrics Display in Operator Dashboard (all 30 tasks finished)**
   - Created `frontend/src/components/MetricsDisplay.jsx`:
     - Displays 4 evaluation metrics (coverage, explainability, latency, auditability)

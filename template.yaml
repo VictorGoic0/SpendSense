@@ -10,7 +10,6 @@ Globals:
     Environment:
       Variables:
         DATABASE_URL: sqlite:///tmp/spendsense.db
-        AWS_REGION: us-east-2
 
 Parameters:
   OpenAIApiKey:
@@ -69,7 +68,6 @@ Resources:
           OPENAI_API_KEY: !Ref OpenAIApiKey
           S3_BUCKET_NAME: spendsense-analytics-goico
           DATABASE_URL: sqlite:///tmp/spendsense.db
-          AWS_REGION: us-east-2
           ENVIRONMENT: !Ref Environment
       Events:
         ApiEvent:
