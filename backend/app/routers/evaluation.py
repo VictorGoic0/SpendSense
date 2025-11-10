@@ -12,21 +12,10 @@ import os
 import sys
 from pathlib import Path
 
-# Add backend directory to path for evaluate.py imports
-# The evaluate.py script expects backend/ to be in sys.path
-backend_dir = Path(__file__).parent.parent.parent
-if str(backend_dir) not in sys.path:
-    sys.path.insert(0, str(backend_dir))
-
-# Add scripts directory to path to import evaluation functions
-scripts_dir = backend_dir.parent / "scripts"
-if str(scripts_dir) not in sys.path:
-    sys.path.insert(0, str(scripts_dir))
-
 from app.database import get_db
 from app.models import EvaluationMetric
 from app.schemas import EvaluationRequest
-from evaluate import (
+from app.services.evaluation_service import (
     compute_coverage_metrics,
     compute_explainability_metrics,
     compute_latency_metrics,

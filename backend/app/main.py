@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import init_db, Base
 from app import models  # Import models to register them with Base
-from app.routers import ingest, features, profile, users, operator, personas, recommendations, consent, products, evaluation
+from app.routers import ingest, features, profile, users, operator, personas, recommendations, consent, products  # , evaluation - disabled for Railway deployment
 import logging
 
 # Configure logging
@@ -16,7 +16,8 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="SpendSense API",
     description="Personalized financial education platform with behavioral pattern detection and AI-generated recommendations",
-    version="1.0.0"
+    version="1.0.0",
+    redirect_slashes=False  # Prevent redirect issues with Railway HTTPS
 )
 
 # Configure CORS
@@ -25,8 +26,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",  # Vite dev
         "http://localhost:3000",  # React dev
-        "https://*.netlify.app",  # Netlify preview/production
-        "*"  # Allow all for demo (tighten in production)
+        "https://spend-sense-goico.netlify.app"  # Netlify
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -50,7 +50,7 @@ app.include_router(personas.router)
 app.include_router(recommendations.router)
 app.include_router(consent.router)
 app.include_router(products.router)
-app.include_router(evaluation.router)
+# app.include_router(evaluation.router)  # Disabled for Railway deployment - requires pandas/numpy
 
 
 @app.get("/")

@@ -16,6 +16,7 @@ from app.schemas import UserResponse
 router = APIRouter(prefix="/users", tags=["users"])
 
 
+@router.get("", include_in_schema=False)
 @router.get("/")
 async def get_users(
     limit: int = Query(default=25, ge=1, le=100, description="Number of users to return"),
