@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { getOperatorDashboard, runEvaluation, getLatestEvaluation, getEvaluationHistory, getLatestExports } from "@src/lib/apiService";
 import MetricsCard from "@src/components/MetricsCard";
 import MetricsDisplay from "@src/components/MetricsDisplay";
+import SuccessModal from "@src/components/SuccessModal";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@src/components/ui/card";
 import { Skeleton } from "@src/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@src/components/ui/alert";
@@ -33,6 +34,10 @@ export default function OperatorDashboard() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true);
   const autoRefreshIntervalRef = useRef(null);
+  
+  // Success modal state
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const fetchDashboardData = async () => {
     try {
@@ -91,11 +96,11 @@ export default function OperatorDashboard() {
       await fetchEvaluationHistory();
       await fetchExports();
       
-      // Show success message (using alert for now, could be replaced with toast)
-      alert("Evaluation completed successfully!");
+      // Show success modal
+      setSuccessMessage("Evaluation completed successfully!");
+      setSuccessModalOpen(true);
     } catch (err) {
       setEvaluationError(err.message || "Failed to run evaluation");
-      alert(`Error: ${err.message || "Failed to run evaluation"}`);
     } finally {
       setEvaluationLoading(false);
     }
@@ -491,6 +496,14 @@ export default function OperatorDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Success Modal */}
+      <SuccessModal
+        open={successModalOpen}
+        onClose={() => setSuccessModalOpen(false)}
+        title="Success"
+        message={successMessage}
+      />
     </div>
   );
 }
