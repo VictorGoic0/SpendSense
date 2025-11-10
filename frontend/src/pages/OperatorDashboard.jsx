@@ -8,6 +8,7 @@ import { Skeleton } from "@src/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@src/components/ui/alert";
 import { Button } from "@src/components/ui/button";
 import { Badge } from "@src/components/ui/badge";
+import { Checkbox } from "@src/components/ui/checkbox";
 import {
   BarChart,
   Bar,
@@ -196,7 +197,30 @@ export default function OperatorDashboard() {
   if (loading) {
     return (
       <div className="px-4 py-6 sm:px-0">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Operator Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6 text-left">Operator Dashboard</h1>
+        
+        {/* Evaluation Metrics Skeleton - 4 wide cards in 2x2 grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-4 w-32" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-8 w-20" />
+                    <Skeleton className="h-5 w-20" />
+                  </div>
+                  <Skeleton className="h-2 w-full" />
+                  <Skeleton className="h-3 w-48" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        
+        {/* Summary Metrics Skeleton - 4 small cards in 1x4 grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {[1, 2, 3, 4].map((i) => (
             <Card key={i}>
@@ -209,24 +233,6 @@ export default function OperatorDashboard() {
               </CardContent>
             </Card>
           ))}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-6 w-48" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-64 w-full" />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-6 w-48" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-64 w-full" />
-            </CardContent>
-          </Card>
         </div>
       </div>
     );
@@ -302,14 +308,15 @@ export default function OperatorDashboard() {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="auto-refresh"
                 checked={autoRefreshEnabled}
-                onChange={(e) => setAutoRefreshEnabled(e.target.checked)}
-                className="rounded"
+                onCheckedChange={(checked) => setAutoRefreshEnabled(checked === true)}
               />
-              <label htmlFor="auto-refresh" className="text-sm text-muted-foreground">
+              <label
+                htmlFor="auto-refresh"
+                className="text-sm text-muted-foreground cursor-pointer"
+              >
                 Auto-refresh (60s)
               </label>
             </div>
