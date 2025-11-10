@@ -1,11 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import init_db, Base, get_db
+from app.database import init_db, Base
 from app import models  # Import models to register them with Base
 from app.routers import ingest, features, profile, users, operator, personas, recommendations, consent, products, evaluation
-from app.utils.seed_data import seed_database
 import logging
-import os
 
 # Configure logging
 logging.basicConfig(
@@ -13,6 +11,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="SpendSense API",
@@ -34,18 +33,6 @@ app.add_middleware(
 async def startup_event():
     """Initialize database on startup"""
     init_db()
-    
-    # Seed database with synthetic data if in Lambda environment and database is empty
-    # This ensures data is available on cold starts
-    if os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
-        logger.info("Lambda environment detected, checking if database needs seeding...")
-        db = next(get_db())
-        try:
-            seed_database(db)
-        except Exception as e:
-            logger.error(f"Error seeding database on startup: {e}", exc_info=True)
-        finally:
-            db.close()
 
 
 # Include routers
