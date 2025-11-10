@@ -1,7 +1,7 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #31 Complete - Frontend Metrics Display in Operator Dashboard
+**Status**: PR #32 Complete - AWS SAM Template & Lambda Configuration
 
 ## Recent Changes
 - ✅ **PR #31 Complete: Frontend - Metrics Display in Operator Dashboard (all 30 tasks finished)**

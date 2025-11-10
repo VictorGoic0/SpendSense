@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SpendSense API - Serverless FastAPI application on AWS Lambda
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: python3.11
+    Environment:
+      Variables:
+        DATABASE_URL: sqlite:///tmp/spendsense.db
+        AWS_REGION: us-east-2
+
+Parameters:
+  OpenAIApiKey:
+    Type: String
+    Description: OpenAI API key for recommendation generation
+    NoEcho: true
+  
+  Environment:
+    Type: String
+    Description: Deployment environment (dev, staging, prod)
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+
+Resources:
+  # Lambda execution role with S3 permissions
+  SpendSenseLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${AWS::StackName}-lambda-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: S3AccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub 'arn:aws:s3:::spendsense-analytics-goico'
+                  - !Sub 'arn:aws:s3:::spendsense-analytics-goico/*'
+
+  # Main API Lambda function
+  SpendSenseAPI:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-api'
+      Handler: app.main.handler
+      CodeUri: backend/
+      Role: !GetAtt SpendSenseLambdaRole.Arn
+      Environment:
+        Variables:
+          OPENAI_API_KEY: !Ref OpenAIApiKey
+          S3_BUCKET_NAME: spendsense-analytics-goico
+          DATABASE_URL: sqlite:///tmp/spendsense.db
+          AWS_REGION: us-east-2
+          ENVIRONMENT: !Ref Environment
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+        RootEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiUrl'
+
+  S3BucketName:
+    Description: S3 bucket name for analytics exports
+    Value: spendsense-analytics-goico
+    Export:
+      Name: !Sub '${AWS::StackName}-S3BucketName'
+
+  S3BucketArn:
+    Description: S3 bucket ARN
+    Value: !Sub 'arn:aws:s3:::spendsense-analytics-goico'
+    Export:
+      Name: !Sub '${AWS::StackName}-S3BucketArn'
+
+  LambdaFunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt SpendSenseAPI.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-LambdaFunctionArn'
+
+  LambdaFunctionName:
+    Description: Lambda function name
+    Value: !Ref SpendSenseAPI
+    Export:
+      Name: !Sub '${AWS::StackName}-LambdaFunctionName'
+
