@@ -255,50 +255,50 @@
 ## PR #31: Frontend - Metrics Display in Operator Dashboard
 
 ### Update Dashboard to Call Evaluation
-- [ ] 1. In OperatorDashboard.jsx, add "Run Evaluation" button
-- [ ] 2. Import evaluate API function
-- [ ] 3. Add state for evaluation results
-- [ ] 4. On button click:
+- [x] 1. In OperatorDashboard.jsx, add "Run Evaluation" button
+- [x] 2. Import evaluate API function
+- [x] 3. Add state for evaluation results
+- [x] 4. On button click:
    - Call POST /evaluate endpoint
    - Show loading spinner
    - Update state with results
    - Show success toast
 
 ### Metrics Display Component
-- [ ] 5. Create `frontend/src/components/MetricsDisplay.jsx`
-- [ ] 6. Accept props: metrics object
-- [ ] 7. Display coverage percentage with progress bar
-- [ ] 8. Display explainability percentage with progress bar
-- [ ] 9. Display average latency with badge
-- [ ] 10. Display auditability percentage with progress bar
-- [ ] 11. Color code: >95% green, 80-95% yellow, <80% red
-- [ ] 12. Use Shadcn Progress and Badge components
+- [x] 5. Create `frontend/src/components/MetricsDisplay.jsx`
+- [x] 6. Accept props: metrics object
+- [x] 7. Display coverage percentage with progress bar
+- [x] 8. Display explainability percentage with progress bar
+- [x] 9. Display average latency with badge
+- [x] 10. Display auditability percentage with progress bar
+- [x] 11. Color code: >95% green, 80-95% yellow, <80% red
+- [x] 12. Use Shadcn Progress and Badge components
 
 ### Download Links Section
-- [ ] 13. Add section to dashboard for parquet downloads
-- [ ] 14. Display list of available exports
-- [ ] 15. Show file name, size, created date
-- [ ] 16. Add download button per file (links to pre-signed URL)
-- [ ] 17. Use Shadcn Button component
+- [x] 13. Add section to dashboard for parquet downloads
+- [x] 14. Display list of available exports
+- [x] 15. Show file name, size, created date
+- [x] 16. Add download button per file (links to pre-signed URL)
+- [x] 17. Use Shadcn Button component
 
 ### Evaluation History
-- [ ] 18. Add section showing last 5 evaluation runs
-- [ ] 19. Display run_id, timestamp, and key metrics
-- [ ] 20. Add "View Details" button per run
-- [ ] 21. Format timestamps in readable format
+- [x] 18. Add section showing last 5 evaluation runs
+- [x] 19. Display run_id, timestamp, and key metrics
+- [x] 20. Add "View Details" button per run
+- [x] 21. Format timestamps in readable format
 
 ### Real-time Updates
-- [ ] 22. Add auto-refresh for metrics (every 60 seconds)
-- [ ] 23. Show last updated timestamp
-- [ ] 24. Add manual refresh button
+- [x] 22. Add auto-refresh for metrics (every 60 seconds)
+- [x] 23. Show last updated timestamp
+- [x] 24. Add manual refresh button
 
 ### Testing Metrics Display
-- [ ] 25. Navigate to operator dashboard
-- [ ] 26. Click "Run Evaluation" button
-- [ ] 27. Verify metrics displayed correctly
-- [ ] 28. Verify progress bars accurate
-- [ ] 29. Test download links for parquet files
-- [ ] 30. Verify evaluation history shows recent runs
+- [x] 25. Navigate to operator dashboard
+- [x] 26. Click "Run Evaluation" button
+- [x] 27. Verify metrics displayed correctly
+- [x] 28. Verify progress bars accurate
+- [x] 29. Test download links for parquet files
+- [x] 30. Verify evaluation history shows recent runs
 
 ---
 

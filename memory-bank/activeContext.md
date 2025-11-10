@@ -1,9 +1,29 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #30 Complete - Evaluation API Endpoint
+**Status**: PR #31 Complete - Frontend Metrics Display in Operator Dashboard
 
 ## Recent Changes
+- ✅ **PR #31 Complete: Frontend - Metrics Display in Operator Dashboard (all 30 tasks finished)**
+  - Created `frontend/src/components/MetricsDisplay.jsx`:
+    - Displays 4 evaluation metrics (coverage, explainability, latency, auditability)
+    - Progress bars for percentage metrics with color coding (>95% green, 80-95% yellow, <80% red)
+    - Badges showing status (Excellent/Good/Needs Improvement)
+    - Latency display with average and P95 values
+  - Updated `frontend/src/pages/OperatorDashboard.jsx`:
+    - Added "Run Evaluation" button with loading state and success/error handling
+    - Integrated MetricsDisplay component to show evaluation metrics
+    - Added Parquet Exports section: Lists S3 exports with file name, size, date, and download buttons
+    - Added Evaluation History section: Shows last 5 evaluation runs with key metrics and "View Details" button
+    - Auto-refresh functionality: Automatically refreshes metrics every 60 seconds (toggleable checkbox)
+    - Manual refresh button for on-demand updates
+    - Last updated timestamp display with relative time formatting
+  - Added evaluation API functions to `frontend/src/lib/apiService.js`:
+    - `runEvaluation()` - Runs evaluation and returns metrics
+    - `getLatestEvaluation()` - Gets most recent evaluation metrics
+    - `getEvaluationHistory()` - Gets evaluation history with limit parameter
+    - `getLatestExports()` - Gets latest S3 parquet exports with pre-signed URLs
+  - All 30 tasks completed (dashboard updates, metrics display, download links, history, auto-refresh)
 - ✅ **PR #30 Complete: Evaluation API Endpoint (all 34 tasks finished)**
   - Created `backend/app/routers/evaluation.py` with 4 endpoints:
     - POST `/evaluate/` - Runs evaluation, computes all metrics, saves to DB, exports to S3, returns metrics with download URLs

@@ -180,3 +180,45 @@ export async function generateRecommendations(userId, windowDays = 30, forceRege
   return response.data;
 }
 
+/**
+ * Run evaluation and compute all metrics
+ * @param {string} runId - Optional run ID (if not provided, one will be generated)
+ * @returns {Promise} API response with run_id, metrics, parquet_exports, and download_urls
+ */
+export async function runEvaluation(runId = null) {
+  const payload = runId ? { run_id: runId } : {};
+  const response = await api.post('/evaluate/', payload);
+  return response.data;
+}
+
+/**
+ * Get the most recent evaluation metrics
+ * @returns {Promise} API response with latest evaluation metrics
+ */
+export async function getLatestEvaluation() {
+  const response = await api.get('/evaluate/latest');
+  return response.data;
+}
+
+/**
+ * Get evaluation history
+ * @param {number} limit - Number of evaluation runs to return (default: 10, max: 100)
+ * @returns {Promise} API response with total count and list of runs
+ */
+export async function getEvaluationHistory(limit = 10) {
+  const params = { limit };
+  const response = await api.get('/evaluate/history', { params });
+  return response.data;
+}
+
+/**
+ * Get latest S3 exports (parquet files)
+ * @param {number} limit - Number of exports to return (default: 10, max: 50)
+ * @returns {Promise} API response with list of exports and download URLs
+ */
+export async function getLatestExports(limit = 10) {
+  const params = { limit };
+  const response = await api.get('/evaluate/exports/latest', { params });
+  return response.data;
+}
+
