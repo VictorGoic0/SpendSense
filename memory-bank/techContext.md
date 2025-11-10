@@ -250,7 +250,14 @@ psycopg2-binary==latest (TBD in PR #32 for PostgreSQL)
   - Deploy: `sam deploy --guided` (interactive deployment with parameter prompts)
   - Auto-seeding: Database automatically seeded on cold start if empty
   - Documentation: See `README.md` and `docs/LAMBDA_DEPLOYMENT.md` for full instructions
-- Frontend: Build with `npm run build`, deploy to Vercel/Netlify/S3
+- **Frontend Deployment** (Netlify):
+  - Configuration: `netlify.toml` in root directory
+  - Base directory: `frontend`
+  - Build command: `npm run build`
+  - Publish directory: `dist` (relative to base)
+  - Node version: 18
+  - Client-side routing: Redirect rule (/* → /index.html) for SPA support
+  - Root directory in Netlify UI: Leave blank/empty
 
 ## Cost Estimates (MVP)
 - **Lambda**: ~$0.20/day (10-20 invocations)

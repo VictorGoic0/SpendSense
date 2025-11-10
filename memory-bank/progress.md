@@ -1,9 +1,16 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #33 Complete - Mangum Adapter & Lambda Deployment Prep
+**Status**: Frontend Deployed to Netlify
 
 ### Completed ✅
+- ✅ **Frontend Deployed to Netlify**
+  - Created `netlify.toml` configuration in root directory
+  - Base directory: `frontend`, publish directory: `dist`
+  - Build command: `npm run build`, Node version: 18
+  - Client-side routing configured with redirect rule
+  - Root directory in Netlify UI: Leave blank/empty (base specified in config)
+  - Frontend successfully deployed and accessible
 - ✅ **PR #33: Mangum Adapter & Lambda Deployment Prep Complete**
   - Mangum integration:
     - Added `mangum==0.17.0` to requirements.txt and installed

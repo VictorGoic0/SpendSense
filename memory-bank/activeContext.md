@@ -925,6 +925,19 @@
 7. **Vector DB Integration** - PR #34-37: Integrate Pinecone Serverless with OpenAI embeddings for sub-1s latency
 8. **AWS Deployment** - Deploy backend to Lambda and frontend to Vercel/Netlify (PAUSED - no AWS access)
 
+## Deployment Status
+
+### Frontend Deployment
+- ✅ **Netlify Deployment Complete**
+  - Frontend deployed to Netlify
+  - `netlify.toml` configuration file created in root directory
+  - Base directory: `frontend`
+  - Build command: `npm run build`
+  - Publish directory: `dist` (relative to base)
+  - Node version: 18
+  - Client-side routing configured with redirect rule (/* → /index.html)
+  - Root directory in Netlify UI: Leave blank/empty
+
 ## Active Decisions and Considerations
 
 ### Immediate Priorities
