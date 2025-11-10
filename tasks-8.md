@@ -7,26 +7,26 @@
 - [x] 4. Note: Backend URL will be updated after Railway deployment
 
 ### Backend Cleanup - Remove AWS Lambda Code
-- [ ] 5. Remove Mangum from `backend/requirements.txt`
-- [ ] 6. Update `backend/app/main.py`:
+- [x] 5. Remove Mangum from `backend/requirements.txt`
+- [x] 6. Update `backend/app/main.py`:
    - Remove Mangum import and handler
    - Keep FastAPI app as-is
    - Add standard Uvicorn startup for local development
-- [ ] 7. Delete AWS-specific files:
+- [x] 7. Delete AWS-specific files:
    - `template.yaml`
    - `samconfig.toml`
    - `.aws-sam/` directory (if exists)
-- [ ] 8. Restore full requirements:
+- [x] 8. Restore full requirements:
    - Rename `requirements-dev.txt` back to `requirements.txt`
    - Keep pandas, numpy, faker (no Lambda size limits on Railway)
 
 ### Railway Setup & Deployment
-- [ ] 9. Install Railway CLI: `npm install -g @railway/cli`
-- [ ] 10. Login to Railway: `railway login`
-- [ ] 11. Initialize Railway project: `railway init`
-- [ ] 12. Link to Railway project (or create new one via CLI)
-- [ ] 13. Create Railway configuration file (optional but recommended)
-- [ ] 14. Set environment variables in Railway dashboard:
+- [x] 9. Install Railway CLI: `npm install -g @railway/cli`
+- [x] 10. Login to Railway: `railway login`
+- [x] 11. Initialize Railway project: `railway init`
+- [x] 12. Link to Railway project (or create new one via CLI)
+- [x] 13. Create Railway configuration file (optional but recommended)
+- [x] 14. Set environment variables in Railway dashboard:
    - `OPENAI_API_KEY` - your OpenAI API key
    - `DATABASE_URL` - sqlite:///data/spendsense.db (Railway has persistent disk)
    - `S3_BUCKET_NAME` - spendsense-analytics-goico
