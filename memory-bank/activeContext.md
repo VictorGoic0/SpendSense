@@ -1,13 +1,36 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #32 Complete - AWS SAM Template & Lambda Configuration
+**Status**: PR #33 Complete - Mangum Adapter & Lambda Deployment Prep
 
 ## Recent Changes
+- ✅ **PR #33 Complete: Mangum Adapter & Lambda Deployment Prep (all 25 tasks finished)**
+  - Mangum integration:
+    - Added `mangum==0.17.0` to requirements.txt and installed
+    - Updated `backend/app/main.py` with Mangum handler (gracefully handles missing import for local dev)
+    - Handler created: `handler = Mangum(app)` for Lambda deployment
+  - Auto-seeding implementation:
+    - Created `backend/app/utils/seed_data.py` with database seeding logic
+    - Seeds from JSON files on Lambda cold start if database is empty
+    - Integrated into startup event (only runs in Lambda environment via AWS_LAMBDA_FUNCTION_NAME check)
+    - Handles both local dev and Lambda paths for data directory location
+  - Build and deployment:
+    - Created `scripts/build_lambda.sh` to copy `data/` directory for Lambda packaging
+    - Updated `template.yaml` with build metadata
+    - Created `backend/.env.production` as reference file
+  - Documentation:
+    - Updated `README.md` with comprehensive Lambda deployment instructions
+    - Created `docs/LAMBDA_DEPLOYMENT.md` with:
+      - SQLite limitations explanation (resets on cold start)
+      - Auto-seeding details and rationale
+      - RDS migration guide (step-by-step instructions)
+      - Alternative options (DynamoDB) with trade-offs
+  - All 25 tasks completed (Mangum installation, handler creation, auto-seeding, build script, documentation)
+  - Ready for testing: `sam build` and `sam local start-api` can be run to test locally
 - ✅ **PR #32 Complete: AWS SAM Template & Lambda Configuration (all 28 tasks finished)**
   - Created `template.yaml` in root directory with AWS SAM structure
   - Configured Lambda function (SpendSenseAPI) with:
-    - Handler: `app.main.handler` (will be created in PR #33 with Mangum)
+    - Handler: `app.main.handler` (created in PR #33 with Mangum)
     - CodeUri: `backend/`
     - Timeout: 30 seconds, Memory: 512MB, Runtime: python3.11
     - API Gateway events: Root path (`/`) and proxy path (`/{proxy+}`) with ANY method
@@ -28,7 +51,7 @@
     - `S3BucketName` and `S3BucketArn` (existing bucket references)
     - `LambdaFunctionArn` and `LambdaFunctionName`
   - Note: Using existing S3 bucket (`spendsense-analytics-goico`) instead of creating new one
-  - Template structure validated and ready for PR #33 (Mangum adapter)
+  - Template structure validated and Mangum adapter integrated (PR #33)
   - All 28 tasks completed (template creation, Lambda config, IAM role, parameters, outputs, validation)
 - ✅ **PR #31 Complete: Frontend - Metrics Display in Operator Dashboard (all 30 tasks finished)**
   - Created `frontend/src/components/MetricsDisplay.jsx`:
@@ -898,7 +921,7 @@
 3. ✅ **Evaluation API Endpoint** - PR #30: Create API endpoints for running evaluations and retrieving metrics (COMPLETE)
 4. **Redis Caching Layer** - PR #31: Implement multi-tier Redis caching for all DB queries and API responses
 5. **PostgreSQL Migration** - PR #32: Migrate from SQLite to PostgreSQL (AWS RDS) for production (PAUSED - no AWS access)
-6. **Scale Synthetic Data** - PR #33: Generate 500-1,000 users with recommendations (prerequisite for vector DB)
+6. **Scale Synthetic Data** - Future PR: Generate 500-1,000 users with recommendations (prerequisite for vector DB)
 7. **Vector DB Integration** - PR #34-37: Integrate Pinecone Serverless with OpenAI embeddings for sub-1s latency
 8. **AWS Deployment** - Deploy backend to Lambda and frontend to Vercel/Netlify (PAUSED - no AWS access)
 

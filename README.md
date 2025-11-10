@@ -588,22 +588,107 @@ Use the Swagger UI at `http://localhost:8000/docs` for interactive API testing, 
 
 ### AWS Lambda Deployment
 
-The platform is designed for serverless deployment on AWS:
+The platform is designed for serverless deployment on AWS using AWS SAM (Serverless Application Model):
 
-- **Backend**: FastAPI application packaged for Lambda
+- **Backend**: FastAPI application packaged for Lambda using Mangum adapter
 - **API Gateway**: REST API endpoint configuration
-- **S3**: Static frontend hosting
-- **Database**: SQLite for MVP (can be migrated to RDS/PostgreSQL)
+- **S3**: Analytics exports bucket (`spendsense-analytics-goico`)
+- **Database**: SQLite in `/tmp` for MVP (resets on cold start, auto-seeded)
 
-### Environment Variables
+#### Prerequisites
 
-Ensure the following environment variables are set in your deployment:
+1. **AWS CLI** configured with appropriate credentials
+2. **SAM CLI** installed (already installed per your setup)
+3. **Python 3.11** (matches Lambda runtime)
+4. **OpenAI API Key** for recommendation generation
 
-- `OPENAI_API_KEY`: Required for recommendation generation
+#### Deployment Steps
 
-### Database Migration
+1. **Build the Lambda package**:
+   ```bash
+   sam build
+   ```
+   This will:
+   - Install dependencies from `backend/requirements.txt`
+   - Package the `backend/` directory
+   - Include the `data/` directory for seeding
 
-For production, consider migrating from SQLite to PostgreSQL or another production-grade database. The SQLAlchemy models are database-agnostic and can be easily adapted.
+2. **Test locally** (optional):
+   ```bash
+   sam local start-api
+   ```
+   The API will be available at `http://localhost:3000`
+   - Test endpoints: `http://localhost:3000/docs` (Swagger UI)
+   - Note: Local testing uses Docker, so ensure Docker is running
+
+3. **Deploy to AWS**:
+   ```bash
+   sam deploy --guided
+   ```
+   This interactive command will:
+   - Prompt for stack name (e.g., `spendsense-api`)
+   - Prompt for AWS region (default: `us-east-2`)
+   - Prompt for `OpenAIApiKey` parameter (your OpenAI API key)
+   - Prompt for `Environment` parameter (dev/staging/prod)
+   - Create/update the CloudFormation stack
+   - Deploy the Lambda function and API Gateway
+
+4. **Get the API URL**:
+   After deployment, SAM will output the API Gateway URL:
+   ```
+   ApiUrl = https://xxxxxxxxxx.execute-api.us-east-2.amazonaws.com/Prod
+   ```
+
+#### Environment Variables
+
+The following environment variables are configured in the SAM template:
+
+- `OPENAI_API_KEY`: Set via `OpenAIApiKey` parameter during deployment
+- `DATABASE_URL`: `sqlite:///tmp/spendsense.db` (SQLite in Lambda's `/tmp`)
+- `S3_BUCKET_NAME`: `spendsense-analytics-goico`
+- `ENVIRONMENT`: Set via `Environment` parameter (dev/staging/prod)
+- `AWS_REGION`: Automatically set by Lambda
+
+#### Database Seeding
+
+On Lambda cold start:
+- The database is automatically initialized (tables created)
+- If the database is empty, synthetic data is automatically seeded from JSON files in the `data/` directory
+- This ensures data is available immediately after deployment or cold start
+- The `/ingest/` endpoint remains available for additional data ingestion
+
+**Note**: SQLite in `/tmp` resets on each Lambda cold start. For production workloads, consider migrating to RDS (PostgreSQL) or DynamoDB for persistent storage.
+
+#### Testing the Deployment
+
+1. **Check API health**:
+   ```bash
+   curl https://YOUR_API_URL/
+   ```
+   Should return: `{"message":"SpendSense API"}`
+
+2. **Access Swagger UI**:
+   Open `https://YOUR_API_URL/docs` in your browser
+
+3. **Test data seeding**:
+   The database should be automatically seeded on first request (cold start)
+
+#### Database Migration to RDS
+
+For production, consider migrating from SQLite to PostgreSQL:
+
+1. **Create RDS PostgreSQL instance** (via AWS Console or CLI)
+2. **Update `DATABASE_URL`** in SAM template to point to RDS
+3. **Update connection string format**: `postgresql://user:pass@host:5432/dbname`
+4. **Deploy updated stack**: `sam deploy`
+
+The SQLAlchemy models are database-agnostic and will work with PostgreSQL without code changes.
+
+#### Reference Files
+
+- **SAM Template**: `template.yaml` (root directory)
+- **Production Env Example**: `backend/.env.production` (reference only)
+- **Build Script**: `scripts/build_lambda.sh`
 
 ---
 

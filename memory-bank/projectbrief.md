@@ -48,12 +48,16 @@ Built for an AI engineering fellowship with emphasis on:
 - ✅ React UI (operator + user views) - **COMPLETE**
 - ✅ Evaluation metrics - **COMPLETE**
 - ✅ Parquet exports to S3 (PR #29) - **COMPLETE**
-- ⏳ AWS Lambda deployment
+- ✅ AWS Lambda deployment prep (PR #33) - **COMPLETE**
+  - Mangum adapter integrated
+  - Auto-seeding on cold start
+  - Build script and documentation complete
+  - Ready for `sam build` and `sam deploy`
 
 **In Scope (Performance Optimization):**
 - ⏳ Redis caching layer (PR #31)
 - ⏳ PostgreSQL migration (PR #32)
-- ⏳ Scale synthetic data to 500-1,000 users (PR #33)
+- ⏳ Scale synthetic data to 500-1,000 users (Future PR)
 - ⏳ Vector database integration with Pinecone (PR #34-37)
 - **Goal**: Achieve sub-1s recommendation latency (from 17s baseline)
 - **Architecture**: Hybrid vector DB + OpenAI fallback

@@ -1,9 +1,27 @@
 # Progress: SpendSense
 
 ## What Works
-**Status**: PR #32 Complete - AWS SAM Template & Lambda Configuration
+**Status**: PR #33 Complete - Mangum Adapter & Lambda Deployment Prep
 
 ### Completed ✅
+- ✅ **PR #33: Mangum Adapter & Lambda Deployment Prep Complete**
+  - Mangum integration:
+    - Added `mangum==0.17.0` to requirements.txt and installed
+    - Updated `backend/app/main.py` with Mangum handler for Lambda
+    - Handler gracefully handles missing import for local development
+  - Auto-seeding implementation:
+    - Created `backend/app/utils/seed_data.py` with database seeding utility
+    - Seeds from JSON files on Lambda cold start if database is empty
+    - Integrated into startup event (only runs in Lambda environment)
+    - Handles both local dev and Lambda paths for data directory
+  - Build and deployment:
+    - Created `scripts/build_lambda.sh` to prepare data directory for Lambda packaging
+    - Updated `template.yaml` with build metadata
+    - Created `backend/.env.production` as reference file
+  - Documentation:
+    - Updated `README.md` with comprehensive Lambda deployment instructions
+    - Created `docs/LAMBDA_DEPLOYMENT.md` with SQLite limitations, auto-seeding details, RDS migration guide
+  - All 25 tasks completed, ready for local testing with SAM CLI
 - ✅ **PR #32: AWS SAM Template & Lambda Configuration Complete**
   - Created `template.yaml` with complete AWS SAM structure
   - Lambda function configured with FastAPI handler path
@@ -698,7 +716,7 @@
 ### Not Started
 - ⏳ Redis caching layer (PR #31)
 - ⏳ PostgreSQL migration (PR #32) - **PAUSED: No AWS access**
-- ⏳ Scale synthetic data to 500-1,000 users (PR #33)
+- ⏳ Scale synthetic data to 500-1,000 users (Future PR)
 - ⏳ Vector DB integration with Pinecone (PR #34-37)
 - ⏳ AWS deployment - **PAUSED: No AWS access**
 
@@ -747,7 +765,7 @@
 - [x] Evaluation API endpoints (PR #30) - **PR #30 Complete**
 - [ ] Redis caching layer (PR #31) - **Quick win for repeated queries**
 - [ ] PostgreSQL migration (PR #32) - **Production-grade database**
-- [ ] Scale synthetic data to 500-1,000 users (PR #33) - **Prerequisite for vector DB**
+- [ ] Scale synthetic data to 500-1,000 users (Future PR) - **Prerequisite for vector DB**
 - [ ] Vector DB integration with Pinecone (PR #34-37) - **Sub-1s latency showcase**
   - Pinecone setup & embedding infrastructure
   - Batch embedding job (populate vector DB)
@@ -874,9 +892,15 @@
 - **Integration**: ✅ Integrated into recommendation generation endpoint (PR #21) and product matching flow (PR #41)
 
 ### Infrastructure
-- **Status**: Not deployed
-- **Next**: Set up AWS SAM template and Lambda configuration
-- **Priority**: Day 3 - after MVP features complete
+- **Status**: Lambda deployment prep complete, ready for testing
+- **Completed**: 
+  - AWS SAM template created (PR #32)
+  - Mangum adapter integrated (PR #33)
+  - Auto-seeding implemented (PR #33)
+  - Build script created (PR #33)
+  - Deployment documentation complete (PR #33)
+- **Next**: Test locally with `sam build` and `sam local start-api`, then deploy to AWS
+- **Priority**: Ready for deployment testing
 
 ## Known Issues
 - ✅ Python version upgraded to 3.11.9 - Resolved

@@ -493,6 +493,15 @@ User Dashboard (React UI)
   - Imports evaluation functions from `scripts/evaluate.py`
   - Adapts evaluation script to work with FastAPI dependency injection
   - All endpoints tested and verified via Swagger UI
-- Lambda for serverless deployment
-- SAM for Infrastructure as Code
+- Lambda for serverless deployment (PR #33 Complete)
+  - Mangum adapter: `handler = Mangum(app)` in `backend/app/main.py`
+  - Auto-seeding: Database seeded from JSON files on cold start if empty
+  - Build script: `scripts/build_lambda.sh` prepares data directory
+  - Handler path: `app.main.handler` (configured in template.yaml)
+  - Environment detection: Uses `AWS_LAMBDA_FUNCTION_NAME` to detect Lambda environment
+- SAM for Infrastructure as Code (PR #32 Complete, PR #33 Updated)
+  - Template: `template.yaml` with Lambda function, IAM role, API Gateway
+  - Build metadata: Configured for Python 3.11 runtime
+  - Parameters: OpenAI API key, Environment (dev/staging/prod)
+  - Outputs: API URL, S3 bucket info, Lambda ARN
 

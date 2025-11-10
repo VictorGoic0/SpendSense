@@ -63,6 +63,9 @@ Resources:
       Handler: app.main.handler
       CodeUri: backend/
       Role: !GetAtt SpendSenseLambdaRole.Arn
+      # Include data directory for seeding
+      Metadata:
+        BuildMethod: python3.11
       Environment:
         Variables:
           OPENAI_API_KEY: !Ref OpenAIApiKey

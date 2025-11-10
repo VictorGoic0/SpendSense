@@ -44,6 +44,8 @@
   - Memory: 512MB
   - Timeout: 30 seconds
   - Handler: `app.main.handler` (via Mangum adapter)
+  - Database: SQLite in `/tmp/spendsense.db` (resets on cold start, auto-seeded)
+  - Auto-seeding: Synthetic data automatically loaded on cold start if database is empty
 - **AWS API Gateway** - REST API
   - Events: Root path (`/`) and proxy path (`/{proxy+}`)
   - Method: ANY
@@ -52,10 +54,14 @@
   - Transform: AWS::Serverless-2016-10-31
   - Parameters: OpenAI API key, Environment (dev/staging/prod)
   - Outputs: API URL, S3 bucket info, Lambda ARN
+  - Build script: `scripts/build_lambda.sh` prepares data directory for packaging
 - **AWS S3** - Parquet file storage
   - Bucket: `spendsense-analytics-goico` (existing, referenced in template)
   - Region: us-east-2
-- **Mangum** - ASGI adapter for Lambda (to be added in PR #33)
+- **Mangum** - ASGI adapter for Lambda (v0.17.0, PR #33 Complete)
+  - Handler: `app.main.handler` (Mangum adapter wrapping FastAPI app)
+  - Gracefully handles missing import for local development
+  - Auto-seeding on Lambda cold start via startup event
 
 ### Analytics
 - **Pandas** - Data processing
@@ -238,7 +244,12 @@ psycopg2-binary==latest (TBD in PR #32 for PostgreSQL)
 - Integration: Full flow via UI
 
 ### Deployment
-- Backend: `sam build && sam deploy`
+- **Lambda Deployment** (PR #33 Complete):
+  - Build: `sam build` (installs dependencies, packages backend/ and data/)
+  - Test locally: `sam local start-api` (requires Docker, available at http://localhost:3000)
+  - Deploy: `sam deploy --guided` (interactive deployment with parameter prompts)
+  - Auto-seeding: Database automatically seeded on cold start if empty
+  - Documentation: See `README.md` and `docs/LAMBDA_DEPLOYMENT.md` for full instructions
 - Frontend: Build with `npm run build`, deploy to Vercel/Netlify/S3
 
 ## Cost Estimates (MVP)
