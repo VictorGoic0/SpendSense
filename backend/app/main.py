@@ -22,7 +22,12 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # Vite default port + React default
+    allow_origins=[
+        "http://localhost:5173",  # Vite dev
+        "http://localhost:3000",  # React dev
+        "https://*.netlify.app",  # Netlify preview/production
+        "*"  # Allow all for demo (tighten in production)
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,12 +58,9 @@ async def root():
     return {"message": "SpendSense API"}
 
 
-# Lambda handler using Mangum
-# This is only imported/used when running in Lambda
-try:
-    from mangum import Mangum
-    handler = Mangum(app)
-except ImportError:
-    # Mangum not installed, likely running locally
-    handler = None
+
+# Standard startup for local development and Railway deployment
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 

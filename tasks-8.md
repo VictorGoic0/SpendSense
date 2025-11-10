@@ -1,63 +1,99 @@
-## PR #34: AWS Deployment & Production Testing
+## PR #34: Production Deployment (Netlify + Railway)
 
-### Initial Deployment
-- [ ] 1. Configure AWS credentials: `aws configure`
-- [ ] 2. Build SAM application: `sam build`
-- [ ] 3. Deploy with guided mode: `sam deploy --guided`
-- [ ] 4. Provide parameter values:
-   - Stack name: spendsense-dev
-   - AWS Region: us-east-1
-   - OpenAI API Key: [your key]
-   - Confirm changeset
-- [ ] 5. Wait for deployment to complete
+### Frontend Deployment to Netlify
+- [x] 1. Deploy frontend to Netlify (completed in previous session)
+- [x] 2. Configure environment variables in Netlify
+- [x] 3. Verify frontend live and accessible
+- [x] 4. Note: Backend URL will be updated after Railway deployment
+
+### Backend Cleanup - Remove AWS Lambda Code
+- [ ] 5. Remove Mangum from `backend/requirements.txt`
+- [ ] 6. Update `backend/app/main.py`:
+   - Remove Mangum import and handler
+   - Keep FastAPI app as-is
+   - Add standard Uvicorn startup for local development
+- [ ] 7. Delete AWS-specific files:
+   - `template.yaml`
+   - `samconfig.toml`
+   - `.aws-sam/` directory (if exists)
+- [ ] 8. Restore full requirements:
+   - Rename `requirements-dev.txt` back to `requirements.txt`
+   - Keep pandas, numpy, faker (no Lambda size limits on Railway)
+
+### Railway Setup & Deployment
+- [ ] 9. Install Railway CLI: `npm install -g @railway/cli`
+- [ ] 10. Login to Railway: `railway login`
+- [ ] 11. Initialize Railway project: `railway init`
+- [ ] 12. Link to Railway project (or create new one via CLI)
+- [ ] 13. Create Railway configuration file (optional but recommended)
+- [ ] 14. Set environment variables in Railway dashboard:
+   - `OPENAI_API_KEY` - your OpenAI API key
+   - `DATABASE_URL` - sqlite:///data/spendsense.db (Railway has persistent disk)
+   - `S3_BUCKET_NAME` - spendsense-analytics-goico
+   - `AWS_ACCESS_KEY_ID` - for S3 access
+   - `AWS_SECRET_ACCESS_KEY` - for S3 access
+   - `AWS_DEFAULT_REGION` - us-east-2
+- [ ] 15. Configure Railway service settings:
+   - Root directory: `/backend`
+   - Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - Or use Procfile (Railway auto-detects)
+- [ ] 16. Deploy to Railway: `railway up`
+- [ ] 17. Wait for deployment to complete (~30-60 seconds)
+- [ ] 18. Get Railway URL from dashboard or CLI: `railway domain`
 
 ### Post-Deployment Verification
-- [ ] 6. Get API Gateway URL from outputs
-- [ ] 7. Test health endpoint: `curl {api-url}/`
-- [ ] 8. Test GET /users endpoint
-- [ ] 9. Verify CORS headers present
-- [ ] 10. Check CloudWatch logs for errors
+- [ ] 19. Test health endpoint: `curl {railway-url}/`
+- [ ] 20. Verify response: `{"message": "SpendSense API is running"}`
+- [ ] 21. Test GET /users endpoint: `curl {railway-url}/users`
+- [ ] 22. Check Railway logs for any errors: `railway logs`
+- [ ] 23. Verify CORS headers present (test from frontend domain)
+- [ ] 24. Test API documentation: Visit `{railway-url}/docs`
 
 ### Data Ingestion in Production
-- [ ] 11. Update local scripts to use production API URL
-- [ ] 12. Run data ingestion: `python scripts/test_ingest.py`
-- [ ] 13. Verify data in database (Lambda will use /tmp SQLite)
-- [ ] 14. Note: Data will reset on cold starts (expected for MVP)
+- [ ] 25. Update local scripts with Railway API URL
+- [ ] 26. Run data ingestion: `python scripts/test_ingest.py`
+- [ ] 27. Verify data persists (Railway has persistent volumes)
+- [ ] 28. Note: Data will persist between deploys (unlike Lambda /tmp)
 
 ### Compute Features in Production
-- [ ] 15. Call feature computation endpoint for all users
-- [ ] 16. May need to batch if Lambda timeout issues
-- [ ] 17. Verify user_features table populated
+- [ ] 29. Call feature computation endpoint for all users
+- [ ] 30. Verify user_features table populated
+- [ ] 31. Check Railway metrics (CPU/RAM usage)
 
 ### Assign Personas in Production
-- [ ] 18. Call persona assignment for all users
-- [ ] 19. Verify personas table populated
-- [ ] 20. Check persona distribution
+- [ ] 32. Call persona assignment for all users
+- [ ] 33. Verify personas table populated
+- [ ] 34. Check persona distribution
 
 ### Generate Recommendations in Production
-- [ ] 21. Generate recommendations for test users
-- [ ] 22. Verify recommendations created
-- [ ] 23. Test approval workflow via API
+- [ ] 35. Generate recommendations for test users
+- [ ] 36. Verify recommendations created
+- [ ] 37. Test approval workflow via API
 
-### Frontend Connection to Production
-- [ ] 24. Update frontend .env with production API URL
-- [ ] 25. Rebuild frontend: `npm run build`
-- [ ] 26. Test all frontend features against production API
-- [ ] 27. Verify CORS working correctly
+### Frontend Connection to Production Backend
+- [ ] 38. Update Netlify environment variable `VITE_API_URL` to Railway URL
+- [ ] 39. Trigger Netlify redeploy (or auto-deploys on env change)
+- [ ] 40. Test all frontend features against Railway API
+- [ ] 41. Verify CORS working correctly
+- [ ] 42. Test complete user flow:
+   - Operator dashboard loads
+   - User list displays
+   - User details show signals
+   - Recommendations generate
+   - Approval workflow works
+   - User view shows recommendations
 
 ### Monitoring Setup
-- [ ] 28. Configure CloudWatch alarms:
-    - Lambda errors
-    - API Gateway 5xx errors
-    - High latency
-- [ ] 29. Set up SNS topic for alerts
-- [ ] 30. Test alerts by triggering errors
+- [ ] 43. Configure Railway metrics tracking (built-in)
+- [ ] 44. Set up Railway webhook notifications (optional)
+- [ ] 45. Monitor deployment logs for errors
+- [ ] 46. Set up uptime monitoring (UptimeRobot or similar - optional)
 
 ### Cost Monitoring
-- [ ] 31. Enable cost allocation tags
-- [ ] 32. Set up AWS Budget alert for $10 threshold
-- [ ] 33. Monitor daily costs in billing dashboard
-- [ ] 34. Review OpenAI API usage and costs
+- [ ] 47. Check Railway usage dashboard
+- [ ] 48. Monitor free tier credit ($5/month)
+- [ ] 49. Review OpenAI API usage and costs
+- [ ] 50. Set up Railway budget alert if needed
 
 ---
 
