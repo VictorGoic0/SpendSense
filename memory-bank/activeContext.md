@@ -1,58 +1,21 @@
 # Active Context: SpendSense
 
 ## Current Work Focus
-**Status**: PR #33 Complete - Mangum Adapter & Lambda Deployment Prep
+**Status**: Backend deployed to Railway (moved from AWS Lambda for ease of deployment)
 
 ## Recent Changes
-- ✅ **PR #33 Complete: Mangum Adapter & Lambda Deployment Prep (all 25 tasks finished)**
-  - Mangum integration:
-    - Added `mangum==0.17.0` to requirements.txt and installed
-    - Updated `backend/app/main.py` with Mangum handler (gracefully handles missing import for local dev)
-    - Handler created: `handler = Mangum(app)` for Lambda deployment
+- ✅ **Deployment Migration: AWS Lambda → Railway**
+  - Moved backend deployment from AWS Lambda to Railway for simplified deployment
+  - Removed Lambda-specific code (Mangum adapter, Lambda environment detection)
+  - Updated deployment documentation to reflect Railway setup
   - Auto-seeding implementation:
-    - Created `backend/app/utils/seed_data.py` with database seeding logic
-    - Seeds from JSON files on Lambda cold start if database is empty
-    - Integrated into startup event (only runs in Lambda environment via AWS_LAMBDA_FUNCTION_NAME check)
-    - Handles both local dev and Lambda paths for data directory location
-  - Build and deployment:
-    - Created `scripts/build_lambda.sh` to copy `data/` directory for Lambda packaging
-    - Updated `template.yaml` with build metadata
-    - Created `backend/.env.production` as reference file
+    - `backend/app/utils/seed_data.py` seeds database from JSON files on startup if empty
+    - Works in both local dev and Railway production environments
+    - Handles data directory location automatically
   - Documentation:
-    - Updated `README.md` with comprehensive Lambda deployment instructions
-    - Created `docs/LAMBDA_DEPLOYMENT.md` with:
-      - SQLite limitations explanation (resets on cold start)
-      - Auto-seeding details and rationale
-      - RDS migration guide (step-by-step instructions)
-      - Alternative options (DynamoDB) with trade-offs
-  - All 25 tasks completed (Mangum installation, handler creation, auto-seeding, build script, documentation)
-  - Ready for testing: `sam build` and `sam local start-api` can be run to test locally
-- ✅ **PR #32 Complete: AWS SAM Template & Lambda Configuration (all 28 tasks finished)**
-  - Created `template.yaml` in root directory with AWS SAM structure
-  - Configured Lambda function (SpendSenseAPI) with:
-    - Handler: `app.main.handler` (created in PR #33 with Mangum)
-    - CodeUri: `backend/`
-    - Timeout: 30 seconds, Memory: 512MB, Runtime: python3.11
-    - API Gateway events: Root path (`/`) and proxy path (`/{proxy+}`) with ANY method
-  - Environment variables configured:
-    - `OPENAI_API_KEY` (from parameter)
-    - `S3_BUCKET_NAME` (existing bucket: `spendsense-analytics-goico`)
-    - `DATABASE_URL` (sqlite:///tmp/spendsense.db for Lambda)
-    - `AWS_REGION` (us-east-2)
-    - `ENVIRONMENT` (from parameter, defaults to 'dev')
-  - IAM role (SpendSenseLambdaRole) with:
-    - S3 permissions (GetObject, PutObject, ListBucket) for existing analytics bucket
-    - CloudWatch Logs permissions (via AWSLambdaBasicExecutionRole managed policy)
-  - Parameters:
-    - `OpenAIApiKey` (String, NoEcho: true)
-    - `Environment` (String, Default: dev, AllowedValues: dev/staging/prod)
-  - Outputs:
-    - `ApiUrl` (API Gateway endpoint URL)
-    - `S3BucketName` and `S3BucketArn` (existing bucket references)
-    - `LambdaFunctionArn` and `LambdaFunctionName`
-  - Note: Using existing S3 bucket (`spendsense-analytics-goico`) instead of creating new one
-  - Template structure validated and Mangum adapter integrated (PR #33)
-  - All 28 tasks completed (template creation, Lambda config, IAM role, parameters, outputs, validation)
+    - Updated `README.md` with Railway deployment instructions
+    - Removed Lambda-specific documentation files
+    - Updated PRD.md to reflect Railway deployment
 - ✅ **PR #31 Complete: Frontend - Metrics Display in Operator Dashboard (all 30 tasks finished)**
   - Created `frontend/src/components/MetricsDisplay.jsx`:
     - Displays 4 evaluation metrics (coverage, explainability, latency, auditability)

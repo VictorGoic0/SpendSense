@@ -1,6 +1,6 @@
 """
 Utility function to seed database with synthetic data from JSON files.
-Used on Lambda cold start to pre-populate the database.
+Used on application startup to pre-populate the database.
 """
 import json
 import logging
@@ -18,10 +18,8 @@ logger = logging.getLogger(__name__)
 def get_data_path() -> Path:
     """
     Get the path to the data directory.
-    Works in both local development and Lambda environments.
+    Works in both local development and production environments.
     """
-    # In Lambda, the code is in /var/task
-    # The data directory is copied to backend/data/ during build
     current_path = Path(__file__).resolve()
     # current_path is backend/app/utils/seed_data.py
     # Go up to backend/ directory
@@ -31,11 +29,6 @@ def get_data_path() -> Path:
     backend_data_path = backend_dir / "data"
     if backend_data_path.exists():
         return backend_data_path
-    
-    # Try /var/task/data (Lambda absolute path)
-    lambda_path = Path("/var/task/data")
-    if lambda_path.exists():
-        return lambda_path
     
     # Fall back to project root data/ (for backwards compatibility)
     project_root = backend_dir.parent

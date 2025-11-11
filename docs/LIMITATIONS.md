@@ -36,7 +36,7 @@ This document outlines known limitations and constraints of the SpendSense MVP.
 - **API Keys**: OpenAI API key stored in environment variables (not encrypted at rest)
 
 ### Scalability
-- **Single Lambda Function**: All endpoints in one function (may need splitting)
+- **Single Application Instance**: All endpoints in one application (may need horizontal scaling)
 - **No Caching**: No Redis caching in MVP (all recommendations regenerated)
 - **No CDN**: Frontend served directly (no CDN optimization)
 

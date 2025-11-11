@@ -25,7 +25,7 @@ SpendSense transforms synthetic bank transaction data into actionable financial 
 - ✅ Full consent tracking and enforcement
 - ✅ Operator approval workflow functional
 - ✅ Working UI (operator + user views) - **MVP REQUIREMENT**
-- ✅ Deployed to AWS Lambda
+- ✅ Deployed to Railway (moved from AWS Lambda for ease of deployment)
 
 ---
 
@@ -66,9 +66,7 @@ SpendSense transforms synthetic bank transaction data into actionable financial 
 - Redis caching for generated content (stretch goal)
 
 **Infrastructure:**
-- AWS Lambda (serverless compute)
-- AWS API Gateway (REST API)
-- AWS SAM (Infrastructure as Code)
+- Railway (backend deployment platform)
 - AWS S3 (Parquet file storage)
 - AWS ElastiCache Redis (stretch - caching layer)
 
@@ -906,8 +904,7 @@ Stretch: JWT tokens with role-based access (customer vs operator)
 - ✅ Display key metrics in operator dashboard
 
 #### Deployment
-- ✅ FastAPI deployed to AWS Lambda via AWS SAM
-- ✅ API Gateway for REST endpoints
+- ✅ FastAPI deployed to Railway (moved from AWS Lambda for ease of deployment)
 - ✅ S3 bucket for Parquet exports
 - ✅ Pre-signed URLs for downloads (7-day expiry)
 
@@ -2032,89 +2029,24 @@ When multiple personas match, apply this prioritization:
 
 ### Day 3 (Stretch Goals - Deploy & Polish)
 
-#### AWS Deployment (3-4 hours)
-**Goal:** Deploy FastAPI to AWS Lambda via SAM
+#### Railway Deployment (3-4 hours)
+**Goal:** Deploy FastAPI to Railway for ease of deployment
 
 **Tasks:**
-1. Install AWS SAM CLI:
+1. Create Railway account and project
+2. Connect GitHub repository to Railway
+3. Configure environment variables in Railway dashboard:
+   - `OPENAI_API_KEY`: Your OpenAI API key
+   - `DATABASE_URL`: SQLite database path (or PostgreSQL connection string)
+   - `S3_BUCKET_NAME`: S3 bucket for Parquet exports
+4. Railway will automatically detect the FastAPI application and deploy
+5. Test deployed API:
    ```bash
-   brew install aws-sam-cli  # macOS
+   curl https://{your-railway-app}.railway.app/users
    ```
-2. Create `template.yaml` (SAM CloudFormation template):
-   ```yaml
-   AWSTemplateFormatVersion: '2010-09-09'
-   Transform: AWS::Serverless-2016-10-31
-   
-   Globals:
-     Function:
-       Timeout: 30
-       MemorySize: 512
-       Runtime: python3.11
-   
-   Resources:
-     SpendSenseAPI:
-       Type: AWS::Serverless::Function
-       Properties:
-         FunctionName: spendsense-api
-         Handler: app.main.handler
-         CodeUri: backend/
-         Events:
-           ApiEvent:
-             Type: Api
-             Properties:
-               Path: /{proxy+}
-               Method: ANY
-         Environment:
-           Variables:
-             OPENAI_API_KEY: !Ref OpenAIKey
-             DATABASE_URL: sqlite:///tmp/spendsense.db
-             S3_BUCKET_NAME: !Ref S3Bucket
-   
-     S3Bucket:
-       Type: AWS::S3::Bucket
-       Properties:
-         BucketName: !Sub 'spendsense-analytics-${AWS::StackName}'
-   
-   Parameters:
-     OpenAIKey:
-       Type: String
-       NoEcho: true
-   
-   Outputs:
-     ApiUrl:
-       Description: "API Gateway endpoint URL"
-       Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
-     S3BucketName:
-       Description: "S3 Bucket for Parquet exports"
-       Value: !Ref S3Bucket
-   ```
-3. Modify FastAPI for Lambda:
-   ```python
-   # app/main.py
-   from mangum import Mangum
-   
-   app = FastAPI()
-   
-   # ... all routes ...
-   
-   handler = Mangum(app)  # AWS Lambda handler
-   ```
-4. Install dependencies:
-   ```bash
-   pip install mangum
-   ```
-5. Build and deploy:
-   ```bash
-   sam build
-   sam deploy --guided
-   ```
-6. Test deployed API:
-   ```bash
-   curl https://{api-id}.execute-api.us-east-1.amazonaws.com/Prod/users
-   ```
-7. Update frontend API base URL to use deployed endpoint
+6. Update frontend API base URL to use deployed endpoint
 
-**Deliverable:** FastAPI running on AWS Lambda, frontend connected to production API
+**Deliverable:** FastAPI running on Railway, frontend connected to production API
 
 ---
 
@@ -2320,42 +2252,33 @@ pytest tests/ -v
 
 ## Deployment Strategy
 
-### AWS SAM Configuration
+### Railway Configuration
 
 **Architecture:**
 ```
 User/Operator Browser
     ↓
-CloudFront (optional, for React frontend)
+Railway (FastAPI)
     ↓
-API Gateway
-    ↓
-AWS Lambda (FastAPI)
-    ↓
-SQLite (stored in /tmp/) OR RDS PostgreSQL (stretch)
+SQLite (local file) OR PostgreSQL (stretch)
     ↓
 S3 (Parquet exports)
 ```
 
-**SAM Template Highlights:**
-- Lambda function: 512MB memory, 30s timeout
-- API Gateway: REST API with ANY method on /{proxy+}
+**Railway Deployment Highlights:**
+- FastAPI application runs as a standard web service
+- Automatic HTTPS and domain provisioning
 - Environment variables: OPENAI_API_KEY, DATABASE_URL, S3_BUCKET_NAME
-- S3 bucket for Parquet exports
+- S3 bucket for Parquet exports (configured separately)
 
-**Deployment Commands:**
-```bash
-# First time
-sam build
-sam deploy --guided
-
-# Subsequent deploys
-sam build && sam deploy
-```
+**Deployment Process:**
+- Connect GitHub repository to Railway
+- Railway auto-detects FastAPI application
+- Configure environment variables in Railway dashboard
+- Automatic deployments on git push
 
 **Cost Estimates (MVP usage):**
-- Lambda: ~$0.20/day (10-20 invocations, mostly development testing)
-- API Gateway: ~$0.035/1000 requests (~$0.05/day)
+- Railway: Free tier available, then ~$5-10/month for small apps
 - S3: ~$0.023/GB/month (~$0.05/month for Parquet files)
 - OpenAI API: ~$0.50-$1.00/day during development (75 users × 5 personas × 2 windows = ~750 API calls total, but cached after first gen)
 
@@ -2494,14 +2417,13 @@ faker==20.1.0
 boto3==1.29.7
 pytest==7.4.3
 httpx==0.25.2  # for testing FastAPI
-mangum==0.17.0  # AWS Lambda adapter
 ```
 
 ### Tech Stack Summary
 - **Backend**: FastAPI (Python 3.11+), SQLite/PostgreSQL
 - **Frontend**: React 18, Vite, Shadcn/ui, TailwindCSS - **MVP REQUIREMENT**
 - **AI**: OpenAI GPT-4o-mini
-- **Infrastructure**: AWS Lambda, API Gateway, S3, SAM
+- **Infrastructure**: Railway (backend deployment), S3
 - **Caching**: Redis (ElastiCache or local) - stretch
 - **Analytics**: Pandas, Parquet
 
@@ -2516,7 +2438,7 @@ mangum==0.17.0  # AWS Lambda adapter
 8. `scripts/evaluate.py` - Metrics computation
 9. **`frontend/src/pages/OperatorDashboard.jsx`** - Operator UI - **MVP**
 10. **`frontend/src/pages/UserDashboard.jsx`** - User UI - **MVP**
-11. `template.yaml` - AWS SAM configuration
+11. Railway configuration (via Railway dashboard)
 
 ---
 
@@ -2542,7 +2464,7 @@ mangum==0.17.0  # AWS Lambda adapter
 - [ ] **Metrics displayed in operator dashboard**
 
 **Stretch (Day 3+):**
-- [ ] FastAPI deployed to AWS Lambda
+- [ ] FastAPI deployed to Railway
 - [ ] Frontend deployed (Vercel/Netlify/S3+CloudFront)
 - [ ] Redis caching (optional)
 - [ ] Vector database integration (optional)

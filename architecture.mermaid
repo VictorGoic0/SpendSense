@@ -8,7 +8,7 @@ graph TB
     Components[Shadcn UI Components]
     APIClient[Axios API Client]
     
-    APIGW[AWS API Gateway]
+    RailwayAPI[Railway API]
     LocalAPI[Local API localhost:8000]
     
     FastAPI[FastAPI Application]
@@ -43,9 +43,6 @@ graph TB
     OperatorActions[(operator actions table)]
     EvalMetrics[(evaluation metrics table)]
     
-    Lambda[AWS Lambda Function]
-    SAM[AWS SAM]
-    
     SyntheticData[Synthetic Data Generator]
     DataFiles[JSON Data Files]
     ComputeFeatures[Compute Features Script]
@@ -61,11 +58,10 @@ graph TB
     Router --> Components
     Components --> APIClient
     
-    APIClient --> APIGW
+    APIClient --> RailwayAPI
     APIClient --> LocalAPI
     
-    APIGW --> Lambda
-    Lambda --> FastAPI
+    RailwayAPI --> FastAPI
     LocalAPI --> FastAPI
     
     FastAPI --> IngestRouter
@@ -115,8 +111,7 @@ graph TB
     ComputeFeatures --> FeaturesRouter
     AssignPersonas --> PersonasRouter
     
-    SAM --> Lambda
-    SAM --> S3
+    RailwayAPI --> S3
 
     style Vite fill:#61dafb
     style Router fill:#61dafb
@@ -160,7 +155,5 @@ graph TB
     style AssignPersonas fill:#9c27b0
     style EvaluateScript fill:#9c27b0
     
-    style Lambda fill:#ff6b6b
-    style SAM fill:#ff6b6b
-    style APIGW fill:#ff6b6b
+    style RailwayAPI fill:#ff6b6b
     style S3 fill:#ff6b6b

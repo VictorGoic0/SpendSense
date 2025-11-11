@@ -11,33 +11,16 @@
   - Client-side routing configured with redirect rule
   - Root directory in Netlify UI: Leave blank/empty (base specified in config)
   - Frontend successfully deployed and accessible
-- ✅ **PR #33: Mangum Adapter & Lambda Deployment Prep Complete**
-  - Mangum integration:
-    - Added `mangum==0.17.0` to requirements.txt and installed
-    - Updated `backend/app/main.py` with Mangum handler for Lambda
-    - Handler gracefully handles missing import for local development
+- ✅ **Deployment Migration: AWS Lambda → Railway Complete**
+  - Moved backend deployment from AWS Lambda to Railway for ease of deployment
+  - Removed Lambda-specific code and dependencies (Mangum adapter)
   - Auto-seeding implementation:
-    - Created `backend/app/utils/seed_data.py` with database seeding utility
-    - Seeds from JSON files on Lambda cold start if database is empty
-    - Integrated into startup event (only runs in Lambda environment)
-    - Handles both local dev and Lambda paths for data directory
-  - Build and deployment:
-    - Created `scripts/build_lambda.sh` to prepare data directory for Lambda packaging
-    - Updated `template.yaml` with build metadata
-    - Created `backend/.env.production` as reference file
+    - `backend/app/utils/seed_data.py` seeds database from JSON files on startup if empty
+    - Works in both local dev and Railway production environments
   - Documentation:
-    - Updated `README.md` with comprehensive Lambda deployment instructions
-    - Created `docs/LAMBDA_DEPLOYMENT.md` with SQLite limitations, auto-seeding details, RDS migration guide
-  - All 25 tasks completed, ready for local testing with SAM CLI
-- ✅ **PR #32: AWS SAM Template & Lambda Configuration Complete**
-  - Created `template.yaml` with complete AWS SAM structure
-  - Lambda function configured with FastAPI handler path
-  - IAM role with S3 and CloudWatch Logs permissions
-  - Environment variables for OpenAI, S3, database, region, and environment detection
-  - Parameters for OpenAI key and environment (dev/staging/prod)
-  - Outputs for API URL, S3 bucket info, and Lambda ARN
-  - Template validated and ready for Mangum adapter (PR #33)
-  - All 28 tasks completed
+    - Updated `README.md` with Railway deployment instructions
+    - Removed Lambda-specific documentation files
+    - Updated PRD.md and architecture diagrams
 - ✅ **PR #31: Frontend - Metrics Display in Operator Dashboard Complete**
   - Created MetricsDisplay component with 4 evaluation metrics (coverage, explainability, latency, auditability)
   - Progress bars with color coding (>95% green, 80-95% yellow, <80% red)
@@ -778,7 +761,7 @@
   - Batch embedding job (populate vector DB)
   - Vector search implementation
   - Hybrid recommendation engine (vector DB + OpenAI fallback)
-- [ ] FastAPI deployed to AWS Lambda
+- [x] FastAPI deployed to Railway
 - [ ] Frontend deployed (Vercel/Netlify/S3+CloudFront)
 - [ ] 10 unit tests passing
 - [ ] Documentation complete (README, decision log, limitations)
@@ -899,15 +882,14 @@
 - **Integration**: ✅ Integrated into recommendation generation endpoint (PR #21) and product matching flow (PR #41)
 
 ### Infrastructure
-- **Status**: Lambda deployment prep complete, ready for testing
+- **Status**: Railway deployment complete
 - **Completed**: 
-  - AWS SAM template created (PR #32)
-  - Mangum adapter integrated (PR #33)
-  - Auto-seeding implemented (PR #33)
-  - Build script created (PR #33)
-  - Deployment documentation complete (PR #33)
-- **Next**: Test locally with `sam build` and `sam local start-api`, then deploy to AWS
-- **Priority**: Ready for deployment testing
+  - Backend deployed to Railway
+  - Auto-seeding on startup implemented
+  - Environment variables configured via Railway dashboard
+  - Deployment documentation updated
+- **Next**: Monitor deployment and optimize as needed
+- **Priority**: Deployment complete
 
 ## Known Issues
 - ✅ Python version upgraded to 3.11.9 - Resolved

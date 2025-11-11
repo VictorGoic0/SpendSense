@@ -279,7 +279,7 @@
    - Why GPT-4o-mini: cost-effective, sufficient quality
    - Why Shadcn/ui: LLM-friendly, modern, accessible
    - Why UI on Day 1: enables early integration testing
-   - Why AWS Lambda: serverless, cost-effective for MVP
+   - Why Railway: simplified deployment, cost-effective for MVP
 - [ ] 10. Document trade-offs and alternatives considered
 
 ### Limitations Document
@@ -290,7 +290,7 @@
     - AI output variability
     - SQLite scalability (recommend RDS for production)
     - No authentication in MVP
-    - Lambda cold starts and /tmp database resets
+    - Database persistence considerations
 - [ ] 12. Add recommendations for production deployment
 
 ### Code Comments

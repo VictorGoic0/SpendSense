@@ -39,29 +39,16 @@
   - Cache invalidation on updates
 
 ### Infrastructure
-- **AWS Lambda** - Serverless compute
+- **Railway** - Backend deployment platform
   - Runtime: Python 3.11
-  - Memory: 512MB
-  - Timeout: 30 seconds
-  - Handler: `app.main.handler` (via Mangum adapter)
-  - Database: SQLite in `/tmp/spendsense.db` (resets on cold start, auto-seeded)
-  - Auto-seeding: Synthetic data automatically loaded on cold start if database is empty
-- **AWS API Gateway** - REST API
-  - Events: Root path (`/`) and proxy path (`/{proxy+}`)
-  - Method: ANY
-- **AWS SAM** - Infrastructure as Code
-  - Template: `template.yaml` in root directory
-  - Transform: AWS::Serverless-2016-10-31
-  - Parameters: OpenAI API key, Environment (dev/staging/prod)
-  - Outputs: API URL, S3 bucket info, Lambda ARN
-  - Build script: `scripts/build_lambda.sh` prepares data directory for packaging
+  - FastAPI application runs as standard web service
+  - Automatic HTTPS and domain provisioning
+  - Database: SQLite (can be upgraded to PostgreSQL)
+  - Auto-seeding: Synthetic data automatically loaded on startup if database is empty
+  - Environment variables configured via Railway dashboard
 - **AWS S3** - Parquet file storage
-  - Bucket: `spendsense-analytics-goico` (existing, referenced in template)
+  - Bucket: `spendsense-analytics-goico`
   - Region: us-east-2
-- **Mangum** - ASGI adapter for Lambda (v0.17.0, PR #33 Complete)
-  - Handler: `app.main.handler` (Mangum adapter wrapping FastAPI app)
-  - Gracefully handles missing import for local development
-  - Auto-seeding on Lambda cold start via startup event
 
 ### Analytics
 - **Pandas** - Data processing
@@ -108,16 +95,16 @@ AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
 AWS_DEFAULT_REGION=us-east-2
 S3_BUCKET_NAME=spendsense-analytics-goico
-ENVIRONMENT=dev  # Optional: dev/staging/prod (defaults to dev in Lambda)
+ENVIRONMENT=dev  # Optional: dev/staging/prod
 ```
 
-### Lambda Environment Variables
-The SAM template sets these environment variables for the Lambda function:
-- `OPENAI_API_KEY` - From SAM parameter (NoEcho: true)
-- `S3_BUCKET_NAME` - `spendsense-analytics-goico` (existing bucket)
-- `DATABASE_URL` - `sqlite:///tmp/spendsense.db` (Lambda /tmp directory)
-- `AWS_REGION` - `us-east-2`
-- `ENVIRONMENT` - From SAM parameter (defaults to 'dev', can be dev/staging/prod)
+### Railway Environment Variables
+Configure these environment variables in Railway dashboard:
+- `OPENAI_API_KEY` - Your OpenAI API key
+- `S3_BUCKET_NAME` - `spendsense-analytics-goico`
+- `DATABASE_URL` - SQLite database path (default: `sqlite:///./spendsense.db`) or PostgreSQL connection string
+- `AWS_REGION` - `us-east-2` (for S3 access)
+- `ENVIRONMENT` - dev/staging/prod (defaults to 'dev')
 
 ### Database Configuration
 - **SQLite with WAL Mode**: Enabled Write-Ahead Logging for concurrent access
@@ -144,7 +131,6 @@ boto3==1.29.7
 faker==20.1.0
 pytest==7.4.3
 httpx==0.25.2
-mangum==0.17.0
 requests==2.31.0
 
 # Vector DB & Caching (to be added)
@@ -190,20 +176,15 @@ psycopg2-binary==latest (TBD in PR #32 for PostgreSQL)
 - **Verify compatibility** before installation:
   - Frontend: Check package.json peer dependencies, run `npm install --dry-run`
   - Backend: Check package documentation, run `pip check` after installation
-- **Deployment compatibility**: Verify packages work on target platforms (AWS Lambda, Vercel, etc.)
+- **Deployment compatibility**: Verify packages work on target platforms (Railway, Vercel, etc.)
 
 ## Deployment Considerations
 
-### AWS Lambda
+### Railway
 - Runtime: Python 3.11
-- Memory: 512MB (configurable)
-- Timeout: 30 seconds
-- Handler: `app.main.handler` (via Mangum)
-
-### API Gateway
-- REST API
-- CORS enabled
-- ANY method on `/{proxy+}` path
+- FastAPI application runs as standard web service
+- Automatic HTTPS and domain provisioning
+- Environment variables configured via dashboard
 
 ### S3 Bucket
 - Bucket name: `spendsense-analytics-goico`
@@ -214,7 +195,7 @@ psycopg2-binary==latest (TBD in PR #32 for PostgreSQL)
 - Uses AWS CLI credentials (or environment variables)
 
 ### Platform Compatibility
-- **AWS Lambda**: Fully compatible (Python 3.11 runtime)
+- **Railway**: Fully compatible (Python 3.11 runtime)
 - **Vercel**: Compatible for frontend deployment (React/Vite)
 - **Netlify**: Compatible for frontend deployment
 - **S3 + CloudFront**: Alternative frontend hosting
@@ -244,12 +225,13 @@ psycopg2-binary==latest (TBD in PR #32 for PostgreSQL)
 - Integration: Full flow via UI
 
 ### Deployment
-- **Lambda Deployment** (PR #33 Complete):
-  - Build: `sam build` (installs dependencies, packages backend/ and data/)
-  - Test locally: `sam local start-api` (requires Docker, available at http://localhost:3000)
-  - Deploy: `sam deploy --guided` (interactive deployment with parameter prompts)
-  - Auto-seeding: Database automatically seeded on cold start if empty
-  - Documentation: See `README.md` and `docs/LAMBDA_DEPLOYMENT.md` for full instructions
+- **Railway Deployment**:
+  - Connect GitHub repository to Railway
+  - Railway auto-detects FastAPI application
+  - Configure environment variables in Railway dashboard
+  - Automatic deployments on git push
+  - Auto-seeding: Database automatically seeded on startup if empty
+  - Documentation: See `README.md` for full instructions
 - **Frontend Deployment** (Netlify):
   - Configuration: `netlify.toml` in root directory
   - Base directory: `frontend`
@@ -260,7 +242,7 @@ psycopg2-binary==latest (TBD in PR #32 for PostgreSQL)
   - Root directory in Netlify UI: Leave blank/empty
 
 ## Cost Estimates (MVP)
-- **Lambda**: ~$0.20/day (10-20 invocations)
+- **Railway**: Free tier available, then ~$5-10/month for small apps
 - **API Gateway**: ~$0.05/day (~1000 requests)
 - **S3**: ~$0.05/month (Parquet files)
 - **OpenAI API**: ~$0.50-$1.00/day (75 users × 5 personas × 2 windows)

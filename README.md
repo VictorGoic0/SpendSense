@@ -193,7 +193,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 ### AI & Infrastructure
 
 - **AI Model**: OpenAI GPT-4o-mini
-- **Deployment Target**: AWS Lambda, API Gateway, S3
+- **Deployment Target**: Railway (backend), Netlify (frontend), S3 (analytics)
 - **Database**: SQLite (development), ready for PostgreSQL migration
 
 ---
@@ -586,109 +586,83 @@ Use the Swagger UI at `http://localhost:8000/docs` for interactive API testing, 
 
 ## Deployment
 
-### AWS Lambda Deployment
+### Railway Deployment
 
-The platform is designed for serverless deployment on AWS using AWS SAM (Serverless Application Model):
+The platform is deployed on Railway for ease of deployment:
 
-- **Backend**: FastAPI application packaged for Lambda using Mangum adapter
-- **API Gateway**: REST API endpoint configuration
+- **Backend**: FastAPI application running on Railway
+- **Frontend**: React application deployed on Netlify
 - **S3**: Analytics exports bucket (`spendsense-analytics-goico`)
-- **Database**: SQLite in `/tmp` for MVP (resets on cold start, auto-seeded)
+- **Database**: SQLite for MVP (can be upgraded to PostgreSQL)
 
 #### Prerequisites
 
-1. **AWS CLI** configured with appropriate credentials
-2. **SAM CLI** installed (already installed per your setup)
-3. **Python 3.11** (matches Lambda runtime)
-4. **OpenAI API Key** for recommendation generation
+1. **Railway account** (sign up at railway.app)
+2. **Python 3.11+** (matches Railway runtime)
+3. **OpenAI API Key** for recommendation generation
 
 #### Deployment Steps
 
-1. **Build the Lambda package**:
-   ```bash
-   sam build
-   ```
-   This will:
-   - Install dependencies from `backend/requirements.txt`
-   - Package the `backend/` directory
-   - Include the `data/` directory for seeding
+1. **Connect GitHub repository to Railway**:
+   - Log in to Railway dashboard
+   - Create a new project
+   - Connect your GitHub repository
+   - Railway will auto-detect the FastAPI application
 
-2. **Test locally** (optional):
-   ```bash
-   sam local start-api
-   ```
-   The API will be available at `http://localhost:3000`
-   - Test endpoints: `http://localhost:3000/docs` (Swagger UI)
-   - Note: Local testing uses Docker, so ensure Docker is running
+2. **Configure environment variables** in Railway dashboard:
+   - `OPENAI_API_KEY`: Your OpenAI API key
+   - `DATABASE_URL`: SQLite database path (default: `sqlite:///./spendsense.db`)
+   - `S3_BUCKET_NAME`: `spendsense-analytics-goico`
+   - `ENVIRONMENT`: `dev`, `staging`, or `prod`
 
-3. **Deploy to AWS**:
-   ```bash
-   sam deploy --guided
-   ```
-   This interactive command will:
-   - Prompt for stack name (e.g., `spendsense-api`)
-   - Prompt for AWS region (default: `us-east-2`)
-   - Prompt for `OpenAIApiKey` parameter (your OpenAI API key)
-   - Prompt for `Environment` parameter (dev/staging/prod)
-   - Create/update the CloudFormation stack
-   - Deploy the Lambda function and API Gateway
+3. **Deploy**:
+   - Railway will automatically build and deploy on git push
+   - Or trigger a manual deployment from the dashboard
 
 4. **Get the API URL**:
-   After deployment, SAM will output the API Gateway URL:
-   ```
-   ApiUrl = https://xxxxxxxxxx.execute-api.us-east-2.amazonaws.com/Prod
-   ```
+   - Railway provides a public URL automatically
+   - Format: `https://your-app-name.railway.app`
 
 #### Environment Variables
 
-The following environment variables are configured in the SAM template:
+The following environment variables should be configured in Railway:
 
-- `OPENAI_API_KEY`: Set via `OpenAIApiKey` parameter during deployment
-- `DATABASE_URL`: `sqlite:///tmp/spendsense.db` (SQLite in Lambda's `/tmp`)
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `DATABASE_URL`: Database connection string (SQLite or PostgreSQL)
 - `S3_BUCKET_NAME`: `spendsense-analytics-goico`
-- `ENVIRONMENT`: Set via `Environment` parameter (dev/staging/prod)
-- `AWS_REGION`: Automatically set by Lambda
+- `ENVIRONMENT`: `dev`, `staging`, or `prod`
 
 #### Database Seeding
 
-On Lambda cold start:
+On application startup:
 - The database is automatically initialized (tables created)
 - If the database is empty, synthetic data is automatically seeded from JSON files in the `data/` directory
-- This ensures data is available immediately after deployment or cold start
+- This ensures data is available immediately after deployment
 - The `/ingest/` endpoint remains available for additional data ingestion
-
-**Note**: SQLite in `/tmp` resets on each Lambda cold start. For production workloads, consider migrating to RDS (PostgreSQL) or DynamoDB for persistent storage.
 
 #### Testing the Deployment
 
 1. **Check API health**:
    ```bash
-   curl https://YOUR_API_URL/
+   curl https://YOUR_RAILWAY_URL/
    ```
    Should return: `{"message":"SpendSense API"}`
 
 2. **Access Swagger UI**:
-   Open `https://YOUR_API_URL/docs` in your browser
+   Open `https://YOUR_RAILWAY_URL/docs` in your browser
 
 3. **Test data seeding**:
-   The database should be automatically seeded on first request (cold start)
+   The database should be automatically seeded on first request
 
-#### Database Migration to RDS
+#### Database Migration to PostgreSQL
 
 For production, consider migrating from SQLite to PostgreSQL:
 
-1. **Create RDS PostgreSQL instance** (via AWS Console or CLI)
-2. **Update `DATABASE_URL`** in SAM template to point to RDS
-3. **Update connection string format**: `postgresql://user:pass@host:5432/dbname`
-4. **Deploy updated stack**: `sam deploy`
+1. **Add PostgreSQL service** in Railway dashboard
+2. **Update `DATABASE_URL`** environment variable to use the PostgreSQL connection string
+3. **Redeploy** the application
 
 The SQLAlchemy models are database-agnostic and will work with PostgreSQL without code changes.
-
-#### Reference Files
-
-- **SAM Template**: `template.yaml` (root directory)
-- **Production Env Example**: `backend/.env.production` (reference only)
-- **Build Script**: `scripts/build_lambda.sh`
 
 ---
 

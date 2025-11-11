@@ -25,7 +25,7 @@ Built for an AI engineering fellowship with emphasis on:
 - ✅ Full consent tracking and enforcement
 - ✅ Operator approval workflow functional
 - ✅ Working UI (operator + user views) - **MVP REQUIREMENT**
-- ✅ Deployed to AWS Lambda
+- ✅ Deployed to Railway (moved from AWS Lambda for ease of deployment)
 
 ## Timeline
 2-4 days (MVP focus)
@@ -48,11 +48,10 @@ Built for an AI engineering fellowship with emphasis on:
 - ✅ React UI (operator + user views) - **COMPLETE**
 - ✅ Evaluation metrics - **COMPLETE**
 - ✅ Parquet exports to S3 (PR #29) - **COMPLETE**
-- ✅ AWS Lambda deployment prep (PR #33) - **COMPLETE**
-  - Mangum adapter integrated
-  - Auto-seeding on cold start
-  - Build script and documentation complete
-  - Ready for `sam build` and `sam deploy`
+- ✅ Railway deployment - **COMPLETE**
+  - Backend deployed to Railway for ease of deployment
+  - Auto-seeding on startup
+  - Environment variables configured via Railway dashboard
 
 **In Scope (Performance Optimization):**
 - ⏳ Redis caching layer (PR #31)
