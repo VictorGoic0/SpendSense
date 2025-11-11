@@ -7,17 +7,22 @@ Tests the subscription and savings detection logic with users from the database.
 
 import sys
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Add backend to path (where app/ module lives)
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
+# Load environment variables
+load_dotenv()
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Get the correct database path (backend/spendsense.db)
+# Use DATABASE_URL env var if available, otherwise use local database
 database_path = backend_dir / "spendsense.db"
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{database_path.absolute()}"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{database_path.absolute()}")
 
 from app.services.feature_detection import (
     compute_subscription_signals,

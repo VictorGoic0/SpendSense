@@ -14,10 +14,14 @@ import os
 from pathlib import Path
 from datetime import datetime, timedelta
 import json
+from dotenv import load_dotenv
 
 # Add backend to path (where app/ module lives)
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
+
+# Load environment variables
+load_dotenv()
 
 import pandas as pd
 import numpy as np
@@ -26,9 +30,9 @@ from botocore.exceptions import ClientError, NoCredentialsError
 from sqlalchemy import create_engine, func, or_
 from sqlalchemy.orm import sessionmaker
 
-# Get the correct database path (backend/spendsense.db)
+# Use DATABASE_URL env var if available, otherwise use local database
 database_path = backend_dir / "spendsense.db"
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{database_path.absolute()}"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{database_path.absolute()}")
 
 from app.models import (
     User, 

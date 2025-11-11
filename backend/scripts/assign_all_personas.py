@@ -10,17 +10,22 @@ from pathlib import Path
 import time
 from datetime import datetime
 from collections import Counter
+import os
+from dotenv import load_dotenv
 
 # Add backend to path (where app/ module lives)
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
+# Load environment variables
+load_dotenv()
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Get the correct database path (backend/spendsense.db)
+# Use DATABASE_URL env var if available, otherwise use local database
 database_path = backend_dir / "spendsense.db"
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{database_path.absolute()}"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{database_path.absolute()}")
 
 from app.models import User, Persona
 from app.services.persona_assignment import assign_and_save_persona
