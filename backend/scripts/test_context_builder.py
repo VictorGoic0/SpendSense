@@ -9,23 +9,14 @@ Verifies all required fields are present and data looks realistic.
 import sys
 import json
 from pathlib import Path
-import os
-from dotenv import load_dotenv
 
 # Add backend to path (where app/ module lives)
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
-# Load environment variables
-load_dotenv()
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-# Use DATABASE_URL env var if available, otherwise use local database
-database_path = backend_dir / "spendsense.db"
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{database_path.absolute()}")
-
+from app.database import SQLALCHEMY_DATABASE_URL
 from app.services.recommendation_engine import build_user_context, validate_context
 from app.models import User, UserFeature, Persona, Account, Transaction
 
