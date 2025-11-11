@@ -28,11 +28,11 @@
 - [x] 13. Create Railway configuration file (optional but recommended)
 - [x] 14. Set environment variables in Railway dashboard:
    - `OPENAI_API_KEY` - your OpenAI API key
-   - `DATABASE_URL` - sqlite:///data/spendsense.db (Railway has persistent disk)
    - `S3_BUCKET_NAME` - spendsense-analytics-goico
    - `AWS_ACCESS_KEY_ID` - for S3 access
    - `AWS_SECRET_ACCESS_KEY` - for S3 access
    - `AWS_DEFAULT_REGION` - us-east-2
+   - Note: Do NOT set `DATABASE_URL` - will default to SQLite
 - [ ] 15. Configure Railway service settings:
    - Root directory: `/backend`
    - Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
@@ -41,78 +41,44 @@
 - [ ] 17. Wait for deployment to complete (~30-60 seconds)
 - [ ] 18. Get Railway URL from dashboard or CLI: `railway domain`
 
-### Postgres Database Setup
-- [ ] 19. Add Postgres service to Railway project (via dashboard or CLI)
-- [ ] 20. Install PostgreSQL adapter: Add `psycopg2-binary` to `backend/requirements.txt`
-- [ ] 21. Update `backend/app/database.py` to support both SQLite (local) and Postgres (production):
-   - Check `DATABASE_URL` environment variable
-   - Use SQLite if `sqlite://` in URL (local development)
-   - Use Postgres if `postgresql://` in URL (production)
-   - Update connection string handling
-- [ ] 22. Update `backend/app/main.py` to use correct database URL from environment
-- [ ] 23. Test database connection locally with Postgres (optional, using Docker)
-- [ ] 24. Update Railway environment variable `DATABASE_URL` to use Postgres connection string from Railway
-- [ ] 25. Verify database tables are created on first deploy
-- [ ] 26. Test database persistence across Railway deployments
+### Database Setup & Verification
+- [x] 19. Verify database initialization:
+   - `init_db()` runs on startup via `@app.on_event("startup")`
+   - Uses `Base.metadata.create_all()` to create all tables
+   - Works for SQLite (default when DATABASE_URL not set)
+   - Tables created automatically on first deploy
+- [ ] 20. Verify database tables are created on first deploy:
+   - Check Railway logs for successful table creation
+   - Verify no errors during `init_db()` execution
+   - Test health endpoint to confirm server started
 
-### Deployment Script & Migrations
-- [ ] 27. Investigate current migration setup:
-   - Review `backend/app/database.py` - `init_db()` runs on every startup
-   - Review `backend/app/main.py` - `@app.on_event("startup")` calls `init_db()`
-   - Note: Currently uses `Base.metadata.create_all()` + manual SQLite migrations
-   - This won't work well for Postgres or production deployments
-- [ ] 28. Add Alembic for database migrations:
-   - Install Alembic: `pip install alembic`
-   - Add to `backend/requirements.txt`
-   - Initialize Alembic: `alembic init alembic` (from backend directory)
-   - Configure `alembic.ini` to use `DATABASE_URL` from environment
-   - Update `alembic/env.py` to import Base and models
-   - Set `target_metadata = Base.metadata` in env.py
-- [ ] 29. Create initial Alembic migration:
-   - Generate initial migration: `alembic revision --autogenerate -m "Initial schema"`
-   - Review generated migration file
-   - Test migration: `alembic upgrade head` (creates all tables)
-   - Verify tables match current SQLAlchemy models
-- [ ] 30. Update `backend/app/main.py` for production:
-   - Modify `init_db()` or startup event to check environment
-   - For production (Railway): Skip automatic `init_db()` - rely on Alembic
-   - For local dev: Optionally keep `init_db()` or use Alembic there too
-   - Consider: Remove `@app.on_event("startup")` init_db() call entirely
-   - Or: Make it conditional based on `ENVIRONMENT` variable
-- [ ] 31. Create `backend/scripts/deploy.sh` (or `deploy.py`):
-   - Script should run migrations explicitly (not on startup)
-   - Script should optionally run seeds (when uncommented)
-   - Script should then start the server (uvicorn command)
-   - Structure:
-     - Always run: `alembic upgrade head` (migrations)
-     - Conditionally run: Seed data (when uncommented in script)
-     - Always run: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-- [ ] 32. Update `backend/Procfile` to use deployment script:
-   - Change from: `web: uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-   - Change to: `web: bash scripts/deploy.sh` (or `python scripts/deploy.py`)
-   - Ensure script is executable: `chmod +x backend/scripts/deploy.sh`
-- [ ] 33. Migrate existing manual migrations to Alembic:
-   - Review `apply_migrations()` in `database.py`
-   - Convert SQLite-specific migrations to Alembic migrations if needed
-   - Test that existing databases can be migrated
-   - Document migration strategy for Postgres
-- [ ] 34. Test deployment script locally:
-   - Run script manually
-   - Verify Alembic migrations run (not automatic init_db)
-   - Verify server starts
-   - Test with seeds uncommented
-   - Test with seeds commented
-   - Verify no duplicate table creation errors
-- [ ] 35. Document seed data process:
-   - Add comment in deployment script explaining how to enable seeds
-   - Note: Seeds should only run on initial setup or when explicitly needed
-   - Document when to uncomment seed section
-- [ ] 36. Verify deployment script runs on Railway deploy:
-   - Check Railway logs for Alembic migration output
-   - Verify `alembic upgrade head` runs successfully
-   - Verify tables are created/updated via migrations (not create_all)
-   - Verify server starts successfully
-   - Confirm no automatic init_db() conflicts
+### Data Seeding in Railway
+- [ ] 21. Verify Railway deployment is successful:
+   - Check Railway logs for successful startup
+   - Verify API is accessible: `curl {railway-url}/`
+   - Confirm tables were created (check logs)
+- [ ] 22. Test Railway CLI connection:
+   - Run: `railway status` to verify connection
+   - Run: `railway variables` to see environment variables
+   - Verify Railway CLI can execute commands
+- [ ] 23. Update seed script for Railway:
+   - Review `backend/scripts/test_ingest.py`
+   - Script uses API endpoint (works with Railway URL)
+   - Or create direct database seeding script for Railway CLI
+- [ ] 24. Seed data using Railway CLI:
+   - Option A: Use API endpoint: Update `test_ingest.py` with Railway URL, run locally
+   - Option B: Use Railway CLI: `railway run python backend/scripts/test_ingest.py`
+   - Option C: Create direct DB script: `railway run python backend/scripts/seed_railway.py`
+   - Choose most convenient method
+- [ ] 25. Verify data ingestion:
+   - Check Railway logs for successful ingestion
+   - Test GET `/users` endpoint: `curl {railway-url}/users`
+   - Verify user count matches expected (75 users)
+   - Verify accounts, transactions, liabilities loaded
+- [ ] 26. Seed product catalog (if needed):
+   - Check if products need to be ingested separately
+   - Use `/ingest` endpoint with product data
+   - Or run product ingestion script via Railway CLI
 
 ### Evaluation Service Investigation
 - [ ] 37. Investigate why evaluation router was disabled for Railway:
@@ -146,24 +112,35 @@
 - [ ] 47. Test API documentation: Visit `{railway-url}/docs`
 
 ### Data Ingestion in Production
-- [ ] 48. Update local scripts with Railway API URL
-- [ ] 49. Run data ingestion: `python backend/scripts/test_ingest.py`
-- [ ] 50. Verify data persists in Postgres database
-- [ ] 51. Note: Data will persist between deploys (Postgres is persistent)
+- [ ] 48. Update seed script with Railway API URL (if using API method):
+   - Modify `backend/scripts/test_ingest.py` to accept Railway URL
+   - Or set `API_BASE_URL` environment variable
+   - Test script can point to Railway instead of localhost
+- [ ] 49. Run data ingestion via Railway CLI:
+   - `railway run python backend/scripts/test_ingest.py`
+   - Or use API endpoint method from local machine
+   - Verify ingestion completes successfully
+- [ ] 50. Verify data in Railway database:
+   - Test GET `/users` endpoint returns users
+   - Test GET `/users/{user_id}` for specific user
+   - Verify all entity types loaded (users, accounts, transactions, liabilities)
+- [ ] 51. Note: SQLite data is ephemeral (lost on redeploy)
+   - For grading/demo: Seed data after each deploy if needed
+   - For production: Consider Postgres later for persistence
 
 ### Compute Features in Production
 - [ ] 52. Call feature computation endpoint for all users
-- [ ] 53. Verify user_features table populated in Postgres
+- [ ] 53. Verify user_features table populated in database
 - [ ] 54. Check Railway metrics (CPU/RAM usage)
 
 ### Assign Personas in Production
 - [ ] 55. Call persona assignment for all users
-- [ ] 56. Verify personas table populated in Postgres
+- [ ] 56. Verify personas table populated in database
 - [ ] 57. Check persona distribution
 
 ### Generate Recommendations in Production
 - [ ] 58. Generate recommendations for test users
-- [ ] 59. Verify recommendations created in Postgres
+- [ ] 59. Verify recommendations created in database
 - [ ] 60. Test approval workflow via API
 
 ### Frontend Connection to Production Backend
