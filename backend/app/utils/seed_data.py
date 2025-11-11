@@ -23,9 +23,12 @@ def get_data_path() -> Path:
     # In Lambda, the code is in /var/task
     # The data directory is copied to backend/data/ during build
     current_path = Path(__file__).resolve()
+    # current_path is backend/app/utils/seed_data.py
+    # Go up to backend/ directory
+    backend_dir = current_path.parent.parent.parent
     
-    # Try backend/data/ first (Lambda build copies it here)
-    backend_data_path = current_path.parent.parent.parent / "data"
+    # Try backend/data/ first (data is now in backend/data/)
+    backend_data_path = backend_dir / "data"
     if backend_data_path.exists():
         return backend_data_path
     
@@ -34,8 +37,8 @@ def get_data_path() -> Path:
     if lambda_path.exists():
         return lambda_path
     
-    # Fall back to project root data/ (local development)
-    project_root = current_path.parent.parent.parent.parent
+    # Fall back to project root data/ (for backwards compatibility)
+    project_root = backend_dir.parent
     data_path = project_root / "data"
     
     return data_path

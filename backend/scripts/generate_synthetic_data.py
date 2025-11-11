@@ -19,15 +19,16 @@ Data Generation Assumptions:
 - Credit Utilization: 20% high (>50%), 30% medium (30-50%), 50% low (<30%)
 
 Output Files:
-- data/synthetic_users.json: User records
-- data/synthetic_accounts.json: Account records
-- data/synthetic_transactions.json: Transaction records
-- data/synthetic_liabilities.json: Credit card liability records
+- backend/data/synthetic_users.json: User records
+- backend/data/synthetic_accounts.json: Account records
+- backend/data/synthetic_transactions.json: Transaction records
+- backend/data/synthetic_liabilities.json: Credit card liability records
 """
 import json
 import random
 import uuid
 from datetime import datetime, timedelta
+from pathlib import Path
 from faker import Faker
 
 # Set random seed for reproducibility
@@ -669,11 +670,16 @@ def main():
     # Write data to JSON files
     print("\nWriting data to JSON files...")
     
+    # Get the script directory and construct data path
+    script_dir = Path(__file__).parent
+    data_dir = script_dir.parent / "data"
+    data_dir.mkdir(exist_ok=True)
+    
     output_files = {
-        'data/synthetic_users.json': users,
-        'data/synthetic_accounts.json': accounts,
-        'data/synthetic_transactions.json': transactions,
-        'data/synthetic_liabilities.json': liabilities
+        data_dir / 'synthetic_users.json': users,
+        data_dir / 'synthetic_accounts.json': accounts,
+        data_dir / 'synthetic_transactions.json': transactions,
+        data_dir / 'synthetic_liabilities.json': liabilities
     }
     
     for filepath, data in output_files.items():

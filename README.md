@@ -513,39 +513,39 @@ The database tables are automatically created on server startup via `init_db()` 
 2. **Generate synthetic user data** (creates JSON files):
 ```bash
 # From project root
-python scripts/generate_synthetic_data.py
+python backend/scripts/generate_synthetic_data.py
 ```
 This generates:
-- `data/synthetic_users.json` (75 users: 71 customers, 4 operators)
-- `data/synthetic_accounts.json` (2-4 accounts per user)
-- `data/synthetic_transactions.json` (150-300 transactions per user)
-- `data/synthetic_liabilities.json` (credit card liabilities)
+- `backend/data/synthetic_users.json` (75 users: 71 customers, 4 operators)
+- `backend/data/synthetic_accounts.json` (2-4 accounts per user)
+- `backend/data/synthetic_transactions.json` (150-300 transactions per user)
+- `backend/data/synthetic_liabilities.json` (credit card liabilities)
 
 3. **Ingest user data via API** (loads JSON into database):
 ```bash
 # Make sure backend server is running first
-python scripts/test_ingest.py
+python backend/scripts/test_ingest.py
 ```
 This POSTs the JSON data to `/ingest/` endpoint, which bulk inserts users, accounts, transactions, and liabilities into the database.
 
 4. **Compute features for users**:
 ```bash
-python scripts/compute_all_features.py
+python backend/scripts/compute_all_features.py
 ```
 Computes behavioral features (subscriptions, savings, credit utilization, income patterns) for all users.
 
 5. **Assign personas**:
 ```bash
-python scripts/assign_all_personas.py
+python backend/scripts/assign_all_personas.py
 ```
 Assigns personas (high_utilization, variable_income, subscription_heavy, savings_builder, wealth_builder) to all users based on their features.
 
 6. **Generate and ingest product catalog** (optional, for product recommendations):
 ```bash
 # Step 6a: Generate product catalog JSON (requires OPENAI_API_KEY in .env)
-python scripts/generate_product_catalog.py
+python backend/scripts/generate_product_catalog.py
 ```
-This uses OpenAI GPT-4o to generate 20-25 realistic financial products matched to the 5 personas. The catalog is saved to `data/product_catalog.json`.
+This uses OpenAI GPT-4o to generate 20-25 realistic financial products matched to the 5 personas. The catalog is saved to `backend/data/product_catalog.json`.
 
 **Expected runtime**: ~30-60 seconds  
 **Expected API cost**: ~$0.10-0.20
@@ -553,7 +553,7 @@ This uses OpenAI GPT-4o to generate 20-25 realistic financial products matched t
 ```bash
 # Step 6b: Ingest products via API
 # Make sure backend server is running first
-python scripts/test_ingest_products.py
+python backend/scripts/test_ingest_products.py
 ```
 This POSTs the product catalog JSON to the `/ingest/` endpoint, which bulk inserts products into the database. Products are ingested the same way as all other data (users, accounts, transactions, liabilities) for consistency.
 
@@ -563,7 +563,7 @@ This POSTs the product catalog JSON to the `/ingest/` endpoint, which bulk inser
 
 ### Backend Testing
 
-Test scripts are available in the `scripts/` directory:
+Test scripts are available in the `backend/scripts/` directory:
 
 - `test_ingest.py` - Test data ingestion
 - `test_feature_detection.py` - Test feature computation
@@ -575,7 +575,7 @@ Test scripts are available in the `scripts/` directory:
 
 Run any test script:
 ```bash
-python scripts/test_<script_name>.py [arguments]
+python backend/scripts/test_<script_name>.py [arguments]
 ```
 
 ### API Testing

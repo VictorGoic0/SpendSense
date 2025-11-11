@@ -11,7 +11,7 @@ Usage:
         source venv/bin/activate
     
     Then run from project root:
-        python scripts/test_override_reject.py [recommendation_id] [operator_id]
+        python backend/scripts/test_override_reject.py [recommendation_id] [operator_id]
 """
 
 import json
@@ -31,7 +31,7 @@ except ImportError:
     print("  # or")
     print("  venv\\Scripts\\activate  # On Windows")
     print("\nThen run the script from the project root:")
-    print("  python scripts/test_override_reject.py")
+    print("  python backend/scripts/test_override_reject.py")
     sys.exit(1)
 
 # Base URL for the API
@@ -181,7 +181,7 @@ def main():
     else:
         # Try to get a pending recommendation
         print("⚠️  No recommendation_id provided. Attempting to find pending recommendation...")
-        print("   Usage: python scripts/test_override_reject.py <recommendation_id> <operator_id>")
+        print("   Usage: python backend/scripts/test_override_reject.py <recommendation_id> <operator_id>")
         
         # Try to get a pending recommendation for a test user
         test_user_id = "user_001"

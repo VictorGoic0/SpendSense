@@ -41,41 +41,109 @@
 - [ ] 17. Wait for deployment to complete (~30-60 seconds)
 - [ ] 18. Get Railway URL from dashboard or CLI: `railway domain`
 
+### Postgres Database Setup
+- [ ] 19. Add Postgres service to Railway project (via dashboard or CLI)
+- [ ] 20. Install PostgreSQL adapter: Add `psycopg2-binary` to `backend/requirements.txt`
+- [ ] 21. Update `backend/app/database.py` to support both SQLite (local) and Postgres (production):
+   - Check `DATABASE_URL` environment variable
+   - Use SQLite if `sqlite://` in URL (local development)
+   - Use Postgres if `postgresql://` in URL (production)
+   - Update connection string handling
+- [ ] 22. Update `backend/app/main.py` to use correct database URL from environment
+- [ ] 23. Test database connection locally with Postgres (optional, using Docker)
+- [ ] 24. Update Railway environment variable `DATABASE_URL` to use Postgres connection string from Railway
+- [ ] 25. Verify database tables are created on first deploy
+- [ ] 26. Test database persistence across Railway deployments
+
+### Deployment Script & Migrations
+- [ ] 27. Create `backend/scripts/deploy.sh` (or `deploy.py`):
+   - Script should run migrations automatically
+   - Script should optionally run seeds (when uncommented)
+   - Script should then start the server (uvicorn command)
+- [ ] 28. Add Alembic for database migrations:
+   - Install Alembic: `pip install alembic`
+   - Initialize Alembic: `alembic init alembic`
+   - Create initial migration from existing models
+   - Configure Alembic to use `DATABASE_URL` from environment
+- [ ] 29. Update `backend/Procfile` to use deployment script:
+   - Change from: `web: uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - Change to: `web: bash scripts/deploy.sh` (or `python scripts/deploy.py`)
+- [ ] 30. Structure deployment script:
+   - Always run: `alembic upgrade head` (migrations)
+   - Conditionally run: Seed data (when uncommented in script)
+   - Always run: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- [ ] 31. Test deployment script locally:
+   - Run script manually
+   - Verify migrations run
+   - Verify server starts
+   - Test with seeds uncommented
+   - Test with seeds commented
+- [ ] 32. Document seed data process:
+   - Add comment in deployment script explaining how to enable seeds
+   - Note: Seeds should only run on initial setup or when explicitly needed
+- [ ] 33. Verify deployment script runs on Railway deploy:
+   - Check Railway logs for migration output
+   - Verify tables are created/updated
+   - Verify server starts successfully
+
+### Evaluation Service Investigation
+- [ ] 34. Investigate why evaluation router was disabled for Railway:
+   - Check `backend/app/main.py` for disabled evaluation import
+   - Review error logs from previous Railway deployments
+   - Identify specific dependency or resource issue
+- [ ] 35. Check evaluation service dependencies:
+   - Review `backend/app/services/evaluation_service.py`
+   - Identify pandas/numpy usage and requirements
+   - Check if dependencies are in `requirements.txt`
+- [ ] 36. Test evaluation service locally:
+   - Ensure all dependencies installed
+   - Run evaluation endpoint manually
+   - Check for any import errors or missing dependencies
+- [ ] 37. Resolve evaluation service issues:
+   - Fix any missing dependencies
+   - Resolve any import errors
+   - Test evaluation endpoint works locally
+- [ ] 38. Re-enable evaluation router in production:
+   - Uncomment evaluation router in `backend/app/main.py`
+   - Deploy to Railway
+   - Verify evaluation endpoint accessible
+   - Test evaluation functionality end-to-end
+
 ### Post-Deployment Verification
-- [ ] 19. Test health endpoint: `curl {railway-url}/`
-- [ ] 20. Verify response: `{"message": "SpendSense API is running"}`
-- [ ] 21. Test GET /users endpoint: `curl {railway-url}/users`
-- [ ] 22. Check Railway logs for any errors: `railway logs`
-- [ ] 23. Verify CORS headers present (test from frontend domain)
-- [ ] 24. Test API documentation: Visit `{railway-url}/docs`
+- [ ] 39. Test health endpoint: `curl {railway-url}/`
+- [ ] 40. Verify response: `{"message": "SpendSense API is running"}`
+- [ ] 41. Test GET /users endpoint: `curl {railway-url}/users`
+- [ ] 42. Check Railway logs for any errors: `railway logs`
+- [ ] 43. Verify CORS headers present (test from frontend domain)
+- [ ] 44. Test API documentation: Visit `{railway-url}/docs`
 
 ### Data Ingestion in Production
-- [ ] 25. Update local scripts with Railway API URL
-- [ ] 26. Run data ingestion: `python scripts/test_ingest.py`
-- [ ] 27. Verify data persists (Railway has persistent volumes)
-- [ ] 28. Note: Data will persist between deploys (unlike Lambda /tmp)
+- [ ] 45. Update local scripts with Railway API URL
+- [ ] 46. Run data ingestion: `python backend/scripts/test_ingest.py`
+- [ ] 47. Verify data persists in Postgres database
+- [ ] 48. Note: Data will persist between deploys (Postgres is persistent)
 
 ### Compute Features in Production
-- [ ] 29. Call feature computation endpoint for all users
-- [ ] 30. Verify user_features table populated
-- [ ] 31. Check Railway metrics (CPU/RAM usage)
+- [ ] 49. Call feature computation endpoint for all users
+- [ ] 50. Verify user_features table populated in Postgres
+- [ ] 51. Check Railway metrics (CPU/RAM usage)
 
 ### Assign Personas in Production
-- [ ] 32. Call persona assignment for all users
-- [ ] 33. Verify personas table populated
-- [ ] 34. Check persona distribution
+- [ ] 52. Call persona assignment for all users
+- [ ] 53. Verify personas table populated in Postgres
+- [ ] 54. Check persona distribution
 
 ### Generate Recommendations in Production
-- [ ] 35. Generate recommendations for test users
-- [ ] 36. Verify recommendations created
-- [ ] 37. Test approval workflow via API
+- [ ] 55. Generate recommendations for test users
+- [ ] 56. Verify recommendations created in Postgres
+- [ ] 57. Test approval workflow via API
 
 ### Frontend Connection to Production Backend
-- [ ] 38. Update Netlify environment variable `VITE_API_URL` to Railway URL
-- [ ] 39. Trigger Netlify redeploy (or auto-deploys on env change)
-- [ ] 40. Test all frontend features against Railway API
-- [ ] 41. Verify CORS working correctly
-- [ ] 42. Test complete user flow:
+- [ ] 58. Update Netlify environment variable `VITE_API_URL` to Railway URL
+- [ ] 59. Trigger Netlify redeploy (or auto-deploys on env change)
+- [ ] 60. Test all frontend features against Railway API
+- [ ] 61. Verify CORS working correctly
+- [ ] 62. Test complete user flow:
    - Operator dashboard loads
    - User list displays
    - User details show signals
@@ -84,16 +152,16 @@
    - User view shows recommendations
 
 ### Monitoring Setup
-- [ ] 43. Configure Railway metrics tracking (built-in)
-- [ ] 44. Set up Railway webhook notifications (optional)
-- [ ] 45. Monitor deployment logs for errors
-- [ ] 46. Set up uptime monitoring (UptimeRobot or similar - optional)
+- [ ] 63. Configure Railway metrics tracking (built-in)
+- [ ] 64. Set up Railway webhook notifications (optional)
+- [ ] 65. Monitor deployment logs for errors
+- [ ] 66. Set up uptime monitoring (UptimeRobot or similar - optional)
 
 ### Cost Monitoring
-- [ ] 47. Check Railway usage dashboard
-- [ ] 48. Monitor free tier credit ($5/month)
-- [ ] 49. Review OpenAI API usage and costs
-- [ ] 50. Set up Railway budget alert if needed
+- [ ] 67. Check Railway usage dashboard
+- [ ] 68. Monitor free tier credit ($5/month)
+- [ ] 69. Review OpenAI API usage and costs
+- [ ] 70. Set up Railway budget alert if needed
 
 ---
 

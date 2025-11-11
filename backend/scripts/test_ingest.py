@@ -10,7 +10,7 @@ Usage:
         source venv/bin/activate
     
     Then run from project root:
-        python scripts/test_ingest.py
+        python backend/scripts/test_ingest.py
 """
 
 import json
@@ -30,7 +30,7 @@ except ImportError:
     print("  # or")
     print("  venv\\Scripts\\activate  # On Windows")
     print("\nThen run the script from the project root:")
-    print("  python scripts/test_ingest.py")
+    print("  python backend/scripts/test_ingest.py")
     print("\nOr install requests in your current Python environment:")
     print("  pip install requests==2.31.0")
     sys.exit(1)
@@ -38,7 +38,7 @@ except ImportError:
 # Base URL for the API
 API_BASE_URL = "http://localhost:8000"
 
-# Paths to JSON files
+# Paths to JSON files (scripts are now in backend/scripts/, data is in backend/data/)
 DATA_DIR = Path(__file__).parent.parent / "data"
 USERS_FILE = DATA_DIR / "synthetic_users.json"
 ACCOUNTS_FILE = DATA_DIR / "synthetic_accounts.json"

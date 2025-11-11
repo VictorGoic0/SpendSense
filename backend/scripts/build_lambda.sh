@@ -12,24 +12,20 @@ echo ""
 
 # Get script directory and project root
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
-BACKEND_DIR="$PROJECT_ROOT/backend"
-DATA_DIR="$PROJECT_ROOT/data"
-BACKEND_DATA_DIR="$BACKEND_DIR/data"
+BACKEND_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
+PROJECT_ROOT="$( cd "$BACKEND_DIR/.." && pwd )"
+# Data is now in backend/data/
+DATA_DIR="$BACKEND_DIR/data"
+BACKEND_DATA_DIR="$DATA_DIR"
 
 echo "Project root: $PROJECT_ROOT"
 echo "Backend directory: $BACKEND_DIR"
 echo ""
 
-# Copy data directory into backend/ for Lambda packaging
+# Verify data directory exists in backend/data/
 # This ensures seed data is available in the Lambda package
 if [ -d "$DATA_DIR" ]; then
-    echo "Copying data directory to backend/..."
-    if [ -d "$BACKEND_DATA_DIR" ]; then
-        rm -rf "$BACKEND_DATA_DIR"
-    fi
-    cp -r "$DATA_DIR" "$BACKEND_DATA_DIR"
-    echo "✅ Data directory copied to backend/data/"
+    echo "✅ Data directory found at backend/data/"
 else
     echo "⚠️  Warning: data/ directory not found at $DATA_DIR"
     echo "   Seed data will not be available in Lambda"
@@ -43,6 +39,6 @@ echo "  1. Run: sam build"
 echo "  2. Test locally: sam local start-api"
 echo "  3. Deploy: sam deploy --guided"
 echo ""
-echo "Note: The data/ directory has been copied to backend/data/ for Lambda packaging"
+echo "Note: The data/ directory is located at backend/data/ for Lambda packaging"
 echo ""
 

@@ -11,7 +11,7 @@ Usage:
         uvicorn app.main:app --reload
     
     Then run from project root:
-        python scripts/test_ingest_products.py
+        python backend/scripts/test_ingest_products.py
 """
 
 import json
@@ -31,7 +31,7 @@ except ImportError:
     print("  # or")
     print("  venv\\Scripts\\activate  # On Windows")
     print("\nThen run the script from the project root:")
-    print("  python scripts/test_ingest_products.py")
+    print("  python backend/scripts/test_ingest_products.py")
     print("\nOr install requests in your current Python environment:")
     print("  pip install requests==2.31.0")
     sys.exit(1)
@@ -39,7 +39,7 @@ except ImportError:
 # Base URL for the API
 API_BASE_URL = "http://localhost:8000"
 
-# Path to product catalog JSON file
+# Path to product catalog JSON file (scripts are now in backend/scripts/, data is in backend/data/)
 DATA_DIR = Path(__file__).parent.parent / "data"
 PRODUCTS_FILE = DATA_DIR / "product_catalog.json"
 
@@ -49,7 +49,7 @@ def load_products(file_path: Path) -> list:
     if not file_path.exists():
         print(f"❌ Error: Product catalog file not found: {file_path}")
         print(f"\nPlease generate the product catalog first:")
-        print(f"  python scripts/generate_product_catalog.py")
+        print(f"  python backend/scripts/generate_product_catalog.py")
         sys.exit(1)
     
     try:

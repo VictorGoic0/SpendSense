@@ -10,7 +10,7 @@ Usage:
         source venv/bin/activate
     
     Then run from project root:
-        python scripts/test_bulk_approve.py [user_id] [operator_id]
+        python backend/scripts/test_bulk_approve.py [user_id] [operator_id]
 """
 
 import json
@@ -30,7 +30,7 @@ except ImportError:
     print("  # or")
     print("  venv\\Scripts\\activate  # On Windows")
     print("\nThen run the script from the project root:")
-    print("  python scripts/test_bulk_approve.py")
+    print("  python backend/scripts/test_bulk_approve.py")
     sys.exit(1)
 
 # Base URL for the API
@@ -151,7 +151,7 @@ def main():
         print("⚠️  No arguments provided. Using defaults:")
         print(f"   user_id: {user_id}")
         print(f"   operator_id: {operator_id}")
-        print("   Usage: python scripts/test_bulk_approve.py <user_id> <operator_id>")
+        print("   Usage: python backend/scripts/test_bulk_approve.py <user_id> <operator_id>")
     
     print("=" * 60)
     print("Testing POST Bulk Approve Recommendations Endpoint")

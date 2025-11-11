@@ -218,7 +218,7 @@ def main():
         
         if not user_features_30d and not user_features_180d:
             print("No user features found in database.")
-            print("Please run feature computation first: python scripts/compute_all_features.py")
+            print("Please run feature computation first: python backend/scripts/compute_all_features.py")
             return
         
         # Test persona checks

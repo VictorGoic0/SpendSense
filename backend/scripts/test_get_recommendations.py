@@ -10,7 +10,7 @@ Usage:
         source venv/bin/activate
     
     Then run from project root:
-        python scripts/test_get_recommendations.py [user_id]
+        python backend/scripts/test_get_recommendations.py [user_id]
 """
 
 import json
@@ -30,7 +30,7 @@ except ImportError:
     print("  # or")
     print("  venv\\Scripts\\activate  # On Windows")
     print("\nThen run the script from the project root:")
-    print("  python scripts/test_get_recommendations.py")
+    print("  python backend/scripts/test_get_recommendations.py")
     sys.exit(1)
 
 # Base URL for the API
@@ -106,7 +106,7 @@ def main():
     else:
         # Try to get a user_id from the database or use a test ID
         print("⚠️  No user_id provided. Using test user_id 'user_001'")
-        print("   Usage: python scripts/test_get_recommendations.py <user_id>")
+        print("   Usage: python backend/scripts/test_get_recommendations.py <user_id>")
         user_id = "user_001"
     
     print("=" * 60)
