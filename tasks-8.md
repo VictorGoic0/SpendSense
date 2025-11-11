@@ -33,13 +33,13 @@
    - `AWS_SECRET_ACCESS_KEY` - for S3 access
    - `AWS_DEFAULT_REGION` - us-east-2
    - Note: Do NOT set `DATABASE_URL` - will default to SQLite
-- [ ] 15. Configure Railway service settings:
+- [x] 15. Configure Railway service settings:
    - Root directory: `/backend`
    - Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - Or use Procfile (Railway auto-detects)
-- [ ] 16. Deploy to Railway: `railway up`
-- [ ] 17. Wait for deployment to complete (~30-60 seconds)
-- [ ] 18. Get Railway URL from dashboard or CLI: `railway domain`
+- [x] 16. Deploy to Railway: `railway up`
+- [x] 17. Wait for deployment to complete (~30-60 seconds)
+- [x] 18. Get Railway URL from dashboard or CLI: `railway domain`
 
 ### Database Setup & Verification
 - [x] 19. Verify database initialization:
@@ -47,29 +47,30 @@
    - Uses `Base.metadata.create_all()` to create all tables
    - Works for SQLite (default when DATABASE_URL not set)
    - Tables created automatically on first deploy
+   - **Note: Created persistent volume for SQLite database in Railway to prevent data loss on redeploy**
 - [ ] 20. Verify database tables are created on first deploy:
    - Check Railway logs for successful table creation
    - Verify no errors during `init_db()` execution
    - Test health endpoint to confirm server started
 
 ### Data Seeding in Railway
-- [ ] 21. Verify Railway deployment is successful:
+- [x] 21. Verify Railway deployment is successful:
    - Check Railway logs for successful startup
    - Verify API is accessible: `curl {railway-url}/`
    - Confirm tables were created (check logs)
-- [ ] 22. Test Railway CLI connection:
+- [x] 22. Test Railway CLI connection:
    - Run: `railway status` to verify connection
    - Run: `railway variables` to see environment variables
    - Verify Railway CLI can execute commands
-- [ ] 23. Update seed script for Railway:
+- [x] 23. Update seed script for Railway:
    - Review `backend/scripts/test_ingest.py`
    - Script uses API endpoint (works with Railway URL)
    - Or create direct database seeding script for Railway CLI
-- [ ] 24. Seed data using Railway CLI:
+- [x] 24. Seed data using Railway CLI:
+   - **Completed: Manually ingested data using `/ingest` endpoint with JSON files (users, accounts, transactions, liabilities, products)**
    - Option A: Use API endpoint: Update `test_ingest.py` with Railway URL, run locally
    - Option B: Use Railway CLI: `railway run python backend/scripts/test_ingest.py`
    - Option C: Create direct DB script: `railway run python backend/scripts/seed_railway.py`
-   - Choose most convenient method
 - [ ] 25. Verify data ingestion:
    - Check Railway logs for successful ingestion
    - Test GET `/users` endpoint: `curl {railway-url}/users`
@@ -124,17 +125,22 @@
    - Test GET `/users` endpoint returns users
    - Test GET `/users/{user_id}` for specific user
    - Verify all entity types loaded (users, accounts, transactions, liabilities)
-- [ ] 51. Note: SQLite data is ephemeral (lost on redeploy)
-   - For grading/demo: Seed data after each deploy if needed
-   - For production: Consider Postgres later for persistence
+- [x] 51. Note: SQLite data persistence
+   - **Created persistent volume in Railway - data persists across redeploys**
+   - For production: Consider Postgres later for better scalability
 
 ### Compute Features in Production
 - [ ] 52. Call feature computation endpoint for all users
+   - **Order of operations after ingestion:**
+   - **1. Compute features first** (creates UserFeature records): `railway run python backend/scripts/compute_all_features.py`
+   - **2. Assign personas second** (reads UserFeature records): `railway run python backend/scripts/assign_all_personas.py`
+   - **Note: Persona assignment requires features to be computed first - it queries UserFeature table**
 - [ ] 53. Verify user_features table populated in database
 - [ ] 54. Check Railway metrics (CPU/RAM usage)
 
 ### Assign Personas in Production
 - [ ] 55. Call persona assignment for all users
+   - **Run after features are computed:** `railway run python backend/scripts/assign_all_personas.py`
 - [ ] 56. Verify personas table populated in database
 - [ ] 57. Check persona distribution
 
