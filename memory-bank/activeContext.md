@@ -4,18 +4,21 @@
 **Status**: Railway production deployment complete with persistent database and all data seeded
 
 ## Recent Changes
-- ✅ **Deployment Migration: AWS Lambda → Railway**
-  - Moved backend deployment from AWS Lambda to Railway for simplified deployment
-  - Removed Lambda-specific code (Mangum adapter, Lambda environment detection)
-  - Updated deployment documentation to reflect Railway setup
-  - Auto-seeding implementation:
-    - `backend/app/utils/seed_data.py` seeds database from JSON files on startup if empty
-    - Works in both local dev and Railway production environments
-    - Handles data directory location automatically
-  - Documentation:
-    - Updated `README.md` with Railway deployment instructions
-    - Removed Lambda-specific documentation files
-    - Updated PRD.md to reflect Railway deployment
+- ✅ **Railway Production Deployment Complete**
+  - Backend successfully deployed to Railway with persistent storage
+  - Created persistent data volume in Railway and mounted at `/data/db`
+  - Database connection refactoring:
+    - Centralized database URL configuration in `app.database` module
+    - All scripts and services now import `SQLALCHEMY_DATABASE_URL` from `app.database`
+    - Eliminated duplicate database configuration code across 11+ scripts
+    - Single source of truth: `DATABASE_URL` env var with fallback to local SQLite
+  - Data ingestion completed:
+    - Manually ingested all data via `/ingest` endpoint (users, accounts, transactions, liabilities, products)
+    - Successfully ran `compute_all_features.py` script via Railway CLI
+    - Successfully ran `assign_all_personas.py` script via Railway CLI
+    - All 71 users have features and personas computed for both 30d and 180d windows
+  - Environment variables configured via Railway dashboard (OPENAI_API_KEY, S3 credentials, etc.)
+  - Auto-seeding disabled in favor of manual ingestion for production control
 - ✅ **PR #31 Complete: Frontend - Metrics Display in Operator Dashboard (all 30 tasks finished)**
   - Created `frontend/src/components/MetricsDisplay.jsx`:
     - Displays 4 evaluation metrics (coverage, explainability, latency, auditability)
