@@ -11,8 +11,8 @@ import sys
 import os
 from pathlib import Path
 
-# Add backend to path
-backend_dir = Path(__file__).parent.parent / "backend"
+# Add backend to path (where app/ module lives)
+backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
 # Set database path

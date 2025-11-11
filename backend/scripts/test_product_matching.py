@@ -9,14 +9,14 @@ Verifies that products are matched correctly based on persona and features.
 import sys
 from pathlib import Path
 
-# Add backend to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
+# Add backend to path (where app/ module lives)
+backend_dir = Path(__file__).parent.parent
+sys.path.insert(0, str(backend_dir))
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 # Get the correct database path (backend/spendsense.db)
-backend_dir = Path(__file__).parent.parent / "backend"
 database_path = backend_dir / "spendsense.db"
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{database_path.absolute()}"
 
