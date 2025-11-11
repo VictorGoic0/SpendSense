@@ -56,94 +56,122 @@
 - [ ] 26. Test database persistence across Railway deployments
 
 ### Deployment Script & Migrations
-- [ ] 27. Create `backend/scripts/deploy.sh` (or `deploy.py`):
-   - Script should run migrations automatically
-   - Script should optionally run seeds (when uncommented)
-   - Script should then start the server (uvicorn command)
+- [ ] 27. Investigate current migration setup:
+   - Review `backend/app/database.py` - `init_db()` runs on every startup
+   - Review `backend/app/main.py` - `@app.on_event("startup")` calls `init_db()`
+   - Note: Currently uses `Base.metadata.create_all()` + manual SQLite migrations
+   - This won't work well for Postgres or production deployments
 - [ ] 28. Add Alembic for database migrations:
    - Install Alembic: `pip install alembic`
-   - Initialize Alembic: `alembic init alembic`
-   - Create initial migration from existing models
-   - Configure Alembic to use `DATABASE_URL` from environment
-- [ ] 29. Update `backend/Procfile` to use deployment script:
+   - Add to `backend/requirements.txt`
+   - Initialize Alembic: `alembic init alembic` (from backend directory)
+   - Configure `alembic.ini` to use `DATABASE_URL` from environment
+   - Update `alembic/env.py` to import Base and models
+   - Set `target_metadata = Base.metadata` in env.py
+- [ ] 29. Create initial Alembic migration:
+   - Generate initial migration: `alembic revision --autogenerate -m "Initial schema"`
+   - Review generated migration file
+   - Test migration: `alembic upgrade head` (creates all tables)
+   - Verify tables match current SQLAlchemy models
+- [ ] 30. Update `backend/app/main.py` for production:
+   - Modify `init_db()` or startup event to check environment
+   - For production (Railway): Skip automatic `init_db()` - rely on Alembic
+   - For local dev: Optionally keep `init_db()` or use Alembic there too
+   - Consider: Remove `@app.on_event("startup")` init_db() call entirely
+   - Or: Make it conditional based on `ENVIRONMENT` variable
+- [ ] 31. Create `backend/scripts/deploy.sh` (or `deploy.py`):
+   - Script should run migrations explicitly (not on startup)
+   - Script should optionally run seeds (when uncommented)
+   - Script should then start the server (uvicorn command)
+   - Structure:
+     - Always run: `alembic upgrade head` (migrations)
+     - Conditionally run: Seed data (when uncommented in script)
+     - Always run: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- [ ] 32. Update `backend/Procfile` to use deployment script:
    - Change from: `web: uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - Change to: `web: bash scripts/deploy.sh` (or `python scripts/deploy.py`)
-- [ ] 30. Structure deployment script:
-   - Always run: `alembic upgrade head` (migrations)
-   - Conditionally run: Seed data (when uncommented in script)
-   - Always run: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-- [ ] 31. Test deployment script locally:
+   - Ensure script is executable: `chmod +x backend/scripts/deploy.sh`
+- [ ] 33. Migrate existing manual migrations to Alembic:
+   - Review `apply_migrations()` in `database.py`
+   - Convert SQLite-specific migrations to Alembic migrations if needed
+   - Test that existing databases can be migrated
+   - Document migration strategy for Postgres
+- [ ] 34. Test deployment script locally:
    - Run script manually
-   - Verify migrations run
+   - Verify Alembic migrations run (not automatic init_db)
    - Verify server starts
    - Test with seeds uncommented
    - Test with seeds commented
-- [ ] 32. Document seed data process:
+   - Verify no duplicate table creation errors
+- [ ] 35. Document seed data process:
    - Add comment in deployment script explaining how to enable seeds
    - Note: Seeds should only run on initial setup or when explicitly needed
-- [ ] 33. Verify deployment script runs on Railway deploy:
-   - Check Railway logs for migration output
-   - Verify tables are created/updated
+   - Document when to uncomment seed section
+- [ ] 36. Verify deployment script runs on Railway deploy:
+   - Check Railway logs for Alembic migration output
+   - Verify `alembic upgrade head` runs successfully
+   - Verify tables are created/updated via migrations (not create_all)
    - Verify server starts successfully
+   - Confirm no automatic init_db() conflicts
 
 ### Evaluation Service Investigation
-- [ ] 34. Investigate why evaluation router was disabled for Railway:
+- [ ] 37. Investigate why evaluation router was disabled for Railway:
    - Check `backend/app/main.py` for disabled evaluation import
    - Review error logs from previous Railway deployments
    - Identify specific dependency or resource issue
-- [ ] 35. Check evaluation service dependencies:
+- [ ] 38. Check evaluation service dependencies:
    - Review `backend/app/services/evaluation_service.py`
    - Identify pandas/numpy usage and requirements
    - Check if dependencies are in `requirements.txt`
-- [ ] 36. Test evaluation service locally:
+- [ ] 39. Test evaluation service locally:
    - Ensure all dependencies installed
    - Run evaluation endpoint manually
    - Check for any import errors or missing dependencies
-- [ ] 37. Resolve evaluation service issues:
+- [ ] 40. Resolve evaluation service issues:
    - Fix any missing dependencies
    - Resolve any import errors
    - Test evaluation endpoint works locally
-- [ ] 38. Re-enable evaluation router in production:
+- [ ] 41. Re-enable evaluation router in production:
    - Uncomment evaluation router in `backend/app/main.py`
    - Deploy to Railway
    - Verify evaluation endpoint accessible
    - Test evaluation functionality end-to-end
 
 ### Post-Deployment Verification
-- [ ] 39. Test health endpoint: `curl {railway-url}/`
-- [ ] 40. Verify response: `{"message": "SpendSense API is running"}`
-- [ ] 41. Test GET /users endpoint: `curl {railway-url}/users`
-- [ ] 42. Check Railway logs for any errors: `railway logs`
-- [ ] 43. Verify CORS headers present (test from frontend domain)
-- [ ] 44. Test API documentation: Visit `{railway-url}/docs`
+- [ ] 42. Test health endpoint: `curl {railway-url}/`
+- [ ] 43. Verify response: `{"message": "SpendSense API is running"}`
+- [ ] 44. Test GET /users endpoint: `curl {railway-url}/users`
+- [ ] 45. Check Railway logs for any errors: `railway logs`
+- [ ] 46. Verify CORS headers present (test from frontend domain)
+- [ ] 47. Test API documentation: Visit `{railway-url}/docs`
 
 ### Data Ingestion in Production
-- [ ] 45. Update local scripts with Railway API URL
-- [ ] 46. Run data ingestion: `python backend/scripts/test_ingest.py`
-- [ ] 47. Verify data persists in Postgres database
-- [ ] 48. Note: Data will persist between deploys (Postgres is persistent)
+- [ ] 48. Update local scripts with Railway API URL
+- [ ] 49. Run data ingestion: `python backend/scripts/test_ingest.py`
+- [ ] 50. Verify data persists in Postgres database
+- [ ] 51. Note: Data will persist between deploys (Postgres is persistent)
 
 ### Compute Features in Production
-- [ ] 49. Call feature computation endpoint for all users
-- [ ] 50. Verify user_features table populated in Postgres
-- [ ] 51. Check Railway metrics (CPU/RAM usage)
+- [ ] 52. Call feature computation endpoint for all users
+- [ ] 53. Verify user_features table populated in Postgres
+- [ ] 54. Check Railway metrics (CPU/RAM usage)
 
 ### Assign Personas in Production
-- [ ] 52. Call persona assignment for all users
-- [ ] 53. Verify personas table populated in Postgres
-- [ ] 54. Check persona distribution
+- [ ] 55. Call persona assignment for all users
+- [ ] 56. Verify personas table populated in Postgres
+- [ ] 57. Check persona distribution
 
 ### Generate Recommendations in Production
-- [ ] 55. Generate recommendations for test users
-- [ ] 56. Verify recommendations created in Postgres
-- [ ] 57. Test approval workflow via API
+- [ ] 58. Generate recommendations for test users
+- [ ] 59. Verify recommendations created in Postgres
+- [ ] 60. Test approval workflow via API
 
 ### Frontend Connection to Production Backend
-- [ ] 58. Update Netlify environment variable `VITE_API_URL` to Railway URL
-- [ ] 59. Trigger Netlify redeploy (or auto-deploys on env change)
-- [ ] 60. Test all frontend features against Railway API
-- [ ] 61. Verify CORS working correctly
-- [ ] 62. Test complete user flow:
+- [ ] 61. Update Netlify environment variable `VITE_API_URL` to Railway URL
+- [ ] 62. Trigger Netlify redeploy (or auto-deploys on env change)
+- [ ] 63. Test all frontend features against Railway API
+- [ ] 64. Verify CORS working correctly
+- [ ] 65. Test complete user flow:
    - Operator dashboard loads
    - User list displays
    - User details show signals
@@ -152,16 +180,16 @@
    - User view shows recommendations
 
 ### Monitoring Setup
-- [ ] 63. Configure Railway metrics tracking (built-in)
-- [ ] 64. Set up Railway webhook notifications (optional)
-- [ ] 65. Monitor deployment logs for errors
-- [ ] 66. Set up uptime monitoring (UptimeRobot or similar - optional)
+- [ ] 66. Configure Railway metrics tracking (built-in)
+- [ ] 67. Set up Railway webhook notifications (optional)
+- [ ] 68. Monitor deployment logs for errors
+- [ ] 69. Set up uptime monitoring (UptimeRobot or similar - optional)
 
 ### Cost Monitoring
-- [ ] 67. Check Railway usage dashboard
-- [ ] 68. Monitor free tier credit ($5/month)
-- [ ] 69. Review OpenAI API usage and costs
-- [ ] 70. Set up Railway budget alert if needed
+- [ ] 70. Check Railway usage dashboard
+- [ ] 71. Monitor free tier credit ($5/month)
+- [ ] 72. Review OpenAI API usage and costs
+- [ ] 73. Set up Railway budget alert if needed
 
 ---
 
