@@ -17,6 +17,39 @@ npm run dev
 
 The dev server defaults to **http://localhost:5173** (Vite).
 
+## Routes
+
+Defined in `src/App.jsx`. Base URL in dev: **`http://localhost:5173`**.
+
+| Path | Page | Who it’s for |
+|------|------|----------------|
+| `/` | Redirect | → `/operator/dashboard` |
+| `/operator/dashboard` | `OperatorDashboard` | Operator — metrics, charts |
+| `/operator/users` | `OperatorUserList` | Operator — browse users, copy **`user_id`** |
+| `/operator/users/:userId` | `OperatorUserDetail` | Operator — signals, generate recs, per-user tools |
+| `/operator/approval-queue` | `OperatorApprovalQueue` | Operator — pending / overridden / rejected recs |
+| **`/user/:userId/dashboard`** | **`UserDashboard`** | **Customer view** (simulated end user) |
+
+### Customer / user dashboard (`/user/:userId/dashboard`)
+
+There is **no** link in the top nav to this route — open it **manually** in the browser.
+
+1. Start backend + `npm run dev`.
+2. Get a **customer** `user_id` (not an operator): **Operator → User List**, or `GET /users/` with `user_type=customer` in Swagger.
+3. Visit:
+
+   **`http://localhost:5173/user/<user_id>/dashboard`**
+
+   Example (replace with a real id from your DB):
+
+   `http://localhost:5173/user/usr_48fcb736-260e-4bc4-bbf7-1d267b24f9d6/dashboard`
+
+**Behavior (matches `UserDashboard.jsx`):**
+
+- Loads user, consent, and **approved** recommendations only (`getRecommendations(userId, 'approved')`).
+- If **consent is off**, recommendations are hidden until the user grants consent on this page.
+- Educational and product recs use separate card components; both appear when present and approved.
+
 ## Environment variables
 
 Optional `.env` or `.env.local` in this directory:
