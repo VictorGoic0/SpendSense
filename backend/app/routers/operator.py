@@ -10,6 +10,7 @@ from sqlalchemy import func, and_
 from typing import Dict, Any, List, Optional, Literal
 import logging
 
+from app.utils.recommendation_serialize import attach_partner_offer_product_fields
 from app.database import get_db
 from app.models import User, Persona, Recommendation, UserFeature, Transaction, Account, Liability
 from app.services.feature_detection import (
@@ -372,7 +373,8 @@ async def get_approval_queue(
     2. Optionally filters by specific status (pending_approval, overridden, rejected)
     3. Orders by generated_at ascending (oldest first, queue order)
     4. Includes user information for display
-    5. Returns recommendations with all relevant fields
+    5. Returns recommendations with all relevant fields (including product_* keys for
+       partner_offer rows, same shape as GET /recommendations/{user_id})
     
     Args:
         status: Optional status filter (pending_approval, overridden, rejected)
@@ -433,7 +435,7 @@ async def get_approval_queue(
         
         recommendations_list = []
         for rec, user_name, user_id in results:
-            recommendations_list.append({
+            row = {
                 "recommendation_id": rec.recommendation_id,
                 "user_id": rec.user_id,
                 "user_name": user_name,
@@ -450,8 +452,10 @@ async def get_approval_queue(
                 "approved_at": rec.approved_at.isoformat() if rec.approved_at else None,
                 "override_reason": rec.override_reason,
                 "original_content": rec.original_content,
-                "metadata_json": rec.metadata_json
-            })
+                "metadata_json": rec.metadata_json,
+            }
+            attach_partner_offer_product_fields(row, rec)
+            recommendations_list.append(row)
         
         return {
             "recommendations": recommendations_list,

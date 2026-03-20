@@ -109,6 +109,9 @@ export default function ProductRecommendationCard({
     user_name,
     user_id,
     product_name,
+    short_description,
+    partner_name,
+    typical_apy_or_fee,
     rationale,
     status,
     persona_type,
@@ -177,12 +180,25 @@ export default function ProductRecommendationCard({
       </CardHeader>
       
       <CardContent>
-        {/* Product name as content */}
-        <div className="mb-4">
-          <h4 className="text-sm font-semibold text-gray-700 mb-1">Content:</h4>
+        <div className="mb-4 space-y-2">
+          <h4 className="text-sm font-semibold text-gray-700 mb-1">Product</h4>
           <div className="text-sm text-gray-600">
-            {product_name || 'Product Recommendation'}
+            <span className="font-medium text-gray-800">
+              {product_name || 'Product recommendation'}
+            </span>
+            {partner_name && (
+              <span className="text-gray-500"> · {partner_name}</span>
+            )}
           </div>
+          {typical_apy_or_fee && (
+            <p className="text-sm text-gray-600">
+              <span className="font-medium text-gray-700">Rate / fee: </span>
+              {typical_apy_or_fee}
+            </p>
+          )}
+          {short_description && (
+            <p className="text-sm text-gray-600 leading-relaxed">{short_description}</p>
+          )}
         </div>
         
         {/* Rationale preview */}

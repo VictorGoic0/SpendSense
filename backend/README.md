@@ -64,6 +64,8 @@ Configured in **`app/services/recommendation_engine.py`** (`generate_recommendat
 
 JSON **`response_format`** is unchanged (structured recommendations for parsing and guardrails).
 
+**Educational recommendations are not seeded.** Ingest scripts only load users, accounts, transactions, liabilities, and (optionally) the product catalog. **`content_type: education`** rows are created when you call **`POST /recommendations/generate/{user_id}`** (Swagger, operator UI, or `test_openai_generation`-style scripts): that runs **`generate_combined_recommendations`**, which calls OpenAI for education and the matcher for **`partner_offer`**. If the OpenAI step errors out or context validation fails, you can still get **only product** recommendations—check server logs. Prerequisites: **`OPENAI_API_KEY`**, user **consent**, **persona** and **features** for the window, and (for a full refresh) use **`force_regenerate=true`** if older rows already exist.
+
 ## Run the API
 
 With venv activated and cwd = `backend`:

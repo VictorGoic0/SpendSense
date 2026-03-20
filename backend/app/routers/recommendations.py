@@ -29,6 +29,7 @@ from app.services.guardrails import (
     append_disclosure,
     MANDATORY_DISCLOSURE
 )
+from app.utils.recommendation_serialize import attach_partner_offer_product_fields
 from datetime import datetime
 
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
@@ -391,21 +392,7 @@ async def generate_recommendations(
                 "generated_at": rec.generated_at.isoformat() if rec.generated_at else None,
                 "metadata_json": rec.metadata_json
             }
-            
-            # Add product fields for partner_offer type
-            if rec.content_type == "partner_offer" and rec.metadata_json:
-                try:
-                    metadata = json.loads(rec.metadata_json)
-                    product_data = metadata.get("product_data", {})
-                    rec_dict["product_id"] = rec.product_id
-                    rec_dict["product_name"] = product_data.get("product_name")
-                    rec_dict["short_description"] = product_data.get("short_description")
-                    rec_dict["benefits"] = product_data.get("benefits", [])
-                    rec_dict["partner_link"] = product_data.get("partner_link")
-                    rec_dict["disclosure"] = product_data.get("disclosure")
-                except (json.JSONDecodeError, TypeError):
-                    logger.warning(f"Failed to parse metadata for recommendation {rec.recommendation_id}")
-            
+            attach_partner_offer_product_fields(rec_dict, rec)
             recommendations_list.append(rec_dict)
         
         # Calculate total request time
@@ -567,23 +554,7 @@ async def get_recommendations(
                 "approved_by": rec.approved_by,
                 "approved_at": rec.approved_at.isoformat() if rec.approved_at else None,
             }
-            
-            # Add product fields for partner_offer type
-            if rec.content_type == "partner_offer" and rec.metadata_json:
-                try:
-                    metadata = json.loads(rec.metadata_json)
-                    product_data = metadata.get("product_data", {})
-                    rec_dict["product_id"] = rec.product_id
-                    rec_dict["product_name"] = product_data.get("product_name")
-                    rec_dict["short_description"] = product_data.get("short_description")
-                    rec_dict["benefits"] = product_data.get("benefits", [])
-                    rec_dict["partner_link"] = product_data.get("partner_link")
-                    rec_dict["disclosure"] = product_data.get("disclosure")
-                    rec_dict["typical_apy_or_fee"] = product_data.get("typical_apy_or_fee")
-                    rec_dict["partner_name"] = product_data.get("partner_name")
-                except (json.JSONDecodeError, TypeError):
-                    logger.warning(f"Failed to parse metadata for recommendation {rec.recommendation_id}")
-            
+            attach_partner_offer_product_fields(rec_dict, rec)
             recommendations_list.append(rec_dict)
         
         # Return JSON response with recommendations list and total count
