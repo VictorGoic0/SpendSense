@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 """
-Test script for data ingestion endpoint.
+Load synthetic JSON from backend/data/ and POST it to the /ingest/ API.
 
-Loads synthetic JSON data files and POSTs them to the /ingest endpoint.
+This is a data-load helper (not a pytest). Requires a running API.
 
 Usage:
-    Make sure the virtual environment is activated:
-        cd backend
-        source venv/bin/activate
-    
-    Then run from project root:
-        python backend/scripts/test_ingest.py
+    cd backend && source venv/bin/activate
+    # from repository root:
+    python backend/scripts/run_ingest.py
 """
 
 import json
@@ -30,7 +27,7 @@ except ImportError:
     print("  # or")
     print("  venv\\Scripts\\activate  # On Windows")
     print("\nThen run the script from the project root:")
-    print("  python backend/scripts/test_ingest.py")
+    print("  python backend/scripts/run_ingest.py")
     print("\nOr install requests in your current Python environment:")
     print("  pip install requests==2.31.0")
     sys.exit(1)
@@ -81,11 +78,11 @@ def ingest_data():
         "liabilities": liabilities
     }
     
-    print(f"\nPosting data to {API_BASE_URL}/ingest...")
+    print(f"\nPosting data to {API_BASE_URL}/ingest/...")
     
     try:
         response = requests.post(
-            f"{API_BASE_URL}/ingest",
+            f"{API_BASE_URL}/ingest/",
             json=payload,
             headers={"Content-Type": "application/json"}
         )
@@ -126,7 +123,7 @@ def ingest_data():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("SpendSense Data Ingestion Test")
+    print("SpendSense — ingest synthetic data (run_ingest)")
     print("=" * 60)
     print()
     
@@ -134,12 +131,12 @@ if __name__ == "__main__":
     
     if success:
         print("\n" + "=" * 60)
-        print("✅ Test completed successfully!")
+        print("✅ Ingest finished successfully.")
         print("=" * 60)
         sys.exit(0)
     else:
         print("\n" + "=" * 60)
-        print("❌ Test failed!")
+        print("❌ Ingest failed.")
         print("=" * 60)
         sys.exit(1)
 

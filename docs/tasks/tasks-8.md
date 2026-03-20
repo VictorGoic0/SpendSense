@@ -64,13 +64,13 @@
    - Run: `railway variables` to see environment variables
    - Verify Railway CLI can execute commands
 - [x] 23. Update seed script for Railway:
-   - Review `backend/scripts/test_ingest.py`
+   - Review `backend/scripts/run_ingest.py`
    - Script uses API endpoint (works with Railway URL)
    - Or create direct database seeding script for Railway CLI
 - [x] 24. Seed data using Railway CLI:
    - **Completed: Manually ingested data using `/ingest` endpoint with JSON files (users, accounts, transactions, liabilities, products)**
-   - Option A: Use API endpoint: Update `test_ingest.py` with Railway URL, run locally
-   - Option B: Use Railway CLI: `railway run python backend/scripts/test_ingest.py`
+   - Option A: Use API endpoint: Update `run_ingest.py` with Railway URL, run locally
+   - Option B: Use Railway CLI: `railway run python backend/scripts/run_ingest.py`
    - Option C: Create direct DB script: `railway run python backend/scripts/seed_railway.py`
 - [x] 25. Verify data ingestion:
    - Check Railway logs for successful ingestion
@@ -118,12 +118,12 @@
 
 ### Data Ingestion in Production
 - [x] 48. Update seed script with Railway API URL (if using API method):
-   - Modify `backend/scripts/test_ingest.py` to accept Railway URL
+   - Modify `backend/scripts/run_ingest.py` to accept Railway URL
    - Or set `API_BASE_URL` environment variable
    - Test script can point to Railway instead of localhost
    - **Complete: Used manual ingestion via `/ingest` endpoint with JSON payloads**
 - [x] 49. Run data ingestion via Railway CLI:
-   - `railway run python backend/scripts/test_ingest.py`
+   - `railway run python backend/scripts/run_ingest.py`
    - Or use API endpoint method from local machine
    - Verify ingestion completes successfully
    - **Complete: All data successfully ingested**

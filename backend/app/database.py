@@ -1,13 +1,40 @@
+from pathlib import Path
+
 from sqlalchemy import create_engine, event, text, inspect
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 import logging
 from dotenv import load_dotenv
 
-load_dotenv()
+# backend/ (parent of app/) — stable anchor for .env and SQLite paths regardless of cwd
+_BACKEND_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(_BACKEND_ROOT / ".env")
+load_dotenv()  # optional overrides from cwd
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./spendsense.db")
+_raw_db_url = os.getenv("DATABASE_URL", "sqlite:///./spendsense.db")
+
+
+def _normalize_sqlite_url(url: str) -> str:
+    """Resolve relative SQLite file paths against backend/ so scripts work from repo root."""
+    if not url.startswith("sqlite:///"):
+        return url
+    rest = url[len("sqlite:///") :]
+    if rest == ":memory:" or not rest:
+        return url
+    path = Path(rest)
+    if not path.is_absolute():
+        path = (_BACKEND_ROOT / path).resolve()
+    # Absolute path: sqlite:/// + /abs/path → four slashes after sqlite:
+    return f"sqlite:///{path.as_posix()}"
+
+
+SQLALCHEMY_DATABASE_URL = (
+    _normalize_sqlite_url(_raw_db_url)
+    if _raw_db_url.startswith("sqlite")
+    else _raw_db_url
+)
 
 # SQLite connection args
 connect_args = {}
@@ -80,10 +107,25 @@ def apply_migrations():
 
 
 def init_db():
-    """Initialize database by creating all tables and applying migrations"""
-    # Create all tables from models
-    Base.metadata.create_all(bind=engine)
-    
-    # Apply any pending migrations
+    """Initialize database by creating all tables and applying migrations."""
+    def _create_all():
+        Base.metadata.create_all(bind=engine)
+
+    # SQLite + multiple Uvicorn workers: each process runs startup; concurrent
+    # create_all() races (both pass checkfirst before either commits). Retry after
+    # "already exists" so this worker's second pass no-ops on existing tables.
+    if "sqlite" in SQLALCHEMY_DATABASE_URL:
+        try:
+            _create_all()
+        except OperationalError as e:
+            orig = getattr(e, "orig", e)
+            msg = str(orig) if orig is not None else str(e)
+            if "already exists" not in msg.lower():
+                raise
+            logger.debug("SQLite create_all race (multi-worker startup): %s", msg)
+            _create_all()
+    else:
+        _create_all()
+
     apply_migrations()
 

@@ -165,7 +165,7 @@ User Dashboard (React UI)
   - Products ingested through `/ingest/` endpoint (same as users, accounts, transactions, liabilities)
   - `ProductCreate` and `ProductResponse` schemas added to `backend/app/schemas.py`
   - Ingestion endpoint converts `persona_targets` and `benefits` lists to JSON strings
-  - Test script: `scripts/test_ingest_products.py` for API-based ingestion
+  - Ingest script: `backend/scripts/run_ingest_products.py` for API-based ingestion
   - All product data follows consistent API ingestion pattern
 - ✅ Product matching service (PR #40 Complete)
   - Service file: `backend/app/services/product_matcher.py`

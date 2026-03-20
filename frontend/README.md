@@ -1,16 +1,75 @@
-# React + Vite
+# SpendSense — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React (Vite) SPA for the operator dashboard, user views, and recommendation workflows. Run everything in this folder; the app expects a running API (see [`../backend/README.md`](../backend/README.md)).
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Node.js**: 20 LTS recommended (matches project conventions; check compatibility with `package.json` if you use another version)
+- **Backend**: FastAPI on `http://localhost:8000` unless you override the API base URL (below)
 
-## React Compiler
+## Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+The dev server defaults to **http://localhost:5173** (Vite).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Environment variables
+
+Optional `.env` or `.env.local` in this directory:
+
+| Variable | Purpose |
+|----------|---------|
+| `VITE_API_BASE_URL` | Base URL for the API. If unset, the client uses `http://localhost:8000`. |
+
+Configured in `src/lib/api.js` via `import.meta.env.VITE_API_BASE_URL`.
+
+**WSL / remote API**: If the browser runs on Windows and the API is only bound inside WSL, you may need a URL reachable from the host (for example the Windows host IP from WSL’s perspective, or `0.0.0.0` on the backend plus the correct host port).
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server with HMR |
+| `npm run build` | Production build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | ESLint |
+
+## Tech stack
+
+- **React** 18 — UI
+- **Vite** — build and dev server
+- **React Router** — routing
+- **Shadcn/ui** (Radix primitives) — components
+- **Tailwind CSS** — styling
+- **Axios** — HTTP client
+- **Recharts** — charts
+- **Lucide React** — icons
+
+Path alias: `@src` → `src/` (see `vite.config.js` and `jsconfig.json`).
+
+## Project layout (this folder)
+
+```
+frontend/
+├── src/
+│   ├── components/     # UI + feature components (incl. components/ui)
+│   ├── pages/          # Route-level pages
+│   ├── lib/            # api.js, apiService.js, utils
+│   ├── constants/
+│   └── main.jsx
+├── package.json
+├── vite.config.js
+└── tailwind.config.js
+```
+
+## Deployment (Netlify)
+
+Repo root `netlify.toml` uses base directory `frontend`, build `npm run build`, publish `dist/`. Client-side routing uses a SPA redirect (`/*` → `/index.html`).
+
+## More context
+
+Product overview, repo layout, and pointers to docs: [`../README.md`](../README.md).

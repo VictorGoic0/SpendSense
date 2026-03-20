@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 """
-Test script for product ingestion via API endpoint.
+Load backend/data/product_catalog.json and POST products to /ingest/.
 
-Loads product catalog JSON file and POSTs it to the /ingest endpoint.
+Data-load helper (not a pytest). Requires a running API.
 
 Usage:
-    Make sure the virtual environment is activated and backend server is running:
-        cd backend
-        source venv/bin/activate
-        uvicorn app.main:app --reload
-    
-    Then run from project root:
-        python backend/scripts/test_ingest_products.py
+    cd backend && source venv/bin/activate && uvicorn app.main:app --reload
+    # from repository root:
+    python backend/scripts/run_ingest_products.py
 """
 
 import json
@@ -31,7 +27,7 @@ except ImportError:
     print("  # or")
     print("  venv\\Scripts\\activate  # On Windows")
     print("\nThen run the script from the project root:")
-    print("  python backend/scripts/test_ingest_products.py")
+    print("  python backend/scripts/run_ingest_products.py")
     print("\nOr install requests in your current Python environment:")
     print("  pip install requests==2.31.0")
     sys.exit(1)
@@ -48,8 +44,7 @@ def load_products(file_path: Path) -> list:
     """Load product data from JSON file"""
     if not file_path.exists():
         print(f"❌ Error: Product catalog file not found: {file_path}")
-        print(f"\nPlease generate the product catalog first:")
-        print(f"  python backend/scripts/generate_product_catalog.py")
+        print(f"\nAdd or generate backend/data/product_catalog.json first.")
         sys.exit(1)
     
     try:
@@ -124,7 +119,7 @@ def ingest_products(products: list):
 def main():
     """Main function"""
     print("=" * 60)
-    print("SpendSense Product Ingestion Test")
+    print("SpendSense — ingest products (run_ingest_products)")
     print("=" * 60)
     
     # Load products

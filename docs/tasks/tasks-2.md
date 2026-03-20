@@ -127,7 +127,7 @@
 
 ### Testing Ingestion
 - [x] 24. Start FastAPI server: `uvicorn app.main:app --reload`
-- [x] 25. Create test script `scripts/test_ingest.py` to POST synthetic data
+- [x] 25. Create ingest script `backend/scripts/run_ingest.py` (formerly `test_ingest.py`) to POST synthetic data
 - [x] 26. Test with all 4 JSON files
 - [x] 27. Verify successful response with correct counts
 - [x] 28. Use SQLite browser to verify data in database:

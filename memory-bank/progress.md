@@ -125,7 +125,7 @@
   - Error handling with rollback on failure
   - Idempotency handling for duplicate key errors (409 status)
   - Returns IngestResponse with counts and duration in milliseconds
-  - Test script created (`scripts/test_ingest.py`)
+  - Ingest script created (`backend/scripts/run_ingest.py`)
   - All synthetic data successfully ingested:
     - 75 users loaded
     - 272 accounts loaded
@@ -618,7 +618,7 @@
   - Added products support to `/ingest/` endpoint for consistency
   - Created product schemas (ProductCreate, ProductResponse)
   - Updated ingestion endpoint to handle products with JSON conversion
-  - Created `scripts/test_ingest_products.py` for API-based ingestion
+  - Created `backend/scripts/run_ingest_products.py` for API-based ingestion
   - Removed direct seeding scripts (seed_product_catalog.py, test_product_seeding.py)
   - Products now follow same ingestion pattern as all other data
   - Created `ProductOffer` model in `backend/app/models.py` with all required fields (product_id, product_name, product_type, category, persona_targets, eligibility criteria, content fields, business fields, timestamps, indexes)

@@ -193,7 +193,7 @@
     - Converts `persona_targets` and `benefits` lists to JSON strings
     - Bulk inserts products into database
     - Includes products count in `IngestResponse`
-  - Created `scripts/test_ingest_products.py` for API-based product ingestion
+  - Created `backend/scripts/run_ingest_products.py` for API-based product ingestion
   - Removed direct database seeding scripts (`seed_product_catalog.py`, `test_product_seeding.py`)
   - Updated README.md to document API-based ingestion workflow
   - Products now follow same ingestion pattern as users, accounts, transactions, liabilities
@@ -338,7 +338,7 @@
   - Error handling with rollback on failure
   - Idempotency handling for duplicate key errors (409 status)
   - Returns IngestResponse with counts and duration in milliseconds
-  - Test script created (`scripts/test_ingest.py`)
+  - Ingest script created (`backend/scripts/run_ingest.py`)
   - All synthetic data successfully ingested:
     - 75 users loaded
     - 272 accounts loaded
