@@ -28,6 +28,7 @@ Create **`backend/.env`** (gitignored). The same template lives in **`example-en
 ```env
 # OpenAI API Configuration
 OPENAI_API_KEY=sk-your-openai-api-key-here
+# OPENAI_REASONING_MODEL=gpt-4o-mini   # optional; default is gpt-4o-mini in code
 
 # Database Configuration
 DATABASE_URL=sqlite:///./spendsense.db
@@ -49,6 +50,19 @@ ENVIRONMENT=dev   # dev | staging | prod
 - **`DATABASE_URL`**: Relative SQLite paths (e.g. `sqlite:///./spendsense.db`) are resolved to **`backend/`** in code, so Uvicorn and CLI scripts behave the same whether you run from `backend/` or the repo root. For PostgreSQL, use your provider’s connection string.
 - **SQLite absolute paths** (SQLAlchemy): `sqlite:///tmp/foo.db` is **not** `/tmp/foo.db` — it is a **relative** path `tmp/foo.db` from the process cwd, and fails if that folder does not exist (`unable to open database file`). For a Unix absolute path use **four** slashes: `sqlite:////tmp/foo.db`.
 - **`OPENAI_API_KEY`**: Required for `/recommendations/generate/...` and any scripts that call OpenAI.
+- **`OPENAI_REASONING_MODEL`** *(optional)*: Overrides the chat model for educational recommendations (default in code: **`gpt-4o-mini`**).
+
+### Recommendation generation (OpenAI)
+
+Configured in **`app/services/recommendation_engine.py`** (`generate_recommendations_via_openai`).
+
+| Setting | Current choice | Notes |
+|--------|----------------|--------|
+| **Model** | **`gpt-4o-mini`** (default) | Cheaper than reasoning-tier minis (e.g. GPT-5-mini); override with `OPENAI_REASONING_MODEL` if you experiment. |
+| **Temperature** | **`0`** | Minimum supported for this model — most deterministic. Runs at **0.75–1.0** produced noticeably worse, less on-prompt educational copy than **temperature 0** in practice. |
+| **Logged cost estimate** | **$0.15 / 1M** input, **$0.60 / 1M** output | Matches 4o-mini–era pricing; update constants in code if you point `OPENAI_REASONING_MODEL` at another SKU. |
+
+JSON **`response_format`** is unchanged (structured recommendations for parsing and guardrails).
 
 ## Run the API
 

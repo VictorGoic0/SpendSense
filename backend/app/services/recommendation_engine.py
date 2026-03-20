@@ -25,7 +25,8 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 # Educational / persona recommendations (chat completions).
-REASONING_MODEL: str = os.getenv("OPENAI_REASONING_MODEL", "gpt-5-mini-2025-08-07")
+# Default gpt-4o-mini + temperature 0 (see backend README). Override model with OPENAI_REASONING_MODEL.
+REASONING_MODEL: str = os.getenv("OPENAI_REASONING_MODEL", "gpt-4o-mini")
 
 
 # ============================================================================
@@ -431,7 +432,7 @@ def generate_recommendations_via_openai(persona_type: str, user_context: dict) -
                     {"role": "user", "content": user_context_json}
                 ],
                 response_format={"type": "json_object"},
-                temperature=1
+                temperature=0,  # min for gpt-4o-mini; higher values hurt copy quality in practice
             )
             
             # Record end time and calculate latency in milliseconds
@@ -457,9 +458,9 @@ def generate_recommendations_via_openai(persona_type: str, user_context: dict) -
                     f"total={token_usage['total_tokens']}"
                 )
                 
-                # GPT-5-mini (REASONING_MODEL): $0.25 / 1M input, $2.00 / 1M output (~200k context)
-                input_cost_per_1m = 0.25
-                output_cost_per_1m = 2.00
+                # gpt-4o-mini: $0.15 / 1M input, $0.60 / 1M output (update if OPENAI_REASONING_MODEL differs)
+                input_cost_per_1m = 0.15
+                output_cost_per_1m = 0.60
                 
                 input_cost = (token_usage['prompt_tokens'] / 1_000_000) * input_cost_per_1m
                 output_cost = (token_usage['completion_tokens'] / 1_000_000) * output_cost_per_1m

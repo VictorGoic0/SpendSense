@@ -4,6 +4,10 @@
 **Status**: Railway production deployment complete with persistent database and all data seeded
 
 ## Recent Changes
+- ✅ **Educational recommendations: gpt-4o-mini + temperature 0**
+  - Default chat model again **gpt-4o-mini** (cheaper than reasoning-tier minis); optional **`OPENAI_REASONING_MODEL`** override
+  - **Temperature 0** (minimum for 4o-mini): materially better, more on-prompt outputs than runs at 0.75–1.0 in practice
+  - Documented in `backend/README.md`, `memory-bank/techContext.md`, `example-env.md`
 - ✅ **Railway Production Deployment Complete**
   - Backend successfully deployed to Railway with persistent storage
   - Created persistent data volume in Railway and mounted at `/data/db`

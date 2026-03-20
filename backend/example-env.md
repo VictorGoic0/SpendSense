@@ -5,6 +5,8 @@ Copy this file to `.env` and fill in your actual values.
 ```env
 # OpenAI API Configuration
 OPENAI_API_KEY=sk-your-openai-api-key-here
+# Optional: override chat model for educational recs (default in code: gpt-4o-mini)
+# OPENAI_REASONING_MODEL=gpt-4o-mini
 
 # Database Configuration
 DATABASE_URL=sqlite:///./spendsense.db

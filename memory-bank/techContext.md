@@ -19,12 +19,12 @@
 - **Python-dotenv** - Environment variable management
 
 ### AI/ML
-- **OpenAI Python SDK** - GPT-4o-mini integration
-- **Model Choice**: gpt-4o-mini (quality-first approach)
-  - Latency: ~17 seconds average per recommendation generation
-  - Quality priority over speed for MVP
-  - Alternative: gpt-3.5-turbo (67% faster at 5.5s, lower quality)
-  - Performance testing documented in `docs/OPENAI_LATENCY_TESTING.md`
+- **OpenAI Python SDK** - Chat completions for educational recommendations
+- **Model (default)**: **gpt-4o-mini** (`REASONING_MODEL` in `recommendation_engine.py`; optional env **`OPENAI_REASONING_MODEL`**)
+  - **Cost**: Lower than reasoning-class minis (e.g. GPT-5-mini); logged estimates use ~$0.15/1M in, $0.60/1M out for this SKU
+  - **Temperature**: **0** (minimum for gpt-4o-mini). Empirically, **0.75–1.0** produced worse / less consistent on-prompt copy than **temperature 0**; keep low for production-like quality
+  - Latency: historically ~17s average per recommendation generation (model + context); see `docs/OPENAI_LATENCY_TESTING.md`
+  - Alternative speed play: gpt-3.5-turbo was ~67% faster in past tests, lower quality
 - **5 separate endpoints** - One per persona with distinct system prompts
 - **JSON response format** - Structured output for recommendations (beneficial for performance)
 - **Vector Database (Planned)**: Pinecone Serverless

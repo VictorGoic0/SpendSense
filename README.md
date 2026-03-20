@@ -57,7 +57,7 @@ CORS is configured for local Vite ports; if you change origin or API URL, adjust
 
 | Area | Stack |
 |------|--------|
-| Backend | FastAPI, SQLAlchemy, Pydantic, SQLite (default), Uvicorn, OpenAI SDK |
+| Backend | FastAPI, SQLAlchemy, Pydantic, SQLite (default), Uvicorn, OpenAI SDK (educational recs: **gpt-4o-mini**, **temperature 0** — see `backend/README.md`) |
 | Frontend | React 18, Vite, React Router, Shadcn/ui, Tailwind, Axios, Recharts |
 | Ops / data | Optional AWS S3 for exports; Railway (backend) and Netlify (frontend) documented in per-folder READMEs |
 

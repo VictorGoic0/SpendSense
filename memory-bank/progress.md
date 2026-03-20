@@ -4,6 +4,8 @@
 **Status**: Frontend Deployed to Netlify
 
 ### Completed ✅
+- ✅ **Recommendation LLM defaults (gpt-4o-mini, temperature 0)**
+  - Documented in `backend/README.md` and `techContext.md`: cheaper default model vs reasoning minis; **temperature 0** fixes degraded copy seen at higher temperatures
 - ✅ **Frontend Deployed to Netlify**
   - Created `netlify.toml` configuration in root directory
   - Base directory: `frontend`, publish directory: `dist`
