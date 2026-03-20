@@ -24,6 +24,9 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
+# Educational / persona recommendations (chat completions).
+REASONING_MODEL: str = os.getenv("OPENAI_REASONING_MODEL", "gpt-5-mini-2025-08-07")
+
 
 # ============================================================================
 # OpenAI Client Setup
@@ -422,13 +425,13 @@ def generate_recommendations_via_openai(persona_type: str, user_context: dict) -
             logger.debug(f"Making OpenAI API call for persona {persona_type} (attempt {retry_count + 1}/{max_retries + 1})")
             
             response = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model=REASONING_MODEL,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_context_json}
                 ],
                 response_format={"type": "json_object"},
-                temperature=0.75
+                temperature=1
             )
             
             # Record end time and calculate latency in milliseconds
@@ -454,10 +457,9 @@ def generate_recommendations_via_openai(persona_type: str, user_context: dict) -
                     f"total={token_usage['total_tokens']}"
                 )
                 
-                # Calculate estimated cost
-                # gpt-4o-mini pricing: $0.15 per 1M input tokens, $0.60 per 1M output tokens
-                input_cost_per_1m = 0.15
-                output_cost_per_1m = 0.60
+                # GPT-5-mini (REASONING_MODEL): $0.25 / 1M input, $2.00 / 1M output (~200k context)
+                input_cost_per_1m = 0.25
+                output_cost_per_1m = 2.00
                 
                 input_cost = (token_usage['prompt_tokens'] / 1_000_000) * input_cost_per_1m
                 output_cost = (token_usage['completion_tokens'] / 1_000_000) * output_cost_per_1m
